@@ -1,0 +1,1 @@
+CATEGORIES = ["Family", "Work", "Health", "Personal"]

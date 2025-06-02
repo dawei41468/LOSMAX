@@ -1,0 +1,116 @@
+{
+  "auth": {
+    "email": "邮箱",
+    "password": "密码",
+    "loading": "加载中...",
+    "LOS": "LOS",
+    "lifeOrganizationSystem": "生活管理系统",
+    "namePlaceholder": "输入姓名",
+    "passwordPlaceholder": "输入密码",
+    "emailPlaceholder": "输入邮箱",
+    "forgotPassword": "忘记密码？",
+    "signInTitle": "登录",
+    "signUpTitle": "创建账户",
+    "signIn": "登录",
+    "signUp": "注册",
+    "alreadyHaveAccount": "已有账户？",
+    "dontHaveAccount": "没有账户？"
+  },
+  "dashboard": {
+    "titles": {
+      "goals": "目标管理",
+      "tasks": "任务管理",
+      "progress": "进度概览",
+      "settings": "设置",
+      "dashboard": "仪表盘"
+    },
+    "subtitles": {
+      "goals": "设定并追踪您的个人及职业目标。",
+      "tasks": "高效组织和管理您的日常任务。",
+      "progress": "监控您在各目标和任务上的进展。",
+      "settings": "配置您的应用偏好。",
+      "dashboard": "欢迎来到您的 LOSMAX 仪表盘。"
+    }
+  },
+  "sidebar": {
+    "losmax": "LOS",
+    "dashboard": "仪表盘",
+    "goals": "目标",
+    "tasks": "任务",
+    "progress": "进度",
+    "settings": "设置",
+    "language": "语言"
+  },
+  "profile": {
+    "settings": "设置",
+    "signout": "登出"
+  },
+  "settings": {
+    "tabs": {
+      "preferences": "偏好设置",
+      "about": "关于"
+    },
+    "account": {
+      "info_title": "账户信息",
+      "info_description": "查看和管理您的账户详情。",
+      "email_label": "邮箱地址",
+      "display_name_label": "显示名称",
+      "display_name_hint": "此名称将公开显示。",
+      "actions_title": "账户操作",
+      "actions_description": "管理您的账户设置和数据。",
+      "password_change_title": "更改密码",
+      "password_change_message": "输入您当前和新的密码以更新。",
+      "current_password": "当前密码",
+      "new_password": "新密码",
+      "confirm_password": "确认新密码"
+    },
+    "preferences": {
+      "deadlines_title": "任务截止时间",
+      "deadlines_description": "设置您偏好的早晨和傍晚任务截止时间。",
+      "morning_deadline": "早晨截止时间",
+      "morning_deadline_hint": "例如：上午9:00。在此时间前到期的任务被视为早晨任务。",
+      "evening_deadline": "傍晚截止时间",
+      "evening_deadline_hint": "例如：晚上10:00。在此时间前到期的任务被视为傍晚任务。",
+      "notifications_title": "通知",
+      "notifications_description": "启用或禁用应用通知。"
+    },
+    "buttons": {
+      "update": "更新",
+      "change_password": "更改密码",
+      "delete_account": "删除账户",
+      "cancel": "取消"
+    },
+    "toast": {
+      "error_title": "错误",
+      "fetch_preferences_error": "获取您的偏好设置失败。请重试。",
+      "account_deletion_message": "您的账户已成功删除。",
+      "account_deletion_error": "删除您的账户失败。请重试。",
+      "settings_saved_message": "您的设置已保存。",
+      "settings_save_error": "保存您的设置失败。请重试。",
+      "name_updated_message": "您的显示名称已更新。",
+      "update_name_error": "更新您的显示名称失败。请重试。",
+      "storage_error": "存储访问错误。请确保您的浏览器允许站点数据。",
+      "password_mismatch": "新密码不匹配。",
+      "password_changed_message_logout": "密码更改成功。请使用新密码重新登录。",
+      "password_change_error": "更改密码失败。请检查您当前的密码并重试。"
+    },
+    "about": {
+      "title": "关于 LOSMAX",
+      "subtitle": "您的生活管理系统，极致版。",
+      "what_is_title": "什么是 LOSMAX？",
+      "what_is_description": "LOSMAX 是一款旨在帮助您组织生活、管理任务、设定目标并有效追踪进度的综合工具。它结合了强大的功能和用户友好的界面，以提高您的生产力和幸福感。",
+      "features_title": "主要特点：",
+      "feature1": "目标设定与追踪",
+      "feature2": "带截止时间的任务管理",
+      "feature3": "进度可视化",
+      "feature4": "用户偏好与定制",
+      "how_to_use_title": "如何使用 LOSMAX：",
+      "step1": "在“目标”部分设定清晰、可实现的目标。",
+      "step2": "在“任务”部分将您的目标分解为可管理的任务。",
+      "step3": "在“进度”中更新您的任务状态并监控您的整体进展。",
+      "step4": "在“设置”页面定制您的体验。",
+      "step5": "保持井井有条，成就更多！",
+      "version_info": "版本 1.0.0 (Alpha)"
+    }
+  }
+}
