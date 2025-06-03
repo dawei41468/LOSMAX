@@ -13,6 +13,7 @@ class GoalBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=100)
     description: Optional[str] = Field(None, max_length=500)
     category: str
+    target_date: datetime # Made mandatory
     status: GoalStatus = GoalStatus.ACTIVE
 
     @field_validator('category')
@@ -29,6 +30,7 @@ class Goal(GoalBase):
     user_id: str
     created_at: datetime
     updated_at: datetime
+    completed_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True

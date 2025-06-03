@@ -1,41 +1,50 @@
 import { useTranslation } from 'react-i18next';
 import { api } from '../../services/api';
-// import Cookies from 'js-cookie'; // Removed unused import
 import { toast } from 'sonner';
 import axios from 'axios'; // Import axios for isAxiosError
+import { useAuth } from '../../hooks/useAuth'; // Import useAuth
 
 export function LanguageSwitcher() {
   const { i18n } = useTranslation();
+  const { setUserLanguageContext } = useAuth(); // Get setUserLanguageContext
 
-  const saveLanguagePreference = async (language: string) => { // Renamed for clarity
-    console.log('Attempting to save language preference:', { language });
+  const saveLanguagePreference = async (language: string) => {
     try {
       await api.patch('/preferences', { language });
+      // setUserLanguageContext will also call i18n.changeLanguage and update localStorage
+      // We call it here to ensure context is updated even if i18n.changeLanguage in changeLanguage was already called.
+      // This also ensures localStorage is updated.
+      setUserLanguageContext(language);
       toast.success('Language preference updated.');
-    } catch (error: unknown) { // Changed to unknown
+      return true; // Indicate success
+    } catch (error: unknown) {
       console.error('Error saving language preference:', error);
       let errorMessage = 'Failed to save language preference.';
-      if (axios.isAxiosError(error) && error.response?.data?.detail) { // Use axios.isAxiosError
+      if (axios.isAxiosError(error) && error.response?.data?.detail) {
         errorMessage = error.response.data.detail;
       } else if (typeof error === 'object' && error !== null && 'response' in error && typeof (error as { response?: { data?: { error?: string } } }).response?.data?.error === 'string') {
          errorMessage = (error as { response: { data: { error: string } } }).response.data.error;
       }
       toast.error(errorMessage);
+      return false; // Indicate failure
     }
   };
 
   const changeLanguage = async (lang: string) => {
     try {
+      // Optimistically change i18n language for immediate UI update
+      // setUserLanguageContext will also call this, but doing it here ensures responsiveness
+      // if saveLanguagePreference has a delay.
       await i18n.changeLanguage(lang);
-      await saveLanguagePreference(lang); // Call the renamed and corrected function
-      // Success toast is now handled within saveLanguagePreference
-    } catch (error: unknown) { // Changed to unknown
-      console.error('Error changing language:', error);
-      // If saveLanguagePreference fails, it will show its own toast.
-      // This catch block will primarily handle errors from i18n.changeLanguage.
-      if (!axios.isAxiosError(error)) { // Avoid double-toasting if saveLanguagePreference failed
-        toast.error('Failed to apply language change.');
+      const success = await saveLanguagePreference(lang);
+      if (!success) {
+        // If saving failed, revert i18n language if needed (or rely on AuthProvider to correct on next load)
+        // For simplicity, we'll let AuthProvider handle eventual consistency.
+        // The toast from saveLanguagePreference will inform the user of the save failure.
       }
+    } catch (error: unknown) {
+      console.error('Error changing language (i18n part):', error);
+      toast.error('Failed to apply language change locally.');
     }
   };
 

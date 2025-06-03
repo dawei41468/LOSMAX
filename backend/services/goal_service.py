@@ -1,7 +1,9 @@
 from datetime import datetime
 from typing import Optional
 from pymongo import ReturnDocument
-from models.goal import Goal, GoalCreate
+from pydantic import ValidationError
+import logging # Use logging module
+from models.goal import Goal, GoalCreate, GoalStatus
 from utils.constants import CATEGORIES
 from database import db
 from fastapi import HTTPException, status
@@ -23,10 +25,37 @@ class GoalService:
         result = await self.collection.find_one({"_id": goal_id})
         return Goal(**result) if result else None
 
-    async def get_goals_by_user(self, user_id: str) -> list[Goal]:
-        """Get all goals for a user"""
-        cursor = self.collection.find({"user_id": user_id})
-        return [Goal(**doc) async for doc in cursor]
+    async def get_goals_by_user(self, user_id: str, status_filter: Optional[GoalStatus] = None) -> list[Goal]:
+        """Get goals for a user, optionally filtered by status."""
+        query = {"user_id": user_id}
+        if status_filter:
+            query["status"] = status_filter.value
+        cursor = self.collection.find(query)
+        
+        valid_goals = []
+        async for doc in cursor:
+            try:
+                # Ensure 'id' is correctly mapped from '_id' for Pydantic model
+                # Pydantic's from_attributes=True and alias for _id might handle this,
+                # but being explicit can help if 'id' is expected directly by Goal model.
+                # The Goal model expects 'id', not '_id'.
+                if "_id" in doc and "id" not in doc: # Check if 'id' is already there
+                    doc["id"] = str(doc["_id"])
+                
+                # Remove '_id' after mapping to 'id' to prevent Pydantic confusion if it's not aliased
+                # and 'id' is the primary identifier in the Pydantic model.
+                # However, if Goal.Config has alias for _id -> id, this might not be needed.
+                # For now, let's assume 'id' is the field in Pydantic model.
+                # doc.pop("_id", None) # Let's test without popping first, as from_attributes might handle it.
+
+                valid_goals.append(Goal(**doc))
+            except ValidationError as e:
+                goal_id_for_log = doc.get("id", str(doc.get("_id", "Unknown ID")))
+                logging.error(f"Skipping goal due to validation error. Goal ID: {goal_id_for_log}. Error: {e.json()}")
+            except Exception as e: # Catch any other unexpected error during processing a single doc
+                goal_id_for_log = doc.get("id", str(doc.get("_id", "Unknown ID")))
+                logging.error(f"Skipping goal due to unexpected error. Goal ID: {goal_id_for_log}. Error: {e}")
+        return valid_goals
 
     async def update_goal(self, goal_id: str, user_id: str, update_data: dict) -> Optional[Goal]:
         """Update a goal"""
@@ -36,9 +65,20 @@ class GoalService:
 
         # Category is immutable, remove it from update_data if present
         update_data.pop("category", None)
+
+        # Handle completed_at based on status
+        if "status" in update_data:
+            if update_data["status"] == GoalStatus.COMPLETED.value:
+                update_data["completed_at"] = datetime.utcnow()
+            elif update_data["status"] == GoalStatus.ACTIVE.value:
+                update_data["completed_at"] = None
         
-        if not update_data: # No fields to update after removing category
-            return existing_goal # Return existing goal if no updates
+        # If only category was in update_data and it was popped, or no actual changes
+        if not update_data or all(value == getattr(existing_goal, key, None) for key, value in update_data.items() if key not in ["updated_at", "completed_at"]):
+             # Check if completed_at also needs to be considered for "no actual changes"
+            if "status" not in update_data and not any(key for key in update_data if key not in ["updated_at", "completed_at"]): # no other fields to update
+                 return existing_goal
+
 
         update_data["updated_at"] = datetime.utcnow()
         
@@ -79,9 +119,9 @@ async def create_goal(goal_data: GoalCreate, user_id: str) -> Goal:
     goal_data.user_id = user_id # Ensure user_id is set in GoalCreate
     return await _goal_service.create_goal(goal_data)
 
-async def get_goals_by_user(user_id: str) -> list[Goal]:
-    """Get all goals for a user (module-level wrapper)"""
-    return await _goal_service.get_goals_by_user(user_id)
+async def get_goals_by_user(user_id: str, status_filter: Optional[GoalStatus] = None) -> list[Goal]:
+    """Get goals for a user, optionally filtered by status (module-level wrapper)"""
+    return await _goal_service.get_goals_by_user(user_id, status_filter)
 
 async def update_goal(goal_id: str, user_id: str, update_data: dict) -> Optional[Goal]:
     """Update a goal (module-level wrapper)"""

@@ -1,52 +1,116 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useCallback } from 'react';
 import { AuthContext } from '../contexts/auth.context';
 import type { AuthContextType } from '../contexts/auth.types';
-import { createGoal, getGoals } from '../services/api'; // These functions need to be implemented in api.ts
+import { createGoal, getGoals, updateGoal, deleteGoal } from '../services/api';
+import type { CreateGoalPayload } from '../services/api'; // Type-only import
 import { useNavigate } from 'react-router-dom';
+import type { Goal, GoalStatus, GoalCategory } from '../types/goals';
+import GoalDialog from '../components/goals/GoalDialog';
+import GoalCard from '../components/goals/GoalCard';
 
-// Hardcoding categories for now, ideally fetched from backend
-const CATEGORIES = ["Family", "Work", "Health", "Personal"];
+// CATEGORIES_PAGE_LEVEL removed as GoalDialog defines its own or it should come from a shared constant
 
-interface Goal {
-  id: string;
-  user_id: string;
-  title: string;
-  description?: string;
-  category: string;
-  status: 'active' | 'completed';
-  created_at: string;
-  updated_at: string;
-}
+type FilterStatus = GoalStatus | 'all';
 
 export default function GoalsPage() {
-  const { isAuthenticated } = useContext(AuthContext) as AuthContextType; // Removed logout
+  const { isAuthenticated } = useContext(AuthContext) as AuthContextType;
   const navigate = useNavigate();
   const [goals, setGoals] = useState<Goal[]>([]);
-  const [newGoal, setNewGoal] = useState({ title: '', description: '', category: CATEGORIES[0] });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentFilter, setCurrentFilter] = useState<FilterStatus>('active');
+  const [isGoalDialogOpen, setIsGoalDialogOpen] = useState(false);
+  const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/auth');
-      return;
-    }
-    fetchGoals();
-  }, [isAuthenticated, navigate]);
-
-  const fetchGoals = async () => {
+  const fetchUserGoals = useCallback(async (filter: FilterStatus) => {
+    if (!isAuthenticated) return;
     setIsLoading(true);
     setError(null);
     try {
-      const fetchedGoals = await getGoals(); // This function needs to be implemented in api.ts
+      const fetchedGoals = await getGoals(filter === 'all' ? undefined : filter);
       setGoals(fetchedGoals);
     } catch (err: unknown) {
       console.error('Failed to fetch goals:', err);
       let errorMessage = 'Failed to load goals.';
       if (err instanceof Error) {
         errorMessage = err.message;
-      } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof err.detail === 'string') {
-        errorMessage = err.detail;
+      } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
+        errorMessage = (err as { detail: string }).detail;
+      }
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/auth');
+    } else {
+      fetchUserGoals(currentFilter);
+    }
+  }, [isAuthenticated, navigate, currentFilter, fetchUserGoals]);
+
+
+  const handleDialogSubmit = async (data: Omit<Goal, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'days_remaining' | 'completed_at'>) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      if (editingGoal) {
+        // Ensure target_date is in the correct string format if it's a Date object
+        const payload: Partial<Omit<Goal, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'days_remaining'>> = {
+          ...data,
+          target_date: typeof data.target_date === 'string' ? data.target_date : new Date(data.target_date).toISOString().split('T')[0],
+        };
+        await updateGoal(editingGoal.id, payload);
+      } else {
+        const payload: CreateGoalPayload = {
+          ...data,
+          target_date: typeof data.target_date === 'string' ? data.target_date : new Date(data.target_date).toISOString().split('T')[0],
+          category: data.category as GoalCategory, // Ensure category is GoalCategory
+        };
+        await createGoal(payload);
+      }
+      fetchUserGoals(currentFilter); // Refetch goals
+    } catch (err: unknown) {
+      console.error('Failed to save goal:', err);
+      let errorMessage = 'Failed to save goal.';
+       if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
+        errorMessage = (err as { detail: string }).detail;
+      }
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+      setIsGoalDialogOpen(false);
+      setEditingGoal(null);
+    }
+  };
+
+  const openCreateDialog = () => {
+    setEditingGoal(null);
+    setIsGoalDialogOpen(true);
+  };
+
+  const openEditDialog = (goal: Goal) => {
+    setEditingGoal(goal);
+    setIsGoalDialogOpen(true);
+  };
+
+  const handleDeleteGoal = async (goalId: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await deleteGoal(goalId);
+      fetchUserGoals(currentFilter); // Refetch goals
+    } catch (err: unknown) {
+      console.error('Failed to delete goal:', err);
+      let errorMessage = 'Failed to delete goal.';
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
+        errorMessage = (err as { detail: string }).detail;
       }
       setError(errorMessage);
     } finally {
@@ -54,26 +118,20 @@ export default function GoalsPage() {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setNewGoal(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleCreateGoal = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleToggleStatus = async (goal: Goal) => {
     setIsLoading(true);
     setError(null);
+    const newStatus = goal.status === 'active' ? 'completed' : 'active';
     try {
-      const created = await createGoal(newGoal); // This function needs to be implemented in api.ts
-      setGoals(prev => [...prev, created]);
-      setNewGoal({ title: '', description: '', category: CATEGORIES[0] }); // Reset form
+      await updateGoal(goal.id, { status: newStatus });
+      fetchUserGoals(currentFilter); // Refetch goals
     } catch (err: unknown) {
-      console.error('Failed to create goal:', err);
-      let errorMessage = 'Failed to create goal.';
-      if (err instanceof Error) {
+      console.error('Failed to update goal status:', err);
+      let errorMessage = 'Failed to update goal status.';
+       if (err instanceof Error) {
         errorMessage = err.message;
-      } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof err.detail === 'string') {
-        errorMessage = err.detail;
+      } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
+        errorMessage = (err as { detail: string }).detail;
       }
       setError(errorMessage);
     } finally {
@@ -82,92 +140,74 @@ export default function GoalsPage() {
   };
 
   const groupedGoals = goals.reduce((acc, goal) => {
-    (acc[goal.category] = acc[goal.category] || []).push(goal);
+    (acc[goal.category as GoalCategory] = acc[goal.category as GoalCategory] || []).push(goal);
     return acc;
-  }, {} as Record<string, Goal[]>);
+  }, {} as Record<GoalCategory, Goal[]>);
+
 
   return (
-    // Removed min-h-screen, w-full, bg-gray-100, p-4 sm:p-8 as DashboardLayout handles this
     <div>
-      {/* The main title is now handled by DashboardLayout. This can be a page-specific sub-header. */}
-      <div className="flex justify-between items-center mb-6"> {/* Adjusted margin */}
-        <h1 className="text-2xl font-semibold text-gray-800">Your Goals</h1> {/* Adjusted styling */}
-        {/* Logout button removed */}
+      <div className="flex justify-between items-center mt-4 mb-6">
+        <h1 className="text-2xl font-semibold text-gray-800">Your Goals</h1>
+        <button
+          onClick={openCreateDialog}
+          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          Create New Goal
+        </button>
       </div>
 
       {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">{error}</div>}
 
-      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-        <h2 className="text-xl font-semibold mb-4">Create New Goal</h2>
-        <form onSubmit={handleCreateGoal} className="space-y-4">
-          <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              value={newGoal.title}
-              onChange={handleInputChange}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            />
-          </div>
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description (Optional)</label>
-            <textarea
-              id="description"
-              name="description"
-              value={newGoal.description}
-              onChange={handleInputChange}
-              rows={3}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            ></textarea>
-          </div>
-          <div>
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
-            <select
-              id="category"
-              name="category"
-              value={newGoal.category}
-              onChange={handleInputChange}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            >
-              {CATEGORIES.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-          </div>
+      <div className="mb-4 flex space-x-2">
+        {(['active', 'completed', 'all'] as FilterStatus[]).map(filter => (
           <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+            key={filter}
+            onClick={() => setCurrentFilter(filter)}
+            className={`px-4 py-2 text-sm font-medium rounded-md ${currentFilter === filter ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
           >
-            {isLoading ? 'Creating...' : 'Create Goal'}
+            {filter.charAt(0).toUpperCase() + filter.slice(1)}
           </button>
-        </form>
+        ))}
       </div>
 
-      {isLoading && <p>Loading goals...</p>}
-      {!isLoading && goals.length === 0 && !error && <p>No goals found. Create one above!</p>}
+      {isGoalDialogOpen && (
+        <GoalDialog
+          isOpen={isGoalDialogOpen}
+          onClose={() => {
+            setIsGoalDialogOpen(false);
+            setEditingGoal(null);
+          }}
+          onSubmit={handleDialogSubmit}
+          initialGoal={editingGoal || undefined} // Pass undefined if not editing
+        />
+      )}
 
-      {Object.keys(groupedGoals).map(category => (
-        <div key={category} className="mb-8">
-          <h2 className="text-2xl font-semibold text-gray-700 mb-4">{category} Goals</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {groupedGoals[category].map(goal => (
-              <div key={goal.id} className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-lg font-bold text-gray-900">{goal.title}</h3>
-                <p className="text-gray-600 text-sm mt-1">{goal.description}</p>
-                <span className={`inline-block mt-3 px-3 py-1 text-xs font-semibold rounded-full ${goal.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                  {goal.status}
-                </span>
-                {/* Add edit/delete buttons here later */}
-              </div>
-            ))}
+      {isLoading && <p className="text-center py-4">Loading goals...</p>}
+      {!isLoading && goals.length === 0 && !error && (
+        <p className="text-center py-4 text-gray-500">
+          No goals found for the "{currentFilter}" filter. Try creating one!
+        </p>
+      )}
+
+      {Object.keys(groupedGoals).length > 0 && !isLoading && (
+         Object.entries(groupedGoals).map(([category, categoryGoals]) => (
+          <div key={category} className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-700 mb-4">{category} Goals</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {categoryGoals.map(goal => (
+                <GoalCard
+                  key={goal.id}
+                  goal={goal}
+                  onEdit={openEditDialog}
+                  onDelete={handleDeleteGoal}
+                  onToggleStatus={handleToggleStatus}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))
+      )}
     </div>
   );
 }

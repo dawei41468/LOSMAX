@@ -14,7 +14,10 @@
     "signIn": "Sign In",
     "signUp": "Sign Up",
     "alreadyHaveAccount": "Already have an account?",
-    "dontHaveAccount": "Don't have an account?"
+    "dontHaveAccount": "Don't have an account?",
+    "loginError": "Login failed. Please check your credentials and try again.",
+    "signupError": "Signup failed. Please try again or contact support if the issue persists.",
+    "genericError": "An unexpected error occurred. Please try again."
   },
   "dashboard": {
     "titles": {
@@ -30,7 +33,17 @@
       "progress": "Monitor your progress across goals and tasks.",
       "settings": "Configure your application preferences.",
       "dashboard": "Welcome to your LOSMAX dashboard."
-    }
+    },
+    "userId": "User ID",
+    "email": "Email",
+    "role": "Role",
+    "language": "Language",
+    "morningDeadline": "Morning Deadline",
+    "eveningDeadline": "Evening Deadline",
+    "notifications": "Notifications",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "notAvailable": "N/A"
   },
   "sidebar": {
     "losmax": "LOS",
@@ -62,7 +75,11 @@
       "password_change_message": "Enter your current and new password to update.",
       "current_password": "Current Password",
       "new_password": "New Password",
-      "confirm_password": "Confirm New Password"
+      "confirm_password": "Confirm New Password",
+      "delete_confirm_title": "Confirm Account Deletion",
+      "delete_confirm_message_p1": "Are you sure you want to permanently delete your account?",
+      "delete_confirm_message_p2": "This action will remove all data associated with {{email}}.",
+      "delete_confirm_warning": "This action cannot be undone."
     },
     "preferences": {
       "deadlines_title": "Task Deadlines",
@@ -78,7 +95,9 @@
       "update": "Update",
       "change_password": "Change Password",
       "delete_account": "Delete Account",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "confirm_delete": "Confirm Delete",
+      "deleting": "Deleting..."
     },
     "toast": {
       "error_title": "Error",

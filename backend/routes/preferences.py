@@ -11,14 +11,14 @@ async def read_user_preferences(current_user: UserInDB = Depends(get_current_use
     Retrieve the current authenticated user's preferences.
     """
     try:
-        preferences = await PreferencesService.get_user_preferences(user_email=current_user.email)
+        preferences = await PreferencesService.get_user_preferences(user_id=str(current_user.id)) # Changed to user_id
         return preferences
     except HTTPException as e:
         # Re-raise HTTPExceptions (e.g., user not found from service)
         raise e
     except Exception as e:
         # Catch any other unexpected errors
-        print(f"Unexpected error fetching preferences for {current_user.email}: {str(e)}")
+        print(f"Unexpected error fetching preferences for {current_user.id}: {str(e)}") # Changed to current_user.id for logging
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An unexpected error occurred while fetching preferences."
@@ -37,7 +37,7 @@ async def update_user_preferences_route(
     """
     try:
         updated_preferences = await PreferencesService.update_user_preferences(
-            user_email=current_user.email,
+            user_id=str(current_user.id), # Changed to user_id
             preferences_update=preferences_update
         )
         return updated_preferences
@@ -46,7 +46,7 @@ async def update_user_preferences_route(
         raise e
     except Exception as e:
         # Catch any other unexpected errors
-        print(f"Unexpected error updating preferences for {current_user.email}: {str(e)}")
+        print(f"Unexpected error updating preferences for {current_user.id}: {str(e)}") # Changed to current_user.id for logging
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An unexpected error occurred while updating preferences."

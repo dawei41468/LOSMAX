@@ -1,6 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel, EmailStr, Field
-from typing import Optional, List
+from typing import Optional, List, Literal
 
 class UserCreate(BaseModel):
     email: EmailStr
@@ -13,6 +13,7 @@ class RefreshToken(BaseModel):
     expires_at: datetime
 
 class UserInDB(BaseModel):
+    id: str # Removed alias="_id"
     email: EmailStr
     name: Optional[str] = None
     hashed_password: str
@@ -23,6 +24,15 @@ class UserInDB(BaseModel):
     evening_deadline: Optional[str] = "10:00 PM" # Changed to AM/PM
     notifications_enabled: Optional[bool] = False
     language: Optional[str] = "en"
+    role: Literal["User", "Admin"] = "User"
+
+    class Config:
+        from_attributes = True
+        populate_by_name = True # Ensure this is active for robust field population
+        # We are manually ensuring 'id' is present as a string in the input dict.
+        # If _id is an ObjectId from DB, Pydantic v2 handles str conversion for 'id: str' well.
+        # For Pydantic v1, you might need json_encoders = {ObjectId: str} if _id is not pre-converted to str.
+        # Assuming current Pydantic version or data loading handles ObjectId to str for _id.
 
     def add_refresh_token(self, token: str, expires_at: datetime) -> None:
         """Add a new refresh token to user's tokens list"""
@@ -53,6 +63,8 @@ class Token(BaseModel):
     token_type: str
     user_id: Optional[str] = None
     name: Optional[str] = None
+    language: Optional[str] = None # Add language field
+    role: Optional[Literal["User", "Admin"]] = None
     refresh_token: Optional[str] = None
 
 # Pydantic models for User Preferences

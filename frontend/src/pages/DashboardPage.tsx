@@ -1,11 +1,44 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../contexts/auth.context';
 import type { AuthContextType } from '../contexts/auth.types';
 import { useNavigate } from 'react-router-dom';
+import { api } from '../services/api'; // Import api service
+import { useTranslation } from 'react-i18next'; // Import useTranslation
+
+// Define a type for the expected API response structure, matching Pydantic model
+interface UserPreferencesResponse {
+  morning_deadline: string;
+  evening_deadline: string;
+  notifications_enabled: boolean;
+  language: string; // Language is part of preferences, but also in AuthContext
+}
 
 export default function DashboardPage() {
-  const { isAuthenticated } = useContext(AuthContext) as AuthContextType;
+  const { isAuthenticated, userName, userId, userEmail, userRole, userLanguage } = useContext(AuthContext) as AuthContextType;
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const [preferences, setPreferences] = useState<UserPreferencesResponse | null>(null);
+  const [loadingPreferences, setLoadingPreferences] = useState(true);
+
+  useEffect(() => {
+    const fetchPreferences = async () => {
+      if (isAuthenticated) {
+        try {
+          setLoadingPreferences(true);
+          const response = await api.get('/preferences');
+          setPreferences(response.data as UserPreferencesResponse);
+        } catch (error) {
+          console.error('Error fetching preferences for dashboard:', error);
+          // Optionally, set an error state to display a message to the user
+        } finally {
+          setLoadingPreferences(false);
+        }
+      }
+    };
+
+    fetchPreferences();
+  }, [isAuthenticated]);
 
   // The ProtectedRoute component in App.tsx already handles redirection if not authenticated.
   // This check provides an additional layer or can be page-specific for loading.
@@ -16,8 +49,8 @@ export default function DashboardPage() {
     return null;
   }
 
-  if (isAuthenticated === null) {
-    // Display a loading message while authentication status is being determined
+  if (isAuthenticated === null || (isAuthenticated && loadingPreferences)) {
+    // Display a loading message while authentication status or preferences are being determined
     return <div className="p-6">Loading dashboard...</div>;
   }
 
@@ -32,14 +65,23 @@ export default function DashboardPage() {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Placeholder for dashboard widgets */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">Welcome!</h2>
-          <p className="text-gray-600">This is your personalized dashboard.</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">Quick Stats</h2>
-          <p className="text-gray-600">Total Goals: X</p>
-          <p className="text-gray-600">Active Tasks: Y</p>
+        <div className="bg-white p-6 rounded-lg shadow-md text-left"> {/* Added text-left */}
+          <h2 className="text-xl font-semibold text-gray-700 mb-4">
+            Welcome{userName ? `, ${userName}` : ''}!
+          </h2>
+          <div className="space-y-2 text-sm">
+            <p><span className="font-medium">{t('dashboard.userId')}:</span> {userId || t('dashboard.notAvailable')}</p>
+            <p><span className="font-medium">{t('dashboard.email')}:</span> {userEmail || t('dashboard.notAvailable')}</p>
+            <p><span className="font-medium">{t('dashboard.role')}:</span> {userRole || t('dashboard.notAvailable')}</p>
+            <p><span className="font-medium">{t('dashboard.language')}:</span> {userLanguage || t('dashboard.notAvailable')}</p>
+            {preferences && (
+              <>
+                <p><span className="font-medium">{t('dashboard.morningDeadline')}:</span> {preferences.morning_deadline}</p>
+                <p><span className="font-medium">{t('dashboard.eveningDeadline')}:</span> {preferences.evening_deadline}</p>
+                <p><span className="font-medium">{t('dashboard.notifications')}:</span> {preferences.notifications_enabled ? t('dashboard.enabled') : t('dashboard.disabled')}</p>
+              </>
+            )}
+          </div>
         </div>
         {/* Add more dashboard widgets here as needed */}
       </div>

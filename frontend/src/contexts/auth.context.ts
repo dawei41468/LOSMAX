@@ -7,5 +7,10 @@ export const AuthContext = createContext<AuthContextType>({
   setAuthState: () => {},
   logout: async () => {},
   userName: null, // Add default for userName
-  setUserNameContext: () => {} // Add default for setUserNameContext
+  setUserNameContext: () => {}, // Add default for setUserNameContext
+  userId: null, // Add default for userId
+  userEmail: null, // Add default for userEmail
+  userRole: null, // Add default for userRole
+  userLanguage: null,
+  setUserLanguageContext: () => {}
 });

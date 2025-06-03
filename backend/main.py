@@ -26,10 +26,12 @@ async def root():
 @app.get("/test-user-model")
 async def test_user_model():
     test_user = UserCreate(email="test@example.com", password="password123")
-    db_user = UserInDB(email=test_user.email, hashed_password="hashed_"+test_user.password)
+    # Simulating data that would come from DB or another source
+    user_data_for_db_user = {"email": test_user.email, "hashed_password": "hashed_"+test_user.password, "id": "test_id_123"}
+    db_user = UserInDB(**user_data_for_db_user)
     return {
-        "input": test_user.dict(),
-        "output": db_user.dict()
+        "input": test_user.model_dump(), # Pydantic v2 uses model_dump()
+        "output": db_user.model_dump() # Pydantic v2 uses model_dump()
     }
 
 app.include_router(auth.router)

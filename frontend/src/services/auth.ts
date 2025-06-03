@@ -27,12 +27,19 @@ export async function login(
   // Let's ensure we destructure it correctly, possibly aliasing if needed,
   // though the previous diff already aliased it to userNameFromResponse.
   // The backend's Token model now returns 'name', so we expect it here.
-  const { access_token, refresh_token, user_id, name: nameReturnedByApi } = await response.json();
+  const { access_token, refresh_token, user_id, name: nameReturnedByApi, language, role } = await response.json(); // Added role
   localStorage.setItem('access_token', access_token);
   localStorage.setItem('refresh_token', refresh_token);
-  localStorage.setItem('userId', user_id); // userId is the email
+  localStorage.setItem('userId', user_id); // This is the MongoDB ID
+  localStorage.setItem('userEmail', email); // Store the email used for login
   if (nameReturnedByApi) { // Use the name returned by the API
     localStorage.setItem('userName', nameReturnedByApi);
+  }
+  if (language) {
+    localStorage.setItem('userLanguage', language);
+  }
+  if (role) { // Store userRole if present in response
+    localStorage.setItem('userRole', role);
   }
   setAuthState(true);
   navigate('/dashboard');
@@ -56,13 +63,20 @@ export async function register(
   if (!response.ok) {
     throw new Error('Registration failed');
   }
-
-  const { access_token, refresh_token, user_id, name: userNameFromResponse } = await response.json(); // Alias 'name' from response
+ 
+  const { access_token, refresh_token, user_id, name: userNameFromResponse, language, role } = await response.json(); // Added role
   localStorage.setItem('access_token', access_token);
   localStorage.setItem('refresh_token', refresh_token);
-  localStorage.setItem('userId', user_id); // userId is the email
+  localStorage.setItem('userId', user_id); // This is the MongoDB ID
+  localStorage.setItem('userEmail', email); // Store the email used for registration
   if (userNameFromResponse) {
     localStorage.setItem('userName', userNameFromResponse);
+  }
+  if (language) {
+    localStorage.setItem('userLanguage', language);
+  }
+  if (role) { // Store userRole if present in response
+    localStorage.setItem('userRole', role);
   }
   setAuthState(true);
   navigate('/dashboard');
@@ -85,7 +99,10 @@ export async function logout(setAuthState: (authenticated: boolean) => void): Pr
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         localStorage.removeItem('userId');
+        localStorage.removeItem('userEmail'); // Remove userEmail on logout
+        localStorage.removeItem('userRole'); // Remove userRole on logout
         localStorage.removeItem('userName'); // Also remove userName on logout
+        localStorage.removeItem('userLanguage'); // Also remove userLanguage on logout
         setAuthState(false);
     }
 }
@@ -113,12 +130,26 @@ export async function refreshToken(): Promise<string> {
         if (!response.ok) {
             throw new Error('Token refresh failed');
         }
-
-        const { access_token, refresh_token } = await response.json();
+ 
+        const { access_token, refresh_token, name, user_id, language, role } = await response.json(); // Destructure name, user_id, language, and role
         // Only update tokens if new ones are provided
-        if (access_token && refresh_token) {
+        if (access_token) { // refresh_token might not always be present if rotation is off
             localStorage.setItem('access_token', access_token);
+        }
+        if (refresh_token) { // Only set if backend sends it (rotation might be off)
             localStorage.setItem('refresh_token', refresh_token);
+        }
+        if (name) {
+            localStorage.setItem('userName', name);
+        }
+        if (user_id) { // Though userId is also in token, good to keep consistent if API sends it
+            localStorage.setItem('userId', user_id);
+        }
+        if (language) {
+            localStorage.setItem('userLanguage', language);
+        }
+        if (role) { // Store userRole if present in response
+            localStorage.setItem('userRole', role);
         }
         return access_token;
     } catch (error) {

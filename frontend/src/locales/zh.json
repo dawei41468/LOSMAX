@@ -14,7 +14,10 @@
     "signIn": "登录",
     "signUp": "注册",
     "alreadyHaveAccount": "已有账户？",
-    "dontHaveAccount": "没有账户？"
+    "dontHaveAccount": "没有账户？",
+    "loginError": "登录失败。请检查您的凭据并重试。",
+    "signupError": "注册失败。请重试，如果问题持续存在，请联系支持。",
+    "genericError": "发生意外错误。请重试。"
   },
   "dashboard": {
     "titles": {
@@ -30,7 +33,17 @@
       "progress": "监控您在各目标和任务上的进展。",
       "settings": "配置您的应用偏好。",
       "dashboard": "欢迎来到您的 LOSMAX 仪表盘。"
-    }
+    },
+    "userId": "用户ID",
+    "email": "邮箱",
+    "role": "角色",
+    "language": "语言",
+    "morningDeadline": "早晨截止时间",
+    "eveningDeadline": "傍晚截止时间",
+    "notifications": "通知",
+    "enabled": "已启用",
+    "disabled": "已禁用",
+    "notAvailable": "不可用"
   },
   "sidebar": {
     "losmax": "LOS",
@@ -62,7 +75,11 @@
       "password_change_message": "输入您当前和新的密码以更新。",
       "current_password": "当前密码",
       "new_password": "新密码",
-      "confirm_password": "确认新密码"
+      "confirm_password": "确认新密码",
+      "delete_confirm_title": "确认删除账户",
+      "delete_confirm_message_p1": "您确定要永久删除您的账户吗？",
+      "delete_confirm_message_p2": "此操作将删除与 {{email}} 相关的所有数据。",
+      "delete_confirm_warning": "此操作无法撤销。"
     },
     "preferences": {
       "deadlines_title": "任务截止时间",
@@ -78,7 +95,9 @@
       "update": "更新",
       "change_password": "更改密码",
       "delete_account": "删除账户",
-      "cancel": "取消"
+      "cancel": "取消",
+      "confirm_delete": "确认删除",
+      "deleting": "删除中..."
     },
     "toast": {
       "error_title": "错误",

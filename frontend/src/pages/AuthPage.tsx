@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner'; // Import toast from sonner
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { LanguageSwitch } from '../components/ui/language-toggle';
 import { login, register } from '../services/auth';
@@ -40,7 +41,10 @@ function AuthFormComponent({
     try {
       await onSubmit(email, password, name || undefined);
     } catch (error) {
-      console.error('Authentication error:', error);
+      // Errors are handled in handleSignIn/handleSignUp, but a general toast here could be a fallback
+      // For now, relying on specific handlers
+      console.error('Authentication error in AuthFormComponent:', error);
+      // toast.error(t('auth.genericError')); // Example of a generic error
     }
   };
 
@@ -151,6 +155,7 @@ export default function AuthPage() {
       await login(email, password, setAuthState, navigate);
     } catch (error) {
       console.error('Login failed:', error);
+      toast.error(t('auth.loginError', 'Login failed. Please check your credentials.'));
     } finally {
       setIsLoading(false);
     }
@@ -162,6 +167,7 @@ export default function AuthPage() {
       await register(email, password, name || '', setAuthState, navigate);
     } catch (error) {
       console.error('Signup failed:', error);
+      toast.error(t('auth.signupError', 'Signup failed. Please try again.'));
     } finally {
       setIsLoading(false);
     }

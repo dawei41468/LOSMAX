@@ -12,7 +12,7 @@ export class WebSocketService {
     this.onAuthUpdate = onAuthUpdate;
   }
 
-  async connect(userId: string) {
+  async connect(userId: string, userEmail?: string | null) { // Add userEmail as an optional parameter
     if (this.socket) {
       return;
     }
@@ -39,7 +39,11 @@ export class WebSocketService {
     this.socket = new WebSocket(wsUrl);
     
     this.socket.onopen = () => {
-      console.log('WebSocket connection established');
+      if (userEmail) {
+        console.log(`WebSocket connection established for user: ${userEmail} (ID: ${userId})`);
+      } else {
+        console.log(`WebSocket connection established for user ID: ${userId}`);
+      }
     };
 
     this.socket.onmessage = (event) => {
@@ -100,7 +104,8 @@ export class WebSocketService {
       
       // Attempt to reconnect after 5 seconds for unintentional disconnects
       console.log('WebSocket connection closed unexpectedly. Attempting to reconnect in 5 seconds...');
-      this.reconnectTimeoutId = window.setTimeout(() => this.connect(userId), 5000);
+      // Pass userEmail to reconnect attempts as well
+      this.reconnectTimeoutId = window.setTimeout(() => this.connect(userId, userEmail), 5000);
     };
   }
 

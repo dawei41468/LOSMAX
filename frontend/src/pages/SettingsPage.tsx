@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios'; // Import axios for isAxiosError
-// import TimePicker from '../components/ui/TimePicker'; // TODO: Implement or find alternative
+import { TimePicker } from '../components/ui/TimePicker'; // Import TimePicker
 // import { Switch } from '../components/ui/switch'; // TODO: Implement or find alternative
 import { toast } from 'sonner'; // Using sonner for toasts
 import { useAuth } from '../hooks/useAuth'; // Corrected path
@@ -37,9 +37,9 @@ const SettingsPage: React.FC = () => {
   const [eveningDeadline, setEveningDeadline] = useState('10:00 PM');
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   // const { toast } = useToast(); // Removed, using sonner's toast directly
-  const { logout, setUserNameContext } = useAuth(); // Get setUserNameContext from useAuth
+  const { logout, setUserNameContext, userEmail: authUserEmail } = useAuth(); // Get setUserNameContext and userEmail from useAuth
   const [name, setName] = useState(localStorage.getItem('userName') || ''); // Local state for the input field
-  const userEmail = localStorage.getItem('userId'); // email is stored as userId
+  // const userEmail = localStorage.getItem('userId'); // email is stored as userId - Now using userEmail from useAuth
   const { t } = useTranslation(); // Removed unused i18n
   // const [language, setLanguage] = useState(i18n.language); // TODO: This state is not used yet, part of commented out UI
 
@@ -144,7 +144,7 @@ const SettingsPage: React.FC = () => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1">{t('settings.account.email_label')}</label>
-                  <div className="text-sm">{userEmail}</div>
+                  <div className="text-sm">{authUserEmail}</div>
                 </div>
                 
                 <div>
@@ -232,51 +232,28 @@ const SettingsPage: React.FC = () => {
               <p className="text-sm text-gray-500 mb-4">{t('settings.preferences.deadlines_description')}</p>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.preferences.morning_deadline')}</label>
-                  {/* <TimePicker
-                    label=""
+                  {/* <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.preferences.morning_deadline')}</label> */}
+                  <TimePicker
+                    label={t('settings.preferences.morning_deadline')}
                     value={morningDeadline}
-                    // Simulate TimePicker onChange - for now, let's use a simple text input for demonstration
-                    // In a real TimePicker, 'time' would be the new time string.
-                    // onChange={(time: string) => {
-                    //   setMorningDeadline(time);
-                    //   savePreference({ morning_deadline: time });
-                    // }}
-                  /> */}
-                  <input
-                    type="text"
-                    value={morningDeadline}
-                    onChange={(e) => {
-                        const newTime = e.target.value;
-                        setMorningDeadline(newTime); // Optimistic update
-                        // Basic validation or debounce could be added here
-                        savePreference({ morning_deadline: newTime });
+                    onChange={(time: string) => {
+                      setMorningDeadline(time);
+                      savePreference({ morning_deadline: time });
                     }}
-                    className="w-full border border-gray-300 rounded-md px-3 py-2"
-                    placeholder="HH:MM AM/PM"
+                    context="morningDeadline" // Provide context for default value
                   />
                   <p className="text-xs text-gray-500 mt-1">{t('settings.preferences.morning_deadline_hint')}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.preferences.evening_deadline')}</label>
-                  {/* <TimePicker
-                    label=""
+                  {/* <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.preferences.evening_deadline')}</label> */}
+                  <TimePicker
+                    label={t('settings.preferences.evening_deadline')}
                     value={eveningDeadline}
                     onChange={(time: string) => {
                       setEveningDeadline(time);
                       savePreference({ evening_deadline: time });
                     }}
-                  /> */}
-                   <input
-                    type="text"
-                    value={eveningDeadline}
-                    onChange={(e) => {
-                        const newTime = e.target.value;
-                        setEveningDeadline(newTime); // Optimistic update
-                        savePreference({ evening_deadline: newTime });
-                    }}
-                    className="w-full border border-gray-300 rounded-md px-3 py-2"
-                    placeholder="HH:MM AM/PM"
+                    context="eveningDeadline" // Provide context for default value
                   />
                   <p className="text-xs text-gray-500 mt-1">{t('settings.preferences.evening_deadline_hint')}</p>
                 </div>
@@ -338,30 +315,45 @@ const SettingsPage: React.FC = () => {
           itemName="account"
         /> */}
         {showDeleteConfirm && (
-          <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-40">
-            <div className="bg-white p-4 rounded-lg shadow-xl">
-              <p>ConfirmDeleteDialog not available. Account deletion initiated (but dialog missing).</p>
-              <button
-                onClick={() => { handleDeleteAccount(); }}
-                className="mt-2 px-3 py-1 bg-red-500 text-white rounded disabled:opacity-50"
-                disabled={isDeleting}
-              >
-                {isDeleting ? 'Deleting...' : 'Confirm Delete (No Dialog)'}
-              </button>
-              <button
-                onClick={() => setShowDeleteConfirm(false)}
-                className="mt-2 ml-2 px-3 py-1 bg-gray-300 rounded"
-                disabled={isDeleting}
-              >
-                Cancel
-              </button>
+          <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50"> {/* Changed bg-opacity-50 to bg-black/30 */}
+            <div className="bg-white p-4 sm:p-6 rounded-lg shadow-xl max-w-md w-full mx-4 sm:mx-0">
+              <h3 className="text-lg font-medium mb-2 text-gray-900">{t('settings.account.delete_confirm_title')}</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                {t('settings.account.delete_confirm_message_p1')}
+              </p>
+              {authUserEmail && (
+                <p className="text-sm text-gray-600 mb-4">
+                  {t('settings.account.delete_confirm_message_p2', { email: authUserEmail })}
+                </p>
+              )}
+              <p className="text-sm text-red-600 font-semibold mb-6">
+                {t('settings.account.delete_confirm_warning')}
+              </p>
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                  onClick={() => setShowDeleteConfirm(false)}
+                  disabled={isDeleting}
+                >
+                  {t('settings.buttons.cancel')}
+                </button>
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-red-600 text-white rounded-md text-sm font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors disabled:opacity-50"
+                  onClick={handleDeleteAccount}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? t('settings.buttons.deleting') : t('settings.buttons.confirm_delete')}
+                </button>
+              </div>
             </div>
           </div>
         )}
 
 
        {showPasswordChange && (
-         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+         <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50"> {/* Changed bg-opacity-50 to bg-black/30 */}
            <div className="bg-white p-4 sm:p-6 rounded-lg max-w-md w-full mx-4 sm:mx-0">
              <h3 className="text-lg font-medium mb-2">{t('settings.account.password_change_title')}</h3>
              <p className="text-sm text-gray-600 mb-6">
@@ -413,7 +405,7 @@ const SettingsPage: React.FC = () => {
              >
                <div className="space-y-4">
                  <div>
-                   <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                   <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-1 text-left"> {/* Added text-left */}
                      {t('settings.account.current_password')}
                    </label>
                    <input
@@ -428,7 +420,7 @@ const SettingsPage: React.FC = () => {
                    />
                  </div>
                  <div>
-                   <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                   <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-1 text-left"> {/* Added text-left */}
                      {t('settings.account.new_password')}
                    </label>
                    <input
@@ -443,7 +435,7 @@ const SettingsPage: React.FC = () => {
                    />
                  </div>
                  <div>
-                   <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                   <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1 text-left"> {/* Added text-left */}
                      {t('settings.account.confirm_password')}
                    </label>
                    <input

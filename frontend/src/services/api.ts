@@ -5,6 +5,7 @@ interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 import { refreshToken } from './auth';
+import type { Goal, GoalCategory, GoalStatus } from '../types/goals'; // Added Goal types
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -134,20 +135,38 @@ export async function login(email: string, password: string) {
   return await response.json();
 }
 
-export async function getGoals() {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/goals`, {
+export async function getGoals(status?: GoalStatus): Promise<Goal[]> {
+  let url = `${import.meta.env.VITE_API_BASE_URL}/goals`;
+  if (status) {
+    url += `?status=${status}`;
+  }
+  const response = await fetch(url, {
     method: 'GET',
     headers: getAuthHeaders()
   });
 
   if (!response.ok) {
-    throw new Error('Failed to fetch goals');
+    // Attempt to parse error response from backend
+    try {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || `Failed to fetch goals. Status: ${response.status}`);
+    } catch (_e) { // eslint-disable-line no-unused-vars
+      throw new Error(`Failed to fetch goals. Status: ${response.status}`);
+    }
   }
 
-  return await response.json();
+  return await response.json() as Goal[];
 }
 
-export async function createGoal(goalData: { title: string; description?: string; category: string }) {
+export interface CreateGoalPayload {
+  title: string;
+  description?: string;
+  category: GoalCategory;
+  target_date: string; // ISO string
+  status?: GoalStatus; // Optional, backend defaults to active
+}
+
+export async function createGoal(goalData: CreateGoalPayload): Promise<Goal> {
   const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/goals`, {
     method: 'POST',
     headers: getAuthHeaders(),
@@ -159,5 +178,43 @@ export async function createGoal(goalData: { title: string; description?: string
     throw new Error(errorData.detail || 'Failed to create goal');
   }
 
-  return await response.json();
+  return await response.json() as Goal;
+}
+
+export type UpdateGoalPayload = Partial<Omit<Goal, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'days_remaining'>>;
+
+export async function updateGoal(goalId: string, goalData: UpdateGoalPayload): Promise<Goal> {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/goals/${goalId}`, {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(goalData)
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || `Failed to update goal ${goalId}`);
+  }
+
+  return await response.json() as Goal;
+}
+
+export async function deleteGoal(goalId: string): Promise<void> {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/goals/${goalId}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders()
+  });
+
+  if (!response.ok) {
+    // DELETE might return 204 No Content on success, which is fine.
+    // Only throw if it's a client or server error status.
+    if (response.status >= 400) {
+      try {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || `Failed to delete goal ${goalId}. Status: ${response.status}`);
+      } catch (_e) { // eslint-disable-line no-unused-vars
+        throw new Error(`Failed to delete goal ${goalId}. Status: ${response.status}`);
+      }
+    }
+  }
+  // No return needed for a successful delete (often 204 No Content)
 }

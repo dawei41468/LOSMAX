@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query # Added Query
 from fastapi.security import OAuth2PasswordBearer
+from typing import Optional # Added Optional
 
 from models.user import User
-from models.goal import GoalCreate, Goal
+from models.goal import GoalCreate, Goal, GoalStatus # Added GoalStatus
 from services.auth_service import get_current_user
 from services.goal_service import (
     create_goal,
@@ -30,9 +31,10 @@ async def create_new_goal(
 
 @router.get("/", response_model=list[Goal])
 async def list_user_goals(
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
+    status_filter: Optional[GoalStatus] = Query(None, alias="status") # Added status_filter
 ):
-    return await get_goals_by_user(str(current_user.id))
+    return await get_goals_by_user(str(current_user.id), status_filter=status_filter)
 
 @router.get("/{goal_id}", response_model=Goal)
 async def get_goal(

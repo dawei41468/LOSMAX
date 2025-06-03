@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 export const ProfileMenu: React.FC = () => {
   const { t } = useTranslation();
-  const { isAuthenticated, logout, userName } = useAuth(); // Get userName from context
+  const { isAuthenticated, logout, userName, userEmail } = useAuth(); // Get userName and userEmail from context
   const [isOpen, setIsOpen] = useState(false);
   // const [displayName, setDisplayName] = useState<string | null>(null); // Removed local state for displayName
   const menuRef = useRef<HTMLDivElement>(null);
@@ -39,10 +39,18 @@ export const ProfileMenu: React.FC = () => {
       
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
-          {(userName || localStorage.getItem('userId')) && ( // Display if userName from context or fallback to email from localStorage
-            <div className="p-3 border-b border-gray-200">
-              <p className="text-sm font-medium truncate" title={userName || localStorage.getItem('userId') || ''}>
-                {userName || localStorage.getItem('userId')}
+          {/* Only render this section if userEmail is available */}
+          {userEmail && (
+            <div className="p-3 border-b border-gray-200 text-left">
+              {/* Display userName if it's available */}
+              {userName && (
+                <p className="text-sm font-medium truncate" title={userName}>
+                  {userName}
+                </p>
+              )}
+              {/* Always display userEmail if available. Add margin if userName was also displayed. */}
+              <p className={`text-xs text-gray-500 truncate ${userName ? 'mt-1' : ''}`} title={userEmail}>
+                {userEmail}
               </p>
             </div>
           )}
