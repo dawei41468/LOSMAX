@@ -28,11 +28,11 @@
       "dashboard": "Dashboard"
     },
     "subtitles": {
-      "goals": "Set and track your personal and professional goals.",
+      "goals": "Set and track your goals in all life areas.",
       "tasks": "Organize and manage your daily tasks efficiently.",
       "progress": "Monitor your progress across goals and tasks.",
       "settings": "Configure your application preferences.",
-      "dashboard": "Welcome to your LOSMAX dashboard."
+      "dashboard": "Welcome to your LOS dashboard."
     },
     "userId": "User ID",
     "email": "Email",
@@ -114,16 +114,16 @@
       "password_change_error": "Failed to change your password. Please check your current password and try again."
     },
     "about": {
-      "title": "About LOSMAX",
+      "title": "About LOS",
       "subtitle": "Your Life Organization System, Maximized.",
-      "what_is_title": "What is LOSMAX?",
-      "what_is_description": "LOSMAX is a comprehensive tool designed to help you organize your life, manage tasks, set goals, and track your progress effectively. It combines powerful features with a user-friendly interface to enhance your productivity and well-being.",
+      "what_is_title": "What is LOS?",
+      "what_is_description": "LOS is a comprehensive tool designed to help you organize your life, manage tasks, set goals, and track your progress effectively. It combines powerful features with a user-friendly interface to enhance your productivity and well-being.",
       "features_title": "Key Features:",
       "feature1": "Goal Setting & Tracking",
       "feature2": "Task Management with Deadlines",
       "feature3": "Progress Visualization",
       "feature4": "User Preferences & Customization",
-      "how_to_use_title": "How to Use LOSMAX:",
+      "how_to_use_title": "How to Use LOS:",
       "step1": "Set clear, achievable goals in the 'Goals' section.",
       "step2": "Break down your goals into manageable tasks in the 'Tasks' section.",
       "step3": "Update your task status and monitor your overall progress in 'Progress'.",

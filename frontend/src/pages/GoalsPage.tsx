@@ -146,25 +146,27 @@ export default function GoalsPage() {
 
 
   return (
-    <div>
-      <div className="flex justify-between items-center mt-4 mb-6">
-        <h1 className="text-2xl font-semibold text-gray-800">Your Goals</h1>
+    <div className="py-6"> {/* Removed px-4, kept py-6 for vertical spacing */}
+      {/* Header Section */}
+      <div className="px-4 flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6"> {/* Added px-4 here */}
         <button
           onClick={openCreateDialog}
-          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           Create New Goal
         </button>
       </div>
 
-      {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">{error}</div>}
+      {/* Error Message */}
+      {error && <div className="mx-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">{error}</div>} {/* Added mx-4 for horizontal margin */}
 
-      <div className="mb-4 flex space-x-2">
+      {/* Filter Buttons */}
+      <div className="px-4 mb-6 flex flex-wrap gap-2"> {/* Added px-4 here, use flex-wrap and gap */}
         {(['active', 'completed', 'all'] as FilterStatus[]).map(filter => (
           <button
             key={filter}
             onClick={() => setCurrentFilter(filter)}
-            className={`px-4 py-2 text-sm font-medium rounded-md ${currentFilter === filter ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+            className={`px-3 py-1.5 text-xs rounded-md transition-colors sm:px-4 sm:py-2 sm:text-sm ${currentFilter === filter ? 'border border-blue-600 text-blue-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
           >
             {filter.charAt(0).toUpperCase() + filter.slice(1)}
           </button>
@@ -191,22 +193,24 @@ export default function GoalsPage() {
       )}
 
       {Object.keys(groupedGoals).length > 0 && !isLoading && (
-         Object.entries(groupedGoals).map(([category, categoryGoals]) => (
-          <div key={category} className="mb-8">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">{category} Goals</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {categoryGoals.map(goal => (
-                <GoalCard
-                  key={goal.id}
-                  goal={goal}
-                  onEdit={openEditDialog}
-                  onDelete={handleDeleteGoal}
-                  onToggleStatus={handleToggleStatus}
-                />
-              ))}
+        (['Family', 'Work', 'Health', 'Personal'] as GoalCategory[])
+          .filter(category => groupedGoals[category] && groupedGoals[category].length > 0) // Filter out categories that have no goals
+          .map(category => (
+            <div key={category} className="mb-6">
+              <h2 className="text-xl font-semibold text-gray-700 mb-3">{category} Goals</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {groupedGoals[category].map(goal => (
+                  <GoalCard
+                    key={goal.id}
+                    goal={goal}
+                    onEdit={openEditDialog}
+                    onDelete={handleDeleteGoal}
+                    onToggleStatus={handleToggleStatus}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        ))
+          ))
       )}
     </div>
   );

@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional
 from pymongo import ReturnDocument
+from bson import ObjectId # Import ObjectId
 from pydantic import ValidationError
 import logging # Use logging module
 from models.goal import Goal, GoalCreate, GoalStatus
@@ -12,18 +13,56 @@ class GoalService:
     def __init__(self):
         self.collection = db.goals
 
-    async def create_goal(self, goal_data: GoalCreate) -> Goal:
+    async def create_goal(self, goal_data: GoalCreate, user_id: str) -> Goal: # Add user_id parameter
         """Create a new goal with validation"""
-        await self._validate_category_limit(goal_data.user_id, goal_data.category)
-        goal = Goal(**goal_data.dict(), created_at=datetime.utcnow(), updated_at=datetime.utcnow())
-        result = await self.collection.insert_one(goal.dict(by_alias=True))
-        goal.id = str(result.inserted_id)
+        await self._validate_category_limit(user_id, goal_data.category) # Use user_id parameter
+        # Construct the goal document for insertion, explicitly adding user_id
+        goal_doc = goal_data.model_dump()
+        goal_doc["user_id"] = user_id
+        goal_doc["created_at"] = datetime.utcnow()
+        goal_doc["updated_at"] = datetime.utcnow()
+        # Ensure status is set if not provided, though GoalBase has a default
+        goal_doc.setdefault("status", GoalStatus.ACTIVE.value)
+
+
+        # The Goal model includes user_id, so we can create it before insertion for validation if needed,
+        # or insert the dict and then construct Goal for the return value.
+        # For now, let's insert the dict and then construct.
+        
+        result = await self.collection.insert_one(goal_doc)
+        
+        # Construct the Goal object for the return value, including the new id
+        # and all other fields from goal_doc.
+        # The Goal model expects 'id', not '_id'.
+        # The 'id' field in the Goal model is for the response, not direct DB field name.
+        # Pydantic's from_attributes=True in Goal.Config should handle mapping if we fetch then model.
+        # Here, we construct it manually post-insert.
+        
+        # Create a complete dict for Goal model instantiation
+        final_goal_data = {**goal_doc, "id": str(result.inserted_id)}
+        # Remove MongoDB's _id if it was accidentally included in goal_doc,
+        # though it shouldn't be as we built goal_doc from GoalCreate.
+        final_goal_data.pop("_id", None)
+
+
+        goal = Goal(**final_goal_data)
         return goal
 
     async def get_goal(self, goal_id: str) -> Optional[Goal]:
         """Get a goal by ID"""
-        result = await self.collection.find_one({"_id": goal_id})
-        return Goal(**result) if result else None
+        try:
+            obj_goal_id = ObjectId(goal_id)
+        except Exception:
+            # Invalid ObjectId format, so goal cannot exist
+            return None
+        result = await self.collection.find_one({"_id": obj_goal_id})
+        if result:
+            # Ensure 'id' is correctly mapped from '_id' for Pydantic model
+            if "_id" in result and "id" not in result:
+                 result["id"] = str(result["_id"])
+            # result.pop("_id", None) # Not strictly necessary if Pydantic handles alias or from_attributes
+            return Goal(**result)
+        return None
 
     async def get_goals_by_user(self, user_id: str, status_filter: Optional[GoalStatus] = None) -> list[Goal]:
         """Get goals for a user, optionally filtered by status."""
@@ -82,20 +121,42 @@ class GoalService:
 
         update_data["updated_at"] = datetime.utcnow()
         
+        try:
+            obj_goal_id = ObjectId(goal_id)
+        except Exception:
+            # This case should ideally be caught by get_goal earlier if goal_id is invalid
+            # but as a safeguard:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid goal ID format for update")
+
         result = await self.collection.find_one_and_update(
-            {"_id": goal_id},
+            {"_id": obj_goal_id}, # Use ObjectId for the query
             {"$set": update_data},
             return_document=ReturnDocument.AFTER
         )
-        return Goal(**result) if result else None
+        
+        if result:
+            # Ensure 'id' is correctly mapped from '_id' for Pydantic model
+            if "_id" in result and "id" not in result:
+                 result["id"] = str(result["_id"])
+            # result.pop("_id", None) # Not strictly necessary
+            return Goal(**result)
+        return None # Explicitly return None if no document was updated/found
 
     async def delete_goal(self, goal_id: str, user_id: str) -> bool:
         """Delete a goal"""
-        existing_goal = await self.get_goal(goal_id)
+        existing_goal = await self.get_goal(goal_id) # get_goal now handles ObjectId conversion for its own find_one
         if not existing_goal or existing_goal.user_id != user_id:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Goal not found or not authorized")
-            
-        result = await self.collection.delete_one({"_id": goal_id})
+        
+        try:
+            obj_goal_id = ObjectId(goal_id)
+        except Exception:
+            # This should ideally not be reached if get_goal above found the goal,
+            # as get_goal would have failed for an invalid ObjectId format.
+            # However, as a safeguard for the delete_one operation itself:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid goal ID format for delete")
+
+        result = await self.collection.delete_one({"_id": obj_goal_id}) # Use ObjectId
         return result.deleted_count > 0
 
     async def _validate_category_limit(self, user_id: str, category: str):
@@ -116,8 +177,8 @@ _goal_service = GoalService()
 
 async def create_goal(goal_data: GoalCreate, user_id: str) -> Goal:
     """Create a new goal (module-level wrapper)"""
-    goal_data.user_id = user_id # Ensure user_id is set in GoalCreate
-    return await _goal_service.create_goal(goal_data)
+    # user_id is now passed directly to the service method
+    return await _goal_service.create_goal(goal_data, user_id)
 
 async def get_goals_by_user(user_id: str, status_filter: Optional[GoalStatus] = None) -> list[Goal]:
     """Get goals for a user, optionally filtered by status (module-level wrapper)"""

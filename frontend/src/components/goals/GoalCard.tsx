@@ -38,7 +38,7 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onEdit, onDelete, onToggleSta
   };
 
   return (
-    <div className={`bg-white shadow-md rounded-lg p-4 border-l-4 ${cardBorderColor()} flex flex-col justify-between`}>
+    <div className={`bg-white shadow-md hover:shadow-lg transition-shadow duration-200 rounded-lg p-5 border-l-2 ${cardBorderColor()} flex flex-col justify-between`}> {/* Increased padding, added hover shadow */}
       <div>
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-lg font-semibold text-gray-800">{goal.title}</h3>
@@ -46,10 +46,9 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onEdit, onDelete, onToggleSta
             {goal.status}
           </span>
         </div>
-        {goal.description && <p className="text-sm text-gray-600 mb-2">{goal.description}</p>}
-        <p className="text-sm text-gray-500">Category: <span className="font-medium">{goal.category}</span></p>
-        <p className="text-sm text-gray-500">Target Date: <span className="font-medium">{new Date(goal.target_date).toLocaleDateString()}</span></p>
-        <p className="text-sm text-gray-500">
+        {goal.description && <p className="text-sm text-gray-600 mb-2 text-left">Details: {goal.description}</p>}
+        <p className="text-sm text-gray-500 text-left">Target Date: <span className="font-medium">{new Date(goal.target_date).toLocaleDateString()}</span></p>
+        <p className="text-sm text-gray-500 text-left">
           Days Remaining: <span className={`font-medium ${daysRemaining === 0 && goal.status === 'active' ? 'text-red-500' : ''}`}>
             {daysRemaining} {daysRemaining === 0 && goal.status === 'active' ? '(Due Today/Overdue)' : ''}
           </span>
@@ -58,19 +57,19 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onEdit, onDelete, onToggleSta
       <div className="mt-4 flex justify-end space-x-2">
         <button
           onClick={() => onEdit(goal)}
-          className="px-3 py-1 text-xs font-medium text-white bg-blue-500 rounded hover:bg-blue-600"
+          className="px-3 py-1.5 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 transition-colors" // Increased text size, adjusted padding, added rounded-md and transition
         >
           Edit
         </button>
         <button
           onClick={() => onToggleStatus(goal)}
-          className={`px-3 py-1 text-xs font-medium text-white rounded ${goal.status === 'active' ? 'bg-green-500 hover:bg-green-600' : 'bg-yellow-500 hover:bg-yellow-600'}`}
+          className={`px-3 py-1.5 text-sm font-medium text-white rounded-md transition-colors ${goal.status === 'active' ? 'bg-green-500 hover:bg-green-600' : 'bg-yellow-500 hover:bg-yellow-600'}`} // Increased text size, adjusted padding, added rounded-md and transition
         >
           {goal.status === 'active' ? 'Complete' : 'Reopen'}
         </button>
         <button
           onClick={() => onDelete(goal.id)}
-          className="px-3 py-1 text-xs font-medium text-white bg-red-500 rounded hover:bg-red-600"
+          className="px-3 py-1.5 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600 transition-colors" // Increased text size, adjusted padding, added rounded-md and transition
         >
           Delete
         </button>

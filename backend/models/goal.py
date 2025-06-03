@@ -23,7 +23,7 @@ class GoalBase(BaseModel):
         return v
 
 class GoalCreate(GoalBase):
-    user_id: str
+    pass # user_id will be added by the service layer from the authenticated user
 
 class Goal(GoalBase):
     id: str

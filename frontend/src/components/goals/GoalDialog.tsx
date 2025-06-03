@@ -65,11 +65,11 @@ const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, init
 
   return (
     <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-4 z-50"> {/* Changed bg-opacity-50 to bg-black/30 */}
-      <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
-        <h2 className="text-xl font-semibold mb-4">{initialGoal ? 'Edit Goal' : 'Create New Goal'}</h2>
+      <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md"> {/* Main dialog content container */}
+        <h2 className="text-xl font-semibold mb-4 text-center">{initialGoal ? 'Edit Goal' : 'Create New Goal'}</h2> {/* Ensured title is centered */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
+            <label htmlFor="title" className="block text-sm font-medium text-gray-700 text-left">Your Goal</label> {/* Changed text and added text-left */}
             <input
               type="text"
               id="title"
@@ -80,7 +80,7 @@ const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, init
             />
           </div>
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description (Optional)</label>
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700 text-left">Description (Optional)</label> {/* Added text-left */}
             <textarea
               id="description"
               value={description}
@@ -90,13 +90,14 @@ const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, init
             />
           </div>
           <div>
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
+            <label htmlFor="category" className="block text-sm font-medium text-gray-700 text-left">Category</label> {/* Added text-left */}
             <select
               id="category"
               value={category}
               onChange={(e) => setCategory(e.target.value as GoalCategory)}
               required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              disabled={!!initialGoal} // Disable if editing (initialGoal is present)
+              className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${initialGoal ? 'bg-gray-100 cursor-not-allowed' : ''}`} // Add styling for disabled state
             >
               {CATEGORIES.map((cat: GoalCategory) => (
                 <option key={cat} value={cat}>{cat}</option>
@@ -104,7 +105,7 @@ const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, init
             </select>
           </div>
           <div>
-            <label htmlFor="target_date" className="block text-sm font-medium text-gray-700">Target Date</label>
+            <label htmlFor="target_date" className="block text-sm font-medium text-gray-700 text-left">Target Date</label> {/* Added text-left */}
             <input
               type="date"
               id="target_date"
