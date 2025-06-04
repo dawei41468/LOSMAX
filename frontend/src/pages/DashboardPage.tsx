@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../services/api'; // Import api service
 import QuoteOfDay from '../components/dashboard/QuoteOfDay';
 import UserInfo from '../components/dashboard/UserInfo';
-import { Greeting } from '../components/dashboard/Greetings';
 
 // Define a type for the expected API response structure, matching Pydantic model
 interface UserPreferencesResponse {
@@ -56,18 +55,14 @@ export default function DashboardPage() {
   }
 
   return (
-    <div>
+    <div className="mt-4 space-y-6">
       {/* 
         The main title (e.g., "Dashboard") is now typically handled by DashboardLayout.tsx.
         If you need a subtitle or a more specific title for this page's content, 
         you can add it here. For example:
         <h2 className="text-2xl font-semibold text-gray-700 mb-6">Overview</h2> 
       */}
-      
-      <Greeting />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <QuoteOfDay />
-        {/* Placeholder for dashboard widgets */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <UserInfo
           userName={userName}
           userId={userId}
@@ -76,7 +71,8 @@ export default function DashboardPage() {
           userLanguage={userLanguage}
           preferences={preferences}
         />
-        {/* Add more dashboard widgets here as needed */}
+        <QuoteOfDay />
+        {/* Placeholder for dashboard widgets */}
       </div>
     </div>
   );

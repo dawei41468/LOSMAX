@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { useAuth } from '../../hooks/useAuth';
@@ -17,8 +16,8 @@ export function Greeting() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mt-2 mb-2">
-        {getTimeBasedGreeting(t)}, {userName || t('dashboard.user_fallback')}!
+      <h2 className="text-2xl font-bold">
+        {getTimeBasedGreeting(t)}, {userName || t('dasboard.user_fallback')}!
       </h2>
     </div>
   );

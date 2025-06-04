@@ -40,18 +40,18 @@
   },
   "dashboard": {
     "titles": {
-      "goals": "目标管理",
-      "tasks": "任务管理",
-      "progress": "进度概览",
+      "goals": "您的目标",
+      "tasks": "日常任务",
+      "progress": "进度",
       "settings": "设置",
       "dashboard": "仪表盘"
     },
     "subtitles": {
-      "goals": "设定并追踪您的个人及职业目标。",
-      "tasks": "高效组织和管理您的日常任务。",
-      "progress": "监控您在各目标和任务上的进展。",
-      "settings": "配置您的应用偏好。",
-      "dashboard": "欢迎来到您的 LOSMAX 仪表盘。"
+      "goals": "管理您在每个生活类别的长期目标",
+      "tasks": "在早晨截止时间前设定您今天的任务",
+      "progress": "追踪您在所有生活领域的进度和完成率",
+      "settings": "管理您的账户和应用偏好",
+      "dashboard": "追踪您在所有生活领域的日常进度"
     },
     "greetings": {
       "morning": "早上好",

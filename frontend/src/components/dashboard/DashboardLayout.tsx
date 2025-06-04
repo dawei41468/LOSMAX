@@ -20,23 +20,23 @@ export function DashboardLayout({ children, route }: DashboardLayoutProps) {
   const getTitle = () => {
     switch(route) {
       case '/goals': return {
-        title: t('common.goals'),
+        title: t('dashboard.titles.goals'),
         subtitle: t('dashboard.subtitles.goals')
       };
       case '/tasks': return {
-        title: t('common.tasks'),
+        title: t('dashboard.titles.tasks'),
         subtitle: t('dashboard.subtitles.tasks')
       };
       case '/progress': return {
-        title: t('common.progress'),
+        title: t('dashboard.titles.progress'),
         subtitle: t('dashboard.subtitles.progress')
       };
       case '/settings': return {
-        title: t('common.settings'),
+        title: t('dashboard.titles.settings'),
         subtitle: t('dashboard.subtitles.settings')
       };
       default: return {
-        title: t('common.dashboard'),
+        title: t('dashboard.titles.dashboard'),
         subtitle: t('dashboard.subtitles.dashboard')
       };
     }
@@ -78,7 +78,7 @@ export function DashboardLayout({ children, route }: DashboardLayoutProps) {
             </button>
             
             {/* Center part: Title/Subtitle - flex-grow to push ProfileMenu to the right, min-w-0 for truncation */}
-            <div className="ml-2 flex-grow min-w-0"> {/* Added flex-grow and min-w-0 */}
+            <div className="ml-4 flex-grow min-w-0 text-left"> {/* Added flex-grow and min-w-0 */}
               <h1 className="text-2xl sm:text-xl font-bold truncate">{title}</h1>
               <p className="text-xs sm:text-sm text-gray-400">{subtitle}</p> {/* Removed truncate to allow wrapping */}
             </div>

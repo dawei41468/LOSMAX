@@ -40,18 +40,18 @@
   },
   "dashboard": {
     "titles": {
-      "goals": "Goals Management",
-      "tasks": "Task Management",
-      "progress": "Progress Overview",
+      "goals": "Your Goals",
+      "tasks": "Daily Tasks",
+      "progress": "Progress",
       "settings": "Settings",
       "dashboard": "Dashboard"
     },
     "subtitles": {
-      "goals": "Set and track your goals in all life areas.",
-      "tasks": "Organize and manage your daily tasks efficiently.",
-      "progress": "Monitor your progress across goals and tasks.",
-      "settings": "Configure your application preferences.",
-      "dashboard": "Welcome to your LOS dashboard."
+      "goals": "Manage your long-term goals for each life category",
+      "tasks": "Set your tasks for today before your morning deadline",
+      "progress": "Track your progress and completion rates across all life areas",
+      "settings": "Manage your account and application preferences",
+      "dashboard": "Track your daily progress across all life areas"
     },
     "greetings": {
       "morning": "Good morning",
