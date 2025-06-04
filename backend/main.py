@@ -5,7 +5,7 @@ from jwt import PyJWTError
 from config.settings import settings
 from database import connect_to_mongo
 from models.user import UserInDB, UserCreate
-from routes import auth, goals, websocket, preferences # Added preferences router
+from routes import auth, goals, websocket, preferences, task # Added preferences and task router
 from middleware.cors import setup_cors
 
 @asynccontextmanager
@@ -37,6 +37,7 @@ async def test_user_model():
 app.include_router(auth.router)
 app.include_router(goals.router)
 app.include_router(preferences.router) # Included preferences router
+app.include_router(task.router) # Included task router
 
 async def test_goal_service():
     """Test GoalService functionality"""

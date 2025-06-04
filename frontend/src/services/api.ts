@@ -150,7 +150,7 @@ export async function getGoals(status?: GoalStatus): Promise<Goal[]> {
     try {
       const errorData = await response.json();
       throw new Error(errorData.detail || `Failed to fetch goals. Status: ${response.status}`);
-    } catch (_e) { // eslint-disable-line no-unused-vars
+    } catch (_) { // eslint-disable-line no-unused-vars
       throw new Error(`Failed to fetch goals. Status: ${response.status}`);
     }
   }
@@ -211,10 +211,104 @@ export async function deleteGoal(goalId: string): Promise<void> {
       try {
         const errorData = await response.json();
         throw new Error(errorData.detail || `Failed to delete goal ${goalId}. Status: ${response.status}`);
-      } catch (_e) { // eslint-disable-line no-unused-vars
+      } catch (_) { // eslint-disable-line no-unused-vars
         throw new Error(`Failed to delete goal ${goalId}. Status: ${response.status}`);
       }
     }
   }
   // No return needed for a successful delete (often 204 No Content)
+}
+
+// Task-related API endpoints
+export interface Task {
+  id: string;
+  user_id: string;
+  goal_id: string; // Tasks are tied to a specific goal
+  title: string;
+  status: 'pending' | 'complete' | 'incomplete'; // Updated status options
+  created_at: string; // ISO string
+}
+
+export async function getTasks(status?: 'pending' | 'complete' | 'incomplete', filter?: 'today' | 'all'): Promise<Task[]> {
+  let url = `${import.meta.env.VITE_API_BASE_URL}/tasks`;
+  const params = new URLSearchParams();
+  if (status) {
+    params.append('status', status);
+  }
+  if (filter) {
+    params.append('filter', filter);
+  }
+  if (params.toString()) {
+    url += `?${params.toString()}`;
+  }
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: getAuthHeaders()
+  });
+
+  if (!response.ok) {
+    try {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || `Failed to fetch tasks. Status: ${response.status}`);
+    } catch (_) { // eslint-disable-line no-unused-vars
+      throw new Error(`Failed to fetch tasks. Status: ${response.status}`);
+    }
+  }
+
+  return await response.json() as Task[];
+}
+
+export interface CreateTaskPayload {
+  title: string;
+  goal_id: string; // Required, as tasks must be tied to a goal
+}
+
+export async function createTask(taskData: CreateTaskPayload): Promise<Task> {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/tasks`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(taskData)
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || 'Failed to create task');
+  }
+
+  return await response.json() as Task;
+}
+
+export type UpdateTaskPayload = Partial<Omit<Task, 'id' | 'user_id' | 'goal_id' | 'created_at'>>;
+
+export async function updateTask(taskId: string, taskData: UpdateTaskPayload): Promise<Task> {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/tasks/${taskId}`, {
+    method: 'PUT',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(taskData)
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.detail || `Failed to update task ${taskId}`);
+  }
+
+  return await response.json() as Task;
+}
+
+export async function deleteTask(taskId: string): Promise<void> {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/tasks/${taskId}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders()
+  });
+
+  if (!response.ok) {
+    if (response.status >= 400) {
+      try {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || `Failed to delete task ${taskId}. Status: ${response.status}`);
+      } catch (_) { // eslint-disable-line no-unused-vars
+        throw new Error(`Failed to delete task ${taskId}. Status: ${response.status}`);
+      }
+    }
+  }
 }

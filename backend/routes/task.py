@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
+from typing import Optional
 
 from models.user import User
 from models.task import TaskCreate, Task
@@ -8,8 +9,7 @@ from services.task_service import (
     create_task,
     get_tasks_by_user,
     update_task,
-    delete_task,
-    get_task_by_id_and_user
+    delete_task
 )
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
@@ -27,19 +27,31 @@ async def create_new_task(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
         )
+    except HTTPException as e:
+        raise e
 
 @router.get("/", response_model=list[Task])
 async def list_user_tasks(
+    status: Optional[str] = None,
+    filter: Optional[str] = None,
     current_user: User = Depends(get_current_user)
 ):
-    return await get_tasks_by_user(str(current_user.id))
+    tasks = await get_tasks_by_user(str(current_user.id))
+    if status:
+        tasks = [task for task in tasks if task.status == status]
+    if filter == "today":
+        from datetime import datetime, date
+        today = date.today()
+        tasks = [task for task in tasks if task.created_at.date() == today]
+    return tasks
 
 @router.get("/{task_id}", response_model=Task)
 async def get_task(
     task_id: str,
     current_user: User = Depends(get_current_user)
 ):
-    task = await get_task_by_id_and_user(task_id, str(current_user.id))
+    tasks = await get_tasks_by_user(str(current_user.id))
+    task = next((t for t in tasks if t.id == task_id), None)
     if not task:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -53,7 +65,12 @@ async def update_existing_task(
     current_user: User = Depends(get_current_user)
 ):
     try:
-        return await update_task(task_id, str(current_user.id), task_update)
+        updated_task = await update_task(task_id, str(current_user.id), task_update)
+        if not updated_task:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Task not found or not authorized")
+        return updated_task
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -67,5 +84,5 @@ async def delete_existing_task(
     if not await delete_task(task_id, str(current_user.id)):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Task not found")
+            detail="Task not found or not authorized")
     return None

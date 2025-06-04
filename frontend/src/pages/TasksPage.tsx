@@ -1,52 +1,256 @@
-import React, { useState, useEffect } from 'react';
-import { api } from '../services/api'; // Assuming you have a configured api service
-import { toast } from 'sonner'; // For error notifications
+import { useState, useEffect, useContext, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AuthContext } from '../contexts/auth.context';
+import type { AuthContextType } from '../contexts/auth.types';
+import { createTask, getTasks, updateTask, deleteTask, getGoals } from '../services/api';
+import { CategoryHeader, getCategoryColorClass } from '../components/ui/CategoryUI';
+import type { GoalCategory } from '../types/goals';
+import type { Task } from '../services/api';
+import type { Goal } from '../types/goals';
+import { useNavigate } from 'react-router-dom';
+import TaskDialog from '../components/tasks/TaskDialog';
+import TaskCard from '../components/tasks/TaskCard';
+import ConfirmDeleteDialog from '../components/ui/ConfirmDeleteDialog';
 
-// Define a type for the expected API response structure for preferences
-interface UserPreferencesResponse {
-  morning_deadline: string;
-  // include other preferences if needed, though only morning_deadline is used here
-}
+type FilterType = 'today' | 'all';
 
-const TasksPage: React.FC = () => {
-  const [morningDeadline, setMorningDeadline] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+export default function TasksPage() {
+  const { t } = useTranslation();
+  const { isAuthenticated } = useContext(AuthContext) as AuthContextType;
+  const navigate = useNavigate();
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [goals, setGoals] = useState<Goal[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [currentFilter, setCurrentFilter] = useState<FilterType>('today');
+  const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
+
+  const fetchUserTasks = useCallback(async (filter: FilterType) => {
+    if (!isAuthenticated) return;
+    setIsLoading(true);
+    setError(null);
+    try {
+      const fetchedTasks = await getTasks(undefined, filter);
+      const fetchedGoals = await getGoals('active');
+      setTasks(fetchedTasks);
+      setGoals(fetchedGoals);
+    } catch (err: unknown) {
+      console.error('Failed to fetch tasks or goals:', err);
+      // Check if the error message contains "404" to handle "Not Found" gracefully
+      if (err instanceof Error && err.message.includes('404')) {
+        setTasks([]); // Set tasks to empty array to show "no tasks found" message
+      } else {
+        let errorMessage = 'Failed to load tasks or goals.';
+        if (err instanceof Error) {
+          errorMessage = err.message;
+        } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
+          errorMessage = (err as { detail: string }).detail;
+        }
+        setError(errorMessage);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
-    const fetchPreferences = async () => {
-      setIsLoading(true);
-      try {
-        const response = await api.get<UserPreferencesResponse>('/preferences');
-        setMorningDeadline(response.data.morning_deadline);
-      } catch (error) {
-        console.error('Error fetching preferences:', error);
-        toast.error('Failed to load your preferences.');
-        // Set a default or leave as null if fetching fails
-        setMorningDeadline('N/A');
-      } finally {
-        setIsLoading(false);
+    if (!isAuthenticated) {
+      navigate('/auth');
+    } else {
+      fetchUserTasks(currentFilter);
+    }
+  }, [isAuthenticated, navigate, currentFilter, fetchUserTasks]);
+
+  const handleDialogSubmit = async (data: Omit<Task, 'id' | 'user_id' | 'created_at'>) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      if (editingTask) {
+        await updateTask(editingTask.id, { title: data.title });
+      } else {
+        await createTask({ title: data.title, goal_id: data.goal_id });
       }
-    };
+      fetchUserTasks(currentFilter); // Refetch tasks
+    } catch (err: unknown) {
+      console.error('Failed to save task:', err);
+      let errorMessage = 'Failed to save task.';
+      if (err instanceof Error) {
+        errorMessage = err.message;
+        if (err.message.includes('404')) {
+          errorMessage = 'Task creation is currently unavailable. Please try again later.';
+        }
+      } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
+        errorMessage = (err as { detail: string }).detail;
+      }
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+      setIsTaskDialogOpen(false);
+      setEditingTask(null);
+    }
+  };
 
-    fetchPreferences();
-  }, []);
+  const openCreateDialog = () => {
+    setEditingTask(null);
+    setIsTaskDialogOpen(true);
+  };
 
-  // The ProtectedRoute in App.tsx ensures this page is only accessed when authenticated.
-  // Auth-specific checks or loading states can be minimal here or handled globally.
+  const openEditDialog = (task: Task) => {
+    setEditingTask(task);
+    setIsTaskDialogOpen(true);
+  };
+
+  const confirmDeleteTask = (taskId: string) => {
+    setTaskToDelete(taskId);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleDeleteTask = async () => {
+    if (!taskToDelete) return;
+
+    setIsLoading(true);
+    setError(null);
+    try {
+      await deleteTask(taskToDelete);
+      fetchUserTasks(currentFilter); // Refetch tasks
+    } catch (err: unknown) {
+      console.error('Failed to delete task:', err);
+      let errorMessage = 'Failed to delete task.';
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
+        errorMessage = (err as { detail: string }).detail;
+      }
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+      setShowDeleteConfirm(false);
+      setTaskToDelete(null);
+    }
+  };
+
+  const handleToggleStatus = async (task: Task) => {
+    setIsLoading(true);
+    setError(null);
+    const newStatus = task.status === 'pending' ? 'complete' : task.status === 'complete' ? 'incomplete' : 'pending';
+    try {
+      await updateTask(task.id, { status: newStatus });
+      fetchUserTasks(currentFilter); // Refetch tasks
+    } catch (err: unknown) {
+      console.error('Failed to update task status:', err);
+      let errorMessage = 'Failed to update task status.';
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
+        errorMessage = (err as { detail: string }).detail;
+      }
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Group tasks by category first (derived from associated goal), then by goal
+  const groupedTasksByCategory = tasks.reduce((acc, task) => {
+    const associatedGoal = goals.find(goal => goal.id === task.goal_id);
+    const category = associatedGoal ? associatedGoal.category : 'Uncategorized';
+    if (!acc[category]) {
+      acc[category] = {};
+    }
+    if (!acc[category][task.goal_id]) {
+      acc[category][task.goal_id] = [];
+    }
+    acc[category][task.goal_id].push(task);
+    return acc;
+  }, {} as Record<string, Record<string, Task[]>>);
+
   return (
-    <div className="p-4"> {/* Basic padding, can be adjusted as needed */}
-      <h2 className="text-xl font-semibold mb-4">Tasks Page</h2>
-      <p>This is a placeholder for the Tasks Page.</p>
-      <p>Content related to managing tasks will be displayed here.</p>
-      {isLoading ? (
-        <p>Loading your preferences...</p>
-      ) : morningDeadline && morningDeadline !== 'N/A' ? (
-        <p className="mt-2">Your Morning Deadline is: {morningDeadline}</p>
-      ) : morningDeadline === 'N/A' ? (
-        <p className="mt-2 text-red-500">Could not load morning deadline.</p>
-      ) : null}
+    <div className="py-6">
+      {/* Header Section */}
+      <div className="px-4 flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6">
+        <button
+          onClick={openCreateDialog}
+          className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          {t('tasks.create_new')}
+        </button>
+      </div>
+
+      {/* Error Message */}
+      {error && <div className="mx-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">{t('tasks.error_message', { error })}</div>}
+
+      {/* Filter Buttons */}
+      <div className="px-4 mb-6 flex flex-wrap gap-2 justify-center">
+        {(['today', 'all'] as FilterType[]).map(filter => (
+          <button
+            key={filter}
+            onClick={() => setCurrentFilter(filter)}
+            className={`px-3 py-1.5 text-xs rounded-md transition-colors sm:px-4 sm:py-2 sm:text-sm ${currentFilter === filter ? 'border border-blue-600 text-blue-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+          >
+            {t(`tasks.filters.${filter}`)}
+          </button>
+        ))}
+      </div>
+
+      {isTaskDialogOpen && (
+        <TaskDialog
+          isOpen={isTaskDialogOpen}
+          onClose={() => {
+            setIsTaskDialogOpen(false);
+            setEditingTask(null);
+          }}
+          onSubmit={handleDialogSubmit}
+          initialTask={editingTask || undefined}
+        />
+      )}
+
+      <ConfirmDeleteDialog
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDeleteTask}
+        itemName="Task"
+        isDeleting={isLoading}
+      />
+
+      {isLoading && <p className="text-center py-4">{t('common.loading')}</p>}
+      {!isLoading && tasks.length === 0 && !error && (
+        <p className="text-center py-4 text-gray-500">
+          {t('tasks.no_tasks_found', { filter: t(`tasks.filters.${currentFilter}`) })}
+        </p>
+      )}
+
+      {Object.keys(groupedTasksByCategory).length > 0 && !isLoading && (
+        (['Family', 'Work', 'Health', 'Personal'] as GoalCategory[])
+          .filter(category => groupedTasksByCategory[category] && Object.keys(groupedTasksByCategory[category]).length > 0)
+          .map(category => (
+            <div key={category} className="mb-6">
+              <h2 className="text-xl font-semibold mb-3 flex items-center">
+                <CategoryHeader category={category as GoalCategory} />
+              </h2>
+              {Object.entries(groupedTasksByCategory[category]).map(([goalId, tasksInGoal]) => (
+                <div key={goalId} className="mb-4">
+                  <h3 className="text-lg font-medium mb-2 text-left" style={{ color: getCategoryColorClass(goals.find(g => g.id === goalId)?.category as GoalCategory || 'Work', 'primary') }}>
+                    {goals.find(g => g.id === goalId)?.title || t('tasks.uncategorized')}
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {tasksInGoal.map(task => (
+                      <TaskCard
+                        key={task.id}
+                        task={task}
+                        onEdit={openEditDialog}
+                        onDelete={() => confirmDeleteTask(task.id)}
+                        onToggleStatus={handleToggleStatus}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))
+      )}
     </div>
   );
-};
-
-export default TasksPage;
+}

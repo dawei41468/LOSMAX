@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { AuthContext } from '../contexts/auth.context';
 import type { AuthContextType } from '../contexts/auth.types';
 import { createGoal, getGoals, updateGoal, deleteGoal } from '../services/api';
+import { CategoryHeader } from '../components/ui/CategoryUI';
 import type { CreateGoalPayload } from '../services/api'; // Type-only import
 import { useNavigate } from 'react-router-dom';
 import type { Goal, GoalStatus, GoalCategory } from '../types/goals';
@@ -219,7 +220,11 @@ export default function GoalsPage() {
           .filter(category => groupedGoals[category] && groupedGoals[category].length > 0) // Filter out categories that have no goals
           .map(category => (
             <div key={category} className="mb-6">
-              <h2 className="text-xl font-semibold text-gray-700 mb-3">{t(`goals.categories.${category}`)}</h2>
+              <h2 className="text-xl font-semibold mb-3 flex items-center">
+                <CategoryHeader
+                  category={category}
+                />
+              </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {groupedGoals[category].map(goal => (
                   <GoalCard

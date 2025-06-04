@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from pymongo import ReturnDocument
 from models.task import Task, TaskCreate
@@ -20,14 +20,16 @@ class TaskService:
                 detail="Goal not found or not authorized"
             )
 
+        task_dict = task_data.model_dump()
+        task_dict.update({
+            "user_id": user_id,
+            "created_at": datetime.now(timezone.utc)
+        })
+        result = await self.collection.insert_one(task_dict)
         task = Task(
-            **task_data.dict(),
-            user_id=user_id,
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            **task_dict,
+            id=str(result.inserted_id)
         )
-        result = await self.collection.insert_one(task.dict(by_alias=True))
-        task.id = str(result.inserted_id)
         return task
 
     async def get_task(self, task_id: str) -> Optional[Task]:
@@ -54,8 +56,6 @@ class TaskService:
                 detail="Task not found or not authorized"
             )
 
-        update_data["updated_at"] = datetime.utcnow()
-        
         result = await self.collection.find_one_and_update(
             {"_id": task_id},
             {"$set": update_data},

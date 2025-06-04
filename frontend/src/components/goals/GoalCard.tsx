@@ -1,6 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import type { Goal } from '../../types/goals'; // Removed GoalCategory
+import type { Goal } from '../../types/goals';
+import { Edit, Check, Trash2 } from 'lucide-react';
+import { getCategoryColorClass } from '../ui/CategoryUI';
 // import { CATEGORIES } from '../../utils/constants'; // Not needed here, category comes from Goal prop
 
 interface GoalCardProps {
@@ -26,13 +28,8 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onEdit, onDelete, onToggleSta
   const daysRemaining = calculateDaysRemaining(goal.target_date);
 
   const cardBorderColor = () => {
-    switch (goal.category) {
-      case 'Family': return 'border-blue-500';
-      case 'Work': return 'border-purple-500';
-      case 'Health': return 'border-green-500';
-      case 'Personal': return 'border-yellow-500';
-      default: return 'border-gray-300';
-    }
+    const color = getCategoryColorClass(goal.category, 'primary');
+    return color ? color : 'border-l-gray-300';
   };
 
   const statusBadgeColor = () => {
@@ -56,24 +53,27 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onEdit, onDelete, onToggleSta
           </span>
         </p>
       </div>
-      <div className="mt-4 flex justify-end space-x-2">
+      <div className="mt-4 flex justify-center space-x-8">
         <button
           onClick={() => onEdit(goal)}
-          className="px-3 py-1.5 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 transition-colors"
+          aria-label={t('common.edit_button')}
+          className="p-2 rounded-md transition-colors"
         >
-          {t('common.edit_button')}
+          <Edit className="w-5 h-5 text-blue-500" />
         </button>
         <button
           onClick={() => onToggleStatus(goal)}
-          className={`px-3 py-1.5 text-sm font-medium text-white rounded-md transition-colors ${goal.status === 'active' ? 'bg-green-500 hover:bg-green-600' : 'bg-yellow-500 hover:bg-yellow-600'}`}
+          aria-label={goal.status === 'active' ? t('goals.card.complete_button') : t('goals.card.reopen_button')}
+          className={`p-2 rounded-md transition-colors ${goal.status === 'active' ? 'hover:text-green-600' : 'hover:text-yellow-600'}`}
         >
-          {goal.status === 'active' ? t('goals.card.complete_button') : t('goals.card.reopen_button')}
+          <Check className={`w-5 h-5 ${goal.status === 'active' ? 'text-green-500' : 'text-yellow-500'}`} />
         </button>
         <button
           onClick={() => onDelete(goal.id)}
-          className="px-3 py-1.5 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600 transition-colors"
+          aria-label={t('common.delete_button')}
+          className="p-2 rounded-md transition-colors hover:text-red-600"
         >
-          {t('common.delete_button')}
+          <Trash2 className="w-5 h-5 text-red-500" />
         </button>
       </div>
     </div>

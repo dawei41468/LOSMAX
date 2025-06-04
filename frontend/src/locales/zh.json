@@ -241,5 +241,30 @@
         "Personal": "个人"
       }
     }
+  },
+  "tasks": {
+    "create_new": "创建新任务",
+    "error_message": "错误：{{error}}",
+    "no_tasks_found": "在“{{filter}}”筛选器下未找到任务。尝试创建一个！",
+    "filters": {
+      "today": "今天",
+      "all": "全部"
+    },
+    "statuses": {
+      "pending": "待处理",
+      "complete": "已完成",
+      "incomplete": "未完成"
+    },
+    "status": "状态",
+    "title": "标题",
+    "titlePlaceholder": "你今天要做什么",
+    "associatedGoal": "关联目标",
+    "selectGoal": "选择一个目标",
+    "goalCannotChange": "目标一旦设定无法更改",
+    "create": "创建任务",
+    "edit": "编辑任务",
+    "markComplete": "标记为已完成",
+    "markIncomplete": "标记为未完成",
+    "markPending": "标记为待处理"
   }
 }

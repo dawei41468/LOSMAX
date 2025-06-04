@@ -241,5 +241,30 @@
         "Personal": "Personal"
       }
     }
+  },
+  "tasks": {
+    "create_new": "Create New Task",
+    "error_message": "Error: {{error}}",
+    "no_tasks_found": "No tasks found for the \"{{filter}}\" filter. Try creating one!",
+    "filters": {
+      "today": "Today",
+      "all": "All"
+    },
+    "statuses": {
+      "pending": "Pending",
+      "complete": "Complete",
+      "incomplete": "Incomplete"
+    },
+    "status": "Status",
+    "title": "Your Task",
+    "titlePlaceholder": "What will you do today?",
+    "associatedGoal": "Associated Goal",
+    "selectGoal": "Select a Goal",
+    "goalCannotChange": "Goal cannot be changed once set",
+    "create": "Create Task",
+    "edit": "Edit Task",
+    "markComplete": "Mark Complete",
+    "markIncomplete": "Mark Incomplete",
+    "markPending": "Mark Pending"
   }
 }
