@@ -14,11 +14,11 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
 
   const { t } = useTranslation();
   const navItems = [
-    { href: "/dashboard", label: t('sidebar.dashboard'), icon: <HomeIcon className="mr-4 h-6 w-6" /> }, // Changed href to /dashboard
-    { href: "/goals", label: t('sidebar.goals'), icon: <ClipboardListIcon className="mr-4 h-6 w-6" /> },
-    { href: "/tasks", label: t('sidebar.tasks'), icon: <CheckCircleIcon className="mr-4 h-6 w-6" /> },
-    { href: "/progress", label: t('sidebar.progress'), icon: <BarChart3Icon className="mr-4 h-6 w-6" /> },
-    { href: "/settings", label: t('sidebar.settings'), icon: <SettingsIcon className="mr-4 h-6 w-6" /> },
+    { href: "/dashboard", label: t('common.dashboard'), icon: <HomeIcon className="mr-4 h-6 w-6" /> },
+    { href: "/goals", label: t('common.goals'), icon: <ClipboardListIcon className="mr-4 h-6 w-6" /> },
+    { href: "/tasks", label: t('common.tasks'), icon: <CheckCircleIcon className="mr-4 h-6 w-6" /> },
+    { href: "/progress", label: t('common.progress'), icon: <BarChart3Icon className="mr-4 h-6 w-6" /> },
+    { href: "/settings", label: t('common.settings'), icon: <SettingsIcon className="mr-4 h-6 w-6" /> },
   ];
 
   const handleNavClick = () => {

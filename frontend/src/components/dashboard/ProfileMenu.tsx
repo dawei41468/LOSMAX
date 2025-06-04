@@ -61,7 +61,7 @@ export const ProfileMenu: React.FC = () => {
             }}
             className="w-full text-left p-3 hover:bg-gray-100 flex items-center gap-3"
           >
-            <Settings className="text-gray-700 stroke-[2] w-4 h-4" /> <span className="text-sm">{t('profile.settings')}</span>
+            <Settings className="text-gray-700 stroke-[2] w-4 h-4" /> <span className="text-sm">{t('common.settings')}</span>
           </button>
           <hr className="border-gray-200 -mx-3" />
           <button 

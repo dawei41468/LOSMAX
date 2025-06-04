@@ -76,7 +76,7 @@ function AuthFormComponent({
         )}
         <div className="space-y-2">
           <label htmlFor="email" className="sr-only">
-            {t('auth.email')}
+            {t('common.email')}
           </label>
           <input
             id="email"
@@ -91,7 +91,7 @@ function AuthFormComponent({
 
         <div className="space-y-2">
           <label htmlFor="password" className="sr-only">
-            {t('auth.password')}
+            {t('common.password')}
           </label>
           <div className="relative">
             <input
@@ -120,7 +120,7 @@ function AuthFormComponent({
           className="w-full py-4 sm:py-3 px-4 bg-gray-900 text-white hover:bg-gray-800 focus:outline-none rounded-md disabled:opacity-50 text-base sm:text-sm"
           disabled={isLoading}
         >
-          {isLoading ? t('auth.loading') : submitText}
+          {isLoading ? t('common.loading') : submitText}
         </button>
       </form>
 

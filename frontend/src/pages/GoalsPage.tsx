@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuthContext } from '../contexts/auth.context';
 import type { AuthContextType } from '../contexts/auth.types';
 import { createGoal, getGoals, updateGoal, deleteGoal } from '../services/api';
@@ -7,12 +8,14 @@ import { useNavigate } from 'react-router-dom';
 import type { Goal, GoalStatus, GoalCategory } from '../types/goals';
 import GoalDialog from '../components/goals/GoalDialog';
 import GoalCard from '../components/goals/GoalCard';
+import ConfirmDeleteDialog from '../components/ui/ConfirmDeleteDialog'; // Import the new dialog
 
 // CATEGORIES_PAGE_LEVEL removed as GoalDialog defines its own or it should come from a shared constant
 
 type FilterStatus = GoalStatus | 'all';
 
 export default function GoalsPage() {
+  const { t } = useTranslation();
   const { isAuthenticated } = useContext(AuthContext) as AuthContextType;
   const navigate = useNavigate();
   const [goals, setGoals] = useState<Goal[]>([]);
@@ -21,6 +24,8 @@ export default function GoalsPage() {
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>('active');
   const [isGoalDialogOpen, setIsGoalDialogOpen] = useState(false);
   const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false); // State for delete confirmation dialog
+  const [goalToDelete, setGoalToDelete] = useState<string | null>(null); // State to store the ID of the goal to delete
 
   const fetchUserGoals = useCallback(async (filter: FilterStatus) => {
     if (!isAuthenticated) return;
@@ -98,11 +103,18 @@ export default function GoalsPage() {
     setIsGoalDialogOpen(true);
   };
 
-  const handleDeleteGoal = async (goalId: string) => {
+  const confirmDeleteGoal = (goalId: string) => {
+    setGoalToDelete(goalId);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleDeleteGoal = async () => {
+    if (!goalToDelete) return;
+
     setIsLoading(true);
     setError(null);
     try {
-      await deleteGoal(goalId);
+      await deleteGoal(goalToDelete);
       fetchUserGoals(currentFilter); // Refetch goals
     } catch (err: unknown) {
       console.error('Failed to delete goal:', err);
@@ -115,6 +127,8 @@ export default function GoalsPage() {
       setError(errorMessage);
     } finally {
       setIsLoading(false);
+      setShowDeleteConfirm(false); // Close the confirmation dialog
+      setGoalToDelete(null); // Clear the goal to delete
     }
   };
 
@@ -153,22 +167,22 @@ export default function GoalsPage() {
           onClick={openCreateDialog}
           className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
-          Create New Goal
+          {t('goals.create_new')}
         </button>
       </div>
 
       {/* Error Message */}
-      {error && <div className="mx-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">{error}</div>} {/* Added mx-4 for horizontal margin */}
+      {error && <div className="mx-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">{t('goals.error_message', { error })}</div>}
 
       {/* Filter Buttons */}
-      <div className="px-4 mb-6 flex flex-wrap gap-2"> {/* Added px-4 here, use flex-wrap and gap */}
+      <div className="px-4 mb-6 flex flex-wrap gap-2 justify-center"> {/* Added px-4 here, use flex-wrap and gap */}
         {(['active', 'completed', 'all'] as FilterStatus[]).map(filter => (
           <button
             key={filter}
             onClick={() => setCurrentFilter(filter)}
             className={`px-3 py-1.5 text-xs rounded-md transition-colors sm:px-4 sm:py-2 sm:text-sm ${currentFilter === filter ? 'border border-blue-600 text-blue-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
           >
-            {filter.charAt(0).toUpperCase() + filter.slice(1)}
+            {t(`goals.filters.${filter}`)}
           </button>
         ))}
       </div>
@@ -185,10 +199,18 @@ export default function GoalsPage() {
         />
       )}
 
-      {isLoading && <p className="text-center py-4">Loading goals...</p>}
+      <ConfirmDeleteDialog
+        isOpen={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDeleteGoal}
+        itemName="goal"
+        isDeleting={isLoading}
+      />
+
+      {isLoading && <p className="text-center py-4">{t('common.loading')}</p>}
       {!isLoading && goals.length === 0 && !error && (
         <p className="text-center py-4 text-gray-500">
-          No goals found for the "{currentFilter}" filter. Try creating one!
+          {t('goals.no_goals_found', { filter: t(`goals.filters.${currentFilter}`) })}
         </p>
       )}
 
@@ -197,14 +219,14 @@ export default function GoalsPage() {
           .filter(category => groupedGoals[category] && groupedGoals[category].length > 0) // Filter out categories that have no goals
           .map(category => (
             <div key={category} className="mb-6">
-              <h2 className="text-xl font-semibold text-gray-700 mb-3">{category} Goals</h2>
+              <h2 className="text-xl font-semibold text-gray-700 mb-3">{t(`goals.categories.${category}`)}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {groupedGoals[category].map(goal => (
                   <GoalCard
                     key={goal.id}
                     goal={goal}
                     onEdit={openEditDialog}
-                    onDelete={handleDeleteGoal}
+                    onDelete={() => confirmDeleteGoal(goal.id)} // Use confirmDeleteGoal
                     onToggleStatus={handleToggleStatus}
                   />
                 ))}

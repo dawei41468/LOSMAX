@@ -1,8 +1,27 @@
 {
-  "auth": {
+  "common": {
+    "cancel": "取消",
+    "confirm_delete": "确认删除",
+    "deleting": "删除中...",
+    "edit_button": "编辑",
+    "delete_button": "删除",
+    "update_button": "更新",
+    "save_changes_button": "保存更改",
+    "loading": "加载中...",
+    "status": {
+      "active": "活跃",
+      "completed": "已完成"
+    },
     "email": "邮箱",
     "password": "密码",
-    "loading": "加载中...",
+    "settings": "设置",
+    "dashboard": "仪表盘",
+    "goals": "目标",
+    "tasks": "任务",
+    "progress": "进度",
+    "language": "语言"
+  },
+  "auth": {
     "LOS": "LOS",
     "lifeOrganizationSystem": "生活管理系统",
     "namePlaceholder": "输入姓名",
@@ -34,10 +53,65 @@
       "settings": "配置您的应用偏好。",
       "dashboard": "欢迎来到您的 LOSMAX 仪表盘。"
     },
+    "greetings": {
+      "morning": "早上好",
+      "afternoon": "下午好",
+      "evening": "晚上好",
+      "night": "晚安"
+    },
+    "user_fallback": "用户",
+    "quotes": {
+      "daily": "每日名言",
+      "1": "千里之行，始于足下。",
+      "2": "求知若饥，虚心若愚。",
+      "3": "成功并非最终，失败也并非致命：重要的是继续前进的勇气。",
+      "4": "成就伟大事业的唯一方法是热爱你所做的一切。",
+      "5": "你的时间有限，不要浪费在过别人的生活上。",
+      "6": "未来属于那些相信梦想之美的人。",
+      "7": "不要看时钟；做它所做的事。继续前进。",
+      "8": "相信你能做到，你就已经成功了一半。",
+      "9": "领先的秘诀在于开始。",
+      "10": "走得慢没关系，只要不停下来就好。",
+      "11": "我们最大的弱点在于放弃。最确定的成功之路是再试一次。",
+      "12": "我们实现明天的唯一限制是我们今天的疑虑。",
+      "13": "设定新目标或梦想新梦想，永远不会太晚。",
+      "14": "行动起来，仿佛你所做的一切都能改变世界。确实如此。",
+      "15": "实现目标所获得的，不如通过实现目标所成就的你重要。",
+      "16": "预测未来的最好方法是创造未来。",
+      "17": "你不必伟大才能开始，但你必须开始才能伟大。",
+      "18": "你为某事付出的努力越多，当你实现它时，你的感觉就越好。",
+      "19": "梦想更大。做得更大。",
+      "20": "不要在疲惫时停止。在完成时停止。",
+      "21": "带着决心醒来。带着满足入睡。",
+      "22": "今天做一些你未来的自己会感谢你的事情。",
+      "23": "小事成就大事。",
+      "24": "这会很难，但难不意味着不可能。",
+      "25": "不要等待机会。创造它。",
+      "26": "有时我们被考验不是为了展示我们的弱点，而是为了发现我们的优点。",
+      "27": "成功的关键是专注于目标，而不是障碍。",
+      "28": "梦想它。相信它。建造它。",
+      "29": "每天一小步，带来大结果。",
+      "30": "不射门，你就百分之百会失误。",
+      "31": "致力于发生什么，而不是如何发生。",
+      "32": "致力于实现预定结果，而不是墨守成规。",
+      "33": "愿意挑战任何困难。",
+      "34": "愿意转变思维并纠正行动。",
+      "35": "客观事实是最终的权威。",
+      "36": "愿意放手。",
+      "37": "清晰的愿景和目标，并专注于行动计划。",
+      "38": "带着紧迫感而非绝望感行动。",
+      "39": "细节，细节，细节和完整的计划。",
+      "40": "你严谨、自律、坚韧不拔。",
+      "41": "炽热的渴望，坚定的信念，有效的行动，钢铁般的意志。",
+      "42": "生命是一段灵感与召唤的旅程。",
+      "43": "感召：通过互动，激励他人看到可能性并采取行动。",
+      "44": "CNA精神宗旨：激发召唤，为创造一个可行的世界做出贡献，成就自我，成就他人，成就社会。",
+      "45": "成功的关键是专注于目标，而不是障碍。",
+      "46": "最高层次的感召：激励他人提升生命价值并采取行动。",
+      "47": "CNA精神宗旨：激励人们承诺，活出生命定位，创造非凡成功人生，追求卓越，持续改进，迈向生命愿景。"
+    },
     "userId": "用户ID",
-    "email": "邮箱",
     "role": "角色",
-    "language": "语言",
     "morningDeadline": "早晨截止时间",
     "eveningDeadline": "傍晚截止时间",
     "notifications": "通知",
@@ -46,16 +120,9 @@
     "notAvailable": "不可用"
   },
   "sidebar": {
-    "losmax": "LOS",
-    "dashboard": "仪表盘",
-    "goals": "目标",
-    "tasks": "任务",
-    "progress": "进度",
-    "settings": "设置",
-    "language": "语言"
+    "losmax": "LOS"
   },
   "profile": {
-    "settings": "设置",
     "signout": "登出"
   },
   "settings": {
@@ -76,6 +143,7 @@
       "current_password": "当前密码",
       "new_password": "新密码",
       "confirm_password": "确认新密码",
+      "item_name": "账户",
       "delete_confirm_title": "确认删除账户",
       "delete_confirm_message_p1": "您确定要永久删除您的账户吗？",
       "delete_confirm_message_p2": "此操作将删除与 {{email}} 相关的所有数据。",
@@ -92,12 +160,8 @@
       "notifications_description": "启用或禁用应用通知。"
     },
     "buttons": {
-      "update": "更新",
       "change_password": "更改密码",
-      "delete_account": "删除账户",
-      "cancel": "取消",
-      "confirm_delete": "确认删除",
-      "deleting": "删除中..."
+      "delete_account": "删除账户"
     },
     "toast": {
       "error_title": "错误",
@@ -130,6 +194,52 @@
       "step4": "在“设置”页面定制您的体验。",
       "step5": "保持井井有条，成就更多！",
       "version_info": "版本 1.0.0 (Alpha)"
+    }
+  },
+  "confirm_delete_dialog": {
+    "title": "确认删除 {{item}}",
+    "message": "您确定要删除此 {{item}} 吗？此操作无法撤销。",
+    "warning": "此操作是永久性的。"
+  },
+  "goals": {
+    "create_new": "创建新目标",
+    "error_message": "错误：{{error}}",
+    "loading_message": "正在加载目标...",
+    "no_goals_found": "在“{{filter}}”筛选器下未找到目标。尝试创建一个！",
+    "filters": {
+      "all": "所有",
+      "active":"活跃",
+      "completed": "已完成"
+    },
+    "categories": {
+      "Family": "家庭目标",
+      "Work": "工作目标",
+      "Health": "健康目标",
+      "Personal": "个人目标"
+    },
+    "card": {
+      "details": "详情",
+      "target_date": "目标日期",
+      "days_remaining": "剩余天数",
+      "due_today_overdue": "（今天到期/已逾期）",
+      "complete_button": "完成",
+      "reopen_button": "重新开启"
+    },
+    "dialog": {
+      "date_error": "目标日期必须是今天或未来的日期。",
+      "edit_title": "编辑目标",
+      "create_title": "创建新目标",
+      "your_goal_label": "您的目标",
+      "description_label": "描述（可选）",
+      "category_label": "类别",
+      "target_date_label": "目标日期",
+      "create_goal_button": "创建目标",
+      "categories": {
+        "Family": "家庭",
+        "Work": "工作",
+        "Health": "健康",
+        "Personal": "个人"
+      }
     }
   }
 }

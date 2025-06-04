@@ -20,24 +20,24 @@ export function DashboardLayout({ children, route }: DashboardLayoutProps) {
   const getTitle = () => {
     switch(route) {
       case '/goals': return {
-        title: t('dashboard.titles.goals', 'Goals Management'), // Added fallback text
-        subtitle: t('dashboard.subtitles.goals', 'Set and track your personal and professional goals.') // Added fallback text
+        title: t('common.goals'),
+        subtitle: t('dashboard.subtitles.goals')
       };
       case '/tasks': return {
-        title: t('dashboard.titles.tasks', 'Task Management'), // Added fallback text
-        subtitle: t('dashboard.subtitles.tasks', 'Organize and manage your daily tasks efficiently.') // Added fallback text
+        title: t('common.tasks'),
+        subtitle: t('dashboard.subtitles.tasks')
       };
       case '/progress': return {
-        title: t('dashboard.titles.progress', 'Progress Overview'), // Added fallback text
-        subtitle: t('dashboard.subtitles.progress', 'Monitor your progress across goals and tasks.') // Added fallback text
+        title: t('common.progress'),
+        subtitle: t('dashboard.subtitles.progress')
       };
       case '/settings': return {
-        title: t('dashboard.titles.settings', 'Settings'), // Added fallback text
-        subtitle: t('dashboard.subtitles.settings', 'Configure your application preferences.') // Added fallback text
+        title: t('common.settings'),
+        subtitle: t('dashboard.subtitles.settings')
       };
       default: return {
-        title: t('dashboard.titles.dashboard', 'Dashboard'), // Added fallback text
-        subtitle: t('dashboard.subtitles.dashboard', 'Welcome to your LOSMAX dashboard.') // Added fallback text and changed to LOSMAX
+        title: t('common.dashboard'),
+        subtitle: t('dashboard.subtitles.dashboard')
       };
     }
   };
@@ -79,7 +79,7 @@ export function DashboardLayout({ children, route }: DashboardLayoutProps) {
             
             {/* Center part: Title/Subtitle - flex-grow to push ProfileMenu to the right, min-w-0 for truncation */}
             <div className="ml-2 flex-grow min-w-0"> {/* Added flex-grow and min-w-0 */}
-              <h1 className="text-xl sm:text-xl font-bold truncate">{title}</h1>
+              <h1 className="text-2xl sm:text-xl font-bold truncate">{title}</h1>
               <p className="text-xs sm:text-sm text-gray-400">{subtitle}</p> {/* Removed truncate to allow wrapping */}
             </div>
 

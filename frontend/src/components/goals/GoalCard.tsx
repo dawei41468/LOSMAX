@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import type { Goal } from '../../types/goals'; // Removed GoalCategory
 // import { CATEGORIES } from '../../utils/constants'; // Not needed here, category comes from Goal prop
 
@@ -21,6 +22,7 @@ const calculateDaysRemaining = (targetDateISOString: string): number => {
 };
 
 const GoalCard: React.FC<GoalCardProps> = ({ goal, onEdit, onDelete, onToggleStatus }) => {
+  const { t } = useTranslation();
   const daysRemaining = calculateDaysRemaining(goal.target_date);
 
   const cardBorderColor = () => {
@@ -43,35 +45,35 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onEdit, onDelete, onToggleSta
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-lg font-semibold text-gray-800">{goal.title}</h3>
           <span className={`px-2 py-1 text-xs font-semibold rounded-full ${statusBadgeColor()}`}>
-            {goal.status}
+            {t(`common.status.${goal.status}`)}
           </span>
         </div>
-        {goal.description && <p className="text-sm text-gray-600 mb-2 text-left">Details: {goal.description}</p>}
-        <p className="text-sm text-gray-500 text-left">Target Date: <span className="font-medium">{new Date(goal.target_date).toLocaleDateString()}</span></p>
+        {goal.description && <p className="text-sm text-gray-600 mb-2 text-left">{t('goals.card.details')}: {goal.description}</p>}
+        <p className="text-sm text-gray-500 text-left">{t('goals.card.target_date')}: <span className="font-medium">{new Date(goal.target_date).toLocaleDateString()}</span></p>
         <p className="text-sm text-gray-500 text-left">
-          Days Remaining: <span className={`font-medium ${daysRemaining === 0 && goal.status === 'active' ? 'text-red-500' : ''}`}>
-            {daysRemaining} {daysRemaining === 0 && goal.status === 'active' ? '(Due Today/Overdue)' : ''}
+          {t('goals.card.days_remaining')}: <span className={`font-medium ${daysRemaining === 0 && goal.status === 'active' ? 'text-red-500' : ''}`}>
+            {daysRemaining} {daysRemaining === 0 && goal.status === 'active' ? t('goals.card.due_today_overdue') : ''}
           </span>
         </p>
       </div>
       <div className="mt-4 flex justify-end space-x-2">
         <button
           onClick={() => onEdit(goal)}
-          className="px-3 py-1.5 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 transition-colors" // Increased text size, adjusted padding, added rounded-md and transition
+          className="px-3 py-1.5 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 transition-colors"
         >
-          Edit
+          {t('common.edit_button')}
         </button>
         <button
           onClick={() => onToggleStatus(goal)}
-          className={`px-3 py-1.5 text-sm font-medium text-white rounded-md transition-colors ${goal.status === 'active' ? 'bg-green-500 hover:bg-green-600' : 'bg-yellow-500 hover:bg-yellow-600'}`} // Increased text size, adjusted padding, added rounded-md and transition
+          className={`px-3 py-1.5 text-sm font-medium text-white rounded-md transition-colors ${goal.status === 'active' ? 'bg-green-500 hover:bg-green-600' : 'bg-yellow-500 hover:bg-yellow-600'}`}
         >
-          {goal.status === 'active' ? 'Complete' : 'Reopen'}
+          {goal.status === 'active' ? t('goals.card.complete_button') : t('goals.card.reopen_button')}
         </button>
         <button
           onClick={() => onDelete(goal.id)}
-          className="px-3 py-1.5 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600 transition-colors" // Increased text size, adjusted padding, added rounded-md and transition
+          className="px-3 py-1.5 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600 transition-colors"
         >
-          Delete
+          {t('common.delete_button')}
         </button>
       </div>
     </div>

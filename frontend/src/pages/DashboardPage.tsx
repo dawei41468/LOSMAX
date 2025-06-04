@@ -3,7 +3,9 @@ import { AuthContext } from '../contexts/auth.context';
 import type { AuthContextType } from '../contexts/auth.types';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../services/api'; // Import api service
-import { useTranslation } from 'react-i18next'; // Import useTranslation
+import QuoteOfDay from '../components/dashboard/QuoteOfDay';
+import UserInfo from '../components/dashboard/UserInfo';
+import { Greeting } from '../components/dashboard/Greetings';
 
 // Define a type for the expected API response structure, matching Pydantic model
 interface UserPreferencesResponse {
@@ -16,7 +18,6 @@ interface UserPreferencesResponse {
 export default function DashboardPage() {
   const { isAuthenticated, userName, userId, userEmail, userRole, userLanguage } = useContext(AuthContext) as AuthContextType;
   const navigate = useNavigate();
-  const { t } = useTranslation();
 
   const [preferences, setPreferences] = useState<UserPreferencesResponse | null>(null);
   const [loadingPreferences, setLoadingPreferences] = useState(true);
@@ -63,26 +64,18 @@ export default function DashboardPage() {
         <h2 className="text-2xl font-semibold text-gray-700 mb-6">Overview</h2> 
       */}
       
+      <Greeting />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <QuoteOfDay />
         {/* Placeholder for dashboard widgets */}
-        <div className="bg-white p-6 rounded-lg shadow-md text-left"> {/* Added text-left */}
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">
-            Welcome{userName ? `, ${userName}` : ''}!
-          </h2>
-          <div className="space-y-2 text-sm">
-            <p><span className="font-medium">{t('dashboard.userId')}:</span> {userId || t('dashboard.notAvailable')}</p>
-            <p><span className="font-medium">{t('dashboard.email')}:</span> {userEmail || t('dashboard.notAvailable')}</p>
-            <p><span className="font-medium">{t('dashboard.role')}:</span> {userRole || t('dashboard.notAvailable')}</p>
-            <p><span className="font-medium">{t('dashboard.language')}:</span> {userLanguage || t('dashboard.notAvailable')}</p>
-            {preferences && (
-              <>
-                <p><span className="font-medium">{t('dashboard.morningDeadline')}:</span> {preferences.morning_deadline}</p>
-                <p><span className="font-medium">{t('dashboard.eveningDeadline')}:</span> {preferences.evening_deadline}</p>
-                <p><span className="font-medium">{t('dashboard.notifications')}:</span> {preferences.notifications_enabled ? t('dashboard.enabled') : t('dashboard.disabled')}</p>
-              </>
-            )}
-          </div>
-        </div>
+        <UserInfo
+          userName={userName}
+          userId={userId}
+          userEmail={userEmail}
+          userRole={userRole}
+          userLanguage={userLanguage}
+          preferences={preferences}
+        />
         {/* Add more dashboard widgets here as needed */}
       </div>
     </div>

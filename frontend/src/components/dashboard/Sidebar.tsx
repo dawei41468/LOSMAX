@@ -33,42 +33,42 @@ export function Sidebar({ activeRoute, className = "" }: SidebarProps) {
           className={`flex items-center gap-3 p-2 rounded hover:bg-gray-200 ${isActive('/dashboard') ? 'bg-gray-100' : 'hover:bg-gray-100'}`}
         >
           <Home className="w-6 h-6 text-gray-600 stroke-[2]" />
-          <span>{t('sidebar.dashboard')}</span>
+          <span>{t('common.dashboard')}</span>
         </Link>
         <Link
           to="/goals"
           className={`flex items-center gap-3 p-2 rounded ${isActive('/goals') ? 'bg-gray-100' : 'hover:bg-gray-100'}`}
         >
           <ClipboardList className="w-6 h-6 text-gray-600 stroke-[2]" />
-          <span>{t('sidebar.goals')}</span>
+          <span>{t('common.goals')}</span>
         </Link>
         <Link
           to="/tasks"
           className={`flex items-center gap-3 p-2 rounded ${isActive('/tasks') ? 'bg-gray-100' : 'hover:bg-gray-100'}`}
         >
           <CheckCircle className="w-6 h-6 text-gray-600 stroke-[2]" />
-          <span>{t('sidebar.tasks')}</span>
+          <span>{t('common.tasks')}</span>
         </Link>
         <Link
           to="/progress"
           className={`flex items-center gap-3 p-2 rounded ${isActive('/progress') ? 'bg-gray-100' : 'hover:bg-gray-100'}`}
         >
           <BarChart2 className="w-6 h-6 text-gray-600 stroke-[2]" />
-          <span>{t('sidebar.progress')}</span>
+          <span>{t('common.progress')}</span>
         </Link>
         <Link
           to="/settings"
           className={`flex items-center gap-3 p-2 rounded ${isActive('/settings') ? 'bg-gray-100' : 'hover:bg-gray-100'}`}
         >
           <Settings className="w-6 h-6 text-gray-600 stroke-[2]" />
-          <span>{t('sidebar.settings')}</span>
+          <span>{t('common.settings')}</span>
         </Link>
       </nav>
 
       {/* Language Switcher at the bottom */}
       <div className="absolute bottom-0 left-0 right-0 p-2 flex items-center justify-center bg-white border-t border-gray-200"> {/* Use absolute positioning and flex row */}
         <div className="text-sm font-medium text-gray-700 mr-2"> {/* Add margin right */}
-          {t('sidebar.language')} {/* Use translation key for Language */}
+          {t('common.language')} {/* Use translation key for Language */}
         </div>
         <LanguageSwitcher />
       </div>

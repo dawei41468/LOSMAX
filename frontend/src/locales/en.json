@@ -1,10 +1,29 @@
 {
+  "common": {
+    "cancel": "Cancel",
+    "confirm_delete": "Confirm Delete",
+    "deleting": "Deleting...",
+    "edit_button": "Edit",
+    "delete_button": "Delete",
+    "update_button": "Update",
+    "save_changes_button": "Save Changes",
+    "loading": "Loading...",
+    "status": {
+      "active": "Active",
+      "completed": "Completed"
+    },
+    "email": "Email",
+    "password": "Password",
+    "settings": "Settings",
+    "dashboard": "Dashboard",
+    "goals": "Goals",
+    "tasks": "Tasks",
+    "progress": "Progress",
+    "language": "Language"
+  },
   "auth": {
     "LOS": "LOS",
     "lifeOrganizationSystem": "Life Organization System",
-    "email": "Email",
-    "password": "Password",
-    "loading": "Loading...",
     "namePlaceholder": "Enter Name",
     "passwordPlaceholder": "Enter Password",
     "emailPlaceholder": "Enter Email",
@@ -34,10 +53,65 @@
       "settings": "Configure your application preferences.",
       "dashboard": "Welcome to your LOS dashboard."
     },
+    "greetings": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening",
+      "night": "Good night"
+    },
+    "user_fallback": "User",
+    "quotes": {
+      "daily": "Quote of the Day",
+      "1": "The journey of a thousand miles begins with one step.",
+      "2": "Stay hungry, stay foolish.",
+      "3": "Success is not final, failure is not fatal: It is the courage to continue that counts.",
+      "4": "The only way to do great work is to love what you do.",
+      "5": "Your time is limited, don't waste it living someone else's life.",
+      "6": "The future belongs to those who believe in the beauty of their dreams.",
+      "7": "Don't watch the clock; do what it does. Keep going.",
+      "8": "Believe you can and you're halfway there.",
+      "9": "The secret of getting ahead is getting started.",
+      "10": "It does not matter how slowly you go as long as you do not stop.",
+      "11": "Our greatest weakness lies in giving up. The most certain way to succeed is always to try just one more time.",
+      "12": "The only limit to our realization of tomorrow is our doubts of today.",
+      "13": "You are never too old to set another goal or to dream a new dream.",
+      "14": "Act as if what you do makes a difference. It does.",
+      "15": "What you get by achieving your goals is not as important as what you become by achieving your goals.",
+      "16": "The best way to predict the future is to create it.",
+      "17": "You don't have to be great to start, but you have to start to be great.",
+      "18": "The harder you work for something, the greater you'll feel when you achieve it.",
+      "19": "Dream bigger. Do bigger.",
+      "20": "Don't stop when you're tired. Stop when you're done.",
+      "21": "Wake up with determination. Go to bed with satisfaction.",
+      "22": "Do something today that your future self will thank you for.",
+      "23": "Little things make big days.",
+      "24": "It's going to be hard, but hard does not mean impossible.",
+      "25": "Don't wait for opportunity. Create it.",
+      "26": "Sometimes we're tested not to show our weaknesses, but to discover our strengths.",
+      "27": "The key to success is to focus on goals, not obstacles.",
+      "28": "Dream it. Believe it. Build it.",
+      "29": "Small steps every day lead to big results.",
+      "30": "You miss 100% of the shots you don't take.",
+      "31": "Commit to what happens rather than how it happens.",
+      "32": "Commit to achieving predetermined results rather than clinging to routines.",
+      "33": "Be willing to challenge any difficulty.",
+      "34": "Be willing to shift mindset and correct actions.",
+      "35": "Objective facts are the ultimate authority.",
+      "36": "Be willing to let go.",
+      "37": "Clear vision and goals, with focus on action plans.",
+      "38": "Act with urgency rather than desperation.",
+      "39": "Details, details, details and a complete plan.",
+      "40": "You are rigorous, disciplined, and persevering.",
+      "41": "Fervent desire, firm belief, effective action, iron will.",
+      "42": "Life is a journey of inspiration and calling.",
+      "43": "Enrolment: Through interaction, inspire others to see possibilities and take action.",
+      "44": "CNA spirit purpose: Inspire calling, contribute to creating a workable world, achieve self, achieve others, achieve society.",
+      "45": "The key to success is to focus on goals, not obstacles.",
+      "46": "Highest level of enrolment: Inspire others to enhance life value and take action.",
+      "47": "CNA spirit purpose: Inspire people to commit, live out life positions, create extraordinary successful lives, pursue excellence, continuously improve, and move toward life vision."
+    },
     "userId": "User ID",
-    "email": "Email",
     "role": "Role",
-    "language": "Language",
     "morningDeadline": "Morning Deadline",
     "eveningDeadline": "Evening Deadline",
     "notifications": "Notifications",
@@ -46,16 +120,9 @@
     "notAvailable": "N/A"
   },
   "sidebar": {
-    "losmax": "LOS",
-    "dashboard": "Dashboard",
-    "goals": "Goals",
-    "tasks": "Tasks",
-    "progress": "Progress",
-    "settings": "Settings",
-    "language": "Language"
+    "losmax": "LOS"
   },
   "profile": {
-    "settings": "Settings",
     "signout": "Sign Out"
   },
   "settings": {
@@ -77,6 +144,7 @@
       "new_password": "New Password",
       "confirm_password": "Confirm New Password",
       "delete_confirm_title": "Confirm Account Deletion",
+      "item_name": "Account",
       "delete_confirm_message_p1": "Are you sure you want to permanently delete your account?",
       "delete_confirm_message_p2": "This action will remove all data associated with {{email}}.",
       "delete_confirm_warning": "This action cannot be undone."
@@ -92,12 +160,8 @@
       "notifications_description": "Enable or disable application notifications."
     },
     "buttons": {
-      "update": "Update",
       "change_password": "Change Password",
-      "delete_account": "Delete Account",
-      "cancel": "Cancel",
-      "confirm_delete": "Confirm Delete",
-      "deleting": "Deleting..."
+      "delete_account": "Delete Account"
     },
     "toast": {
       "error_title": "Error",
@@ -111,7 +175,7 @@
       "storage_error": "Storage access error. Please ensure your browser allows site data.",
       "password_mismatch": "New passwords do not match.",
       "password_changed_message_logout": "Password changed successfully. Please log in again with your new password.",
-      "password_change_error": "Failed to change your password. Please check your current password and try again."
+      "password_change_error": "更改密码失败。请检查您当前的密码并重试。"
     },
     "about": {
       "title": "About LOS",
@@ -130,6 +194,52 @@
       "step4": "Customize your experience in the 'Settings' page.",
       "step5": "Stay organized and achieve more!",
       "version_info": "Version 1.0.0 (Alpha)"
+    }
+  },
+  "confirm_delete_dialog": {
+    "title": "Confirm Deletion of {{item}}",
+    "message": "Are you sure you want to delete this {{item}}? This action cannot be undone.",
+    "warning": "This action is permanent."
+  },
+  "goals": {
+    "create_new": "Create New Goal",
+    "error_message": "Error: {{error}}",
+    "loading_message": "Loading goals...",
+    "no_goals_found": "No goals found for the \"{{filter}}\" filter. Try creating one!",
+    "filters": {
+      "all": "All",
+      "active": "Active",
+      "completed": "Completed"
+    },
+    "categories": {
+      "Family": "Family Goals",
+      "Work": "Work Goals",
+      "Health": "Health Goals",
+      "Personal": "Personal Goals"
+    },
+    "card": {
+      "details": "Details",
+      "target_date": "Target Date",
+      "days_remaining": "Days Remaining",
+      "due_today_overdue": "(Due Today/Overdue)",
+      "complete_button": "Complete",
+      "reopen_button": "Reopen"
+    },
+    "dialog": {
+      "date_error": "Target date must be today or a future date.",
+      "edit_title": "Edit Goal",
+      "create_title": "Create New Goal",
+      "your_goal_label": "Your Goal",
+      "description_label": "Description (Optional)",
+      "category_label": "Category",
+      "target_date_label": "Target Date",
+      "create_goal_button": "Create Goal",
+      "categories": {
+        "Family": "Family",
+        "Work": "Work",
+        "Health": "Health",
+        "Personal": "Personal"
+      }
     }
   }
 }
