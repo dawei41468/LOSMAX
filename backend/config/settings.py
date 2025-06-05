@@ -11,7 +11,32 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     
     class Config:
-        env_file = Path(__file__).parent.parent / ".env"
+        env_file_path = Path(__file__).parent.parent
+        env_file = env_file_path / ".env"
         env_file_encoding = "utf-8"
+
+        @classmethod
+        def customise_sources(
+            cls,
+            init_settings,
+            env_settings,
+            dotenv_settings,
+            file_secret_settings,
+        ):
+            from pydantic_settings import SettingsConfigDict
+            import os
+
+            app_env = os.getenv('APP_ENV', 'development')
+            if app_env == 'production':
+                dotenv_settings = SettingsConfigDict(env_file=cls.env_file_path / ".env.production", env_file_encoding="utf-8")
+            else:
+                dotenv_settings = SettingsConfigDict(env_file=cls.env_file_path / ".env.development", env_file_encoding="utf-8")
+
+            return (
+                init_settings,
+                env_settings,
+                dotenv_settings,
+                file_secret_settings,
+            )
 
 settings = Settings()
