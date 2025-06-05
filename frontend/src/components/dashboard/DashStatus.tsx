@@ -30,7 +30,7 @@ const DashStatus: React.FC<DashStatusProps> = ({ todayTasks, activeGoals }) => {
       <div className="mb-6">
         <h3 className="text-lg font-medium text-gray-700">{t('dashboard.task_completion')}</h3>
         <div className="flex items-center mt-2">
-          <div className="w-full bg-gray-100 rounded-full h-2.5 dark:bg-gray-700">
+          <div className="w-full bg-gray-100 rounded-full h-2.5 dark:bg-gray-700 ml-2">
             <div
               className="bg-blue-600 h-2.5 rounded-full"
               style={{ width: `${completionPercentage}%` }}
@@ -49,7 +49,7 @@ const DashStatus: React.FC<DashStatusProps> = ({ todayTasks, activeGoals }) => {
           <p className="text-sm text-gray-500">{t('dashboard.no_active_goals')}</p>
         )}
         {Object.keys(groupedGoalsByCategory).length > 0 && (
-          <div className="space-y-3">
+          <div className="space-y-3 ml-2" >
             {(['Family', 'Work', 'Health', 'Personal'] as GoalCategory[])
               .filter(category => groupedGoalsByCategory[category] && groupedGoalsByCategory[category].length > 0)
               .map(category => (
