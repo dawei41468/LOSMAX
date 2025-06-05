@@ -170,7 +170,7 @@ class GoalService:
             "status": "active" # Only count active goals
         })
         if count >= 3:  # Max 3 active goals per category
-            raise ValueError("Maximum 3 active goals allowed per category")
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Maximum 3 active goals allowed per category")
 
 # Module-level function exports for convenience
 _goal_service = GoalService()

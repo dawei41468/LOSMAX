@@ -99,13 +99,21 @@ export default function TasksPage() {
   };
 
   const openEditDialog = (task: Task) => {
-    setEditingTask(task);
-    setIsTaskDialogOpen(true);
+    if (task.id) {
+      setEditingTask(task);
+      setIsTaskDialogOpen(true);
+    } else {
+      setError("Cannot edit task without a valid ID.");
+    }
   };
 
   const confirmDeleteTask = (taskId: string) => {
-    setTaskToDelete(taskId);
-    setShowDeleteConfirm(true);
+    if (taskId) {
+      setTaskToDelete(taskId);
+      setShowDeleteConfirm(true);
+    } else {
+      setError("Cannot delete task without a valid ID.");
+    }
   };
 
   const handleDeleteTask = async () => {
@@ -133,12 +141,16 @@ export default function TasksPage() {
   };
 
   const handleToggleStatus = async (task: Task) => {
+    if (!task.id) {
+      setError("Cannot update status of task without a valid ID.");
+      return;
+    }
     setIsLoading(true);
     setError(null);
     const newStatus = task.status === 'pending' ? 'complete' : task.status === 'complete' ? 'incomplete' : 'pending';
     try {
-      await updateTask(task.id, { status: newStatus });
-      fetchUserTasks(currentFilter); // Refetch tasks
+      const updatedTask = await updateTask(task.id, { status: newStatus });
+      setTasks(prevTasks => prevTasks.map(t => t.id === updatedTask.id ? updatedTask : t));
     } catch (err: unknown) {
       console.error('Failed to update task status:', err);
       let errorMessage = 'Failed to update task status.';
@@ -168,12 +180,12 @@ export default function TasksPage() {
   }, {} as Record<string, Record<string, Task[]>>);
 
   return (
-    <div className="py-6">
+    <div className="py-6 no-scrollbar" style={{ overflowY: 'auto' }}>
       {/* Header Section */}
       <div className="px-4 flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6">
         <button
           onClick={openCreateDialog}
-          className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none"
         >
           {t('tasks.create_new')}
         </button>
@@ -217,8 +229,12 @@ export default function TasksPage() {
 
       {isLoading && <p className="text-center py-4">{t('common.loading')}</p>}
       {!isLoading && tasks.length === 0 && !error && (
-        <p className="text-center py-4 text-gray-500">
-          {t('tasks.no_tasks_found', { filter: t(`tasks.filters.${currentFilter}`) })}
+        <p className="text-center py-4 text-gray-500 text-xl">
+          {currentFilter === 'today' ? (
+            <em>{t('tasks.no_tasks_found_today')}</em>
+          ) : (
+            t('tasks.no_tasks_found', { filter: t(`tasks.filters.${currentFilter}`) })
+          )}
         </p>
       )}
 
@@ -236,9 +252,9 @@ export default function TasksPage() {
                     {goals.find(g => g.id === goalId)?.title || t('tasks.uncategorized')}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {tasksInGoal.map(task => (
+                    {tasksInGoal.map((task, index) => (
                       <TaskCard
-                        key={task.id}
+                        key={task.id || `task-${index}`}
                         task={task}
                         onEdit={openEditDialog}
                         onDelete={() => confirmDeleteTask(task.id)}

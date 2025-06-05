@@ -175,7 +175,7 @@
       "storage_error": "Storage access error. Please ensure your browser allows site data.",
       "password_mismatch": "New passwords do not match.",
       "password_changed_message_logout": "Password changed successfully. Please log in again with your new password.",
-      "password_change_error": "更改密码失败。请检查您当前的密码并重试。"
+      "password_change_error": "Failed to change password. Please check your current password and try again."
     },
     "about": {
       "title": "About LOS",
@@ -206,6 +206,7 @@
     "error_message": "Error: {{error}}",
     "loading_message": "Loading goals...",
     "no_goals_found": "No goals found for the \"{{filter}}\" filter. Try creating one!",
+    "max_active_goals_reached": "Maximum of 3 active goals allowed per category.",
     "filters": {
       "all": "All",
       "active": "Active",
@@ -246,6 +247,7 @@
     "create_new": "Create New Task",
     "error_message": "Error: {{error}}",
     "no_tasks_found": "No tasks found for the \"{{filter}}\" filter. Try creating one!",
+    "no_tasks_found_today": "What can you do today to make progress on your goals?",
     "filters": {
       "today": "Today",
       "all": "All"
@@ -263,6 +265,7 @@
     "goalCannotChange": "Goal cannot be changed once set",
     "create": "Create Task",
     "edit": "Edit Task",
+    "update": "Update Task",
     "markComplete": "Mark Complete",
     "markIncomplete": "Mark Incomplete",
     "markPending": "Mark Pending"

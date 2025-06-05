@@ -250,12 +250,17 @@ export async function getTasks(status?: 'pending' | 'complete' | 'incomplete', f
     try {
       const errorData = await response.json();
       throw new Error(errorData.detail || `Failed to fetch tasks. Status: ${response.status}`);
-    } catch (_) { // eslint-disable-line no-unused-vars
+    } catch (e) {
       throw new Error(`Failed to fetch tasks. Status: ${response.status}`);
     }
   }
 
-  return await response.json() as Task[];
+  const rawData = await response.json();
+  const tasks = rawData.map((task: { _id?: string; id?: string; [key: string]: unknown }) => ({
+    ...task,
+    id: task._id || task.id
+  })) as Task[];
+  return tasks;
 }
 
 export interface CreateTaskPayload {

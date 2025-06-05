@@ -5,6 +5,7 @@ from models.task import Task, TaskCreate
 from database import db
 from fastapi import HTTPException, status
 from services.goal_service import get_goal_by_id_and_user
+from bson import ObjectId
 
 class TaskService:
     def __init__(self):
@@ -34,13 +35,28 @@ class TaskService:
 
     async def get_task(self, task_id: str) -> Optional[Task]:
         """Get a task by ID"""
-        result = await self.collection.find_one({"_id": task_id})
-        return Task(**result) if result else None
+        from bson import ObjectId
+        try:
+            result = await self.collection.find_one({"_id": ObjectId(task_id)})
+            if result:
+                result['id'] = str(result.get('_id', ''))
+                return Task(**result)
+        except ValueError:
+            # If the task_id is not a valid ObjectId, try as string
+            result = await self.collection.find_one({"_id": task_id})
+            if result:
+                result['id'] = str(result.get('_id', ''))
+                return Task(**result)
+        return None
 
     async def get_tasks_by_user(self, user_id: str) -> list[Task]:
         """Get all tasks for a user"""
         cursor = self.collection.find({"user_id": user_id})
-        return [Task(**doc) async for doc in cursor]
+        tasks = []
+        async for doc in cursor:
+            doc['id'] = str(doc.get('_id', ''))
+            tasks.append(Task(**doc))
+        return tasks
 
     async def get_tasks_by_goal(self, goal_id: str, user_id: str) -> list[Task]:
         """Get all tasks for a specific goal"""
@@ -56,24 +72,51 @@ class TaskService:
                 detail="Task not found or not authorized"
             )
 
-        result = await self.collection.find_one_and_update(
-            {"_id": task_id},
-            {"$set": update_data},
-            return_document=ReturnDocument.AFTER
-        )
-        return Task(**result) if result else None
+        from bson import ObjectId
+        try:
+            result = await self.collection.find_one_and_update(
+                {"_id": ObjectId(task_id)},
+                {"$set": update_data},
+                return_document=ReturnDocument.AFTER
+            )
+            if result:
+                result['id'] = str(result.get('_id', ''))
+                return Task(**result)
+        except ValueError:
+            # If the task_id is not a valid ObjectId, try as string
+            result = await self.collection.find_one_and_update(
+                {"_id": task_id},
+                {"$set": update_data},
+                return_document=ReturnDocument.AFTER
+            )
+            if result:
+                result['id'] = str(result.get('_id', ''))
+                return Task(**result)
+        return None
 
     async def delete_task(self, task_id: str, user_id: str) -> bool:
         """Delete a task"""
-        existing_task = await self.get_task(task_id)
-        if not existing_task or existing_task.user_id != user_id:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Task not found or not authorized"
-            )
-            
-        result = await self.collection.delete_one({"_id": task_id})
-        return result.deleted_count > 0
+        from bson import ObjectId
+        try:
+            existing_task = await self.get_task(task_id)
+            if not existing_task or existing_task.user_id != user_id:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Task not found or not authorized"
+                )
+                
+            result = await self.collection.delete_one({"_id": ObjectId(task_id)})
+            return result.deleted_count > 0
+        except ValueError:
+            # If the task_id is not a valid ObjectId, try as string
+            existing_task = await self.get_task(task_id)
+            if not existing_task or existing_task.user_id != user_id:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Task not found or not authorized"
+                )
+            result = await self.collection.delete_one({"_id": task_id})
+            return result.deleted_count > 0
 
 # Module-level function exports for convenience
 _task_service = TaskService()

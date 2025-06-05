@@ -93,6 +93,11 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ isOpen, onClose, onSubmit, init
               {initialTask && (
                 <p className="text-xs text-gray-500 mt-1">{t('tasks.goalCannotChange')}</p>
               )}
+              {goalId && goals.find(g => g.id === goalId)?.description && (
+                <p className="text-xs text-gray-500 mt-1 italic">
+                  {goals.find(g => g.id === goalId)?.description}
+                </p>
+              )}
             </div>
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={onClose}>

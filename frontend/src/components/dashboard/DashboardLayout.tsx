@@ -87,7 +87,7 @@ export function DashboardLayout({ children, route }: DashboardLayoutProps) {
             {isAuthenticated && <ProfileMenu />}
           </div>
         </div>
-        <main className="flex-1 overflow-auto px-0 bg-white">
+        <main className="flex-1 overflow-auto px-0 bg-white no-scrollbar">
           {children}
         </main>
       </div>

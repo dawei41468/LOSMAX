@@ -10,6 +10,7 @@ import type { Goal, GoalStatus, GoalCategory } from '../types/goals';
 import GoalDialog from '../components/goals/GoalDialog';
 import GoalCard from '../components/goals/GoalCard';
 import ConfirmDeleteDialog from '../components/ui/ConfirmDeleteDialog'; // Import the new dialog
+import { toast } from 'sonner'; // Import toast from sonner
 
 // CATEGORIES_PAGE_LEVEL removed as GoalDialog defines its own or it should come from a shared constant
 
@@ -21,7 +22,6 @@ export default function GoalsPage() {
   const navigate = useNavigate();
   const [goals, setGoals] = useState<Goal[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>('active');
   const [isGoalDialogOpen, setIsGoalDialogOpen] = useState(false);
   const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
@@ -31,7 +31,6 @@ export default function GoalsPage() {
   const fetchUserGoals = useCallback(async (filter: FilterStatus) => {
     if (!isAuthenticated) return;
     setIsLoading(true);
-    setError(null);
     try {
       const fetchedGoals = await getGoals(filter === 'all' ? undefined : filter);
       setGoals(fetchedGoals);
@@ -43,11 +42,11 @@ export default function GoalsPage() {
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      setError(errorMessage);
+      toast.error(t('goals.error_message', { error: errorMessage }));
     } finally {
       setIsLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, t]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -60,7 +59,6 @@ export default function GoalsPage() {
 
   const handleDialogSubmit = async (data: Omit<Goal, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'days_remaining' | 'completed_at'>) => {
     setIsLoading(true);
-    setError(null);
     try {
       if (editingGoal) {
         // Ensure target_date is in the correct string format if it's a Date object
@@ -86,7 +84,7 @@ export default function GoalsPage() {
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      setError(errorMessage);
+      toast.error(t('goals.error_message', { error: errorMessage }));
     } finally {
       setIsLoading(false);
       setIsGoalDialogOpen(false);
@@ -113,7 +111,6 @@ export default function GoalsPage() {
     if (!goalToDelete) return;
 
     setIsLoading(true);
-    setError(null);
     try {
       await deleteGoal(goalToDelete);
       fetchUserGoals(currentFilter); // Refetch goals
@@ -125,7 +122,7 @@ export default function GoalsPage() {
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      setError(errorMessage);
+      toast.error(t('goals.error_message', { error: errorMessage }));
     } finally {
       setIsLoading(false);
       setShowDeleteConfirm(false); // Close the confirmation dialog
@@ -135,7 +132,6 @@ export default function GoalsPage() {
 
   const handleToggleStatus = async (goal: Goal) => {
     setIsLoading(true);
-    setError(null);
     const newStatus = goal.status === 'active' ? 'completed' : 'active';
     try {
       await updateGoal(goal.id, { status: newStatus });
@@ -148,7 +144,7 @@ export default function GoalsPage() {
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      setError(errorMessage);
+      toast.error(t('goals.error_message', { error: errorMessage }));
     } finally {
       setIsLoading(false);
     }
@@ -161,19 +157,16 @@ export default function GoalsPage() {
 
 
   return (
-    <div className="py-6"> {/* Removed px-4, kept py-6 for vertical spacing */}
+    <div className="py-6 no-scrollbar" style={{ overflowY: 'auto' }}> {/* Removed px-4, kept py-6 for vertical spacing */}
       {/* Header Section */}
       <div className="px-4 flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6"> {/* Added px-4 here */}
         <button
           onClick={openCreateDialog}
-          className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none"
         >
           {t('goals.create_new')}
         </button>
       </div>
-
-      {/* Error Message */}
-      {error && <div className="mx-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">{t('goals.error_message', { error })}</div>}
 
       {/* Filter Buttons */}
       <div className="px-4 mb-6 flex flex-wrap gap-2 justify-center"> {/* Added px-4 here, use flex-wrap and gap */}
@@ -209,7 +202,7 @@ export default function GoalsPage() {
       />
 
       {isLoading && <p className="text-center py-4">{t('common.loading')}</p>}
-      {!isLoading && goals.length === 0 && !error && (
+      {!isLoading && goals.length === 0 && (
         <p className="text-center py-4 text-gray-500">
           {t('goals.no_goals_found', { filter: t(`goals.filters.${currentFilter}`) })}
         </p>

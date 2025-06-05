@@ -87,7 +87,7 @@ const SettingsPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col sm:p-2 max-w-4xl mx-auto">
+    <div className="flex flex-col sm:p-2 max-w-4xl mx-auto text-left">
       <div className="flex border-b border-gray-200">
         <button
           className={`flex-grow px-3 py-3 sm:flex-grow-0 sm:px-4 sm:py-2 font-medium text-sm sm:text-base ${activeTab === 'preferences' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
@@ -107,8 +107,8 @@ const SettingsPage: React.FC = () => {
         {activeTab === 'preferences' && (
           <div className="space-y-6">
             <div className="p-4 border border-gray-200 rounded-lg">
-              <h2 className="text-xl font-medium mb-3">{t('settings.account.info_title')}</h2>
-              <p className="text-sm text-gray-500 mb-4">{t('settings.account.info_description')}</p>
+              <h2 className="text-xl text-center font-medium mb-3">{t('settings.account.info_title')}</h2>
+              <p className="text-sm text-center text-gray-500 mb-4">{t('settings.account.info_description')}</p>
               
               <div className="space-y-4">
                 <div>
@@ -178,8 +178,8 @@ const SettingsPage: React.FC = () => {
             </div>
             
             <div className="p-4 border border-gray-200 rounded-lg">
-              <h2 className="text-xl font-medium mb-3">{t('settings.preferences.deadlines_title')}</h2>
-              <p className="text-sm text-gray-500 mb-4">{t('settings.preferences.deadlines_description')}</p>
+              <h2 className="text-xl text-center font-medium mb-3">{t('settings.preferences.deadlines_title')}</h2>
+              <p className="text-sm text-center text-gray-500 mb-4">{t('settings.preferences.deadlines_description')}</p>
               <div className="space-y-4">
                 <div>
                   <TimePicker
@@ -208,7 +208,7 @@ const SettingsPage: React.FC = () => {
               </div>
             </div>
             <div className="p-4 border border-gray-200 rounded-lg">
-              <h2 className="text-xl font-medium mb-3">{t('settings.preferences.notifications_title')}</h2>
+              <h2 className="text-xl text-center font-medium mb-3">{t('settings.preferences.notifications_title')}</h2>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-500">{t('settings.preferences.notifications_description')}</span>
                 <div className="focus:ring-0 focus:ring-offset-0">
@@ -227,8 +227,8 @@ const SettingsPage: React.FC = () => {
             </div>
 
             <div className="p-4 border border-gray-200 rounded-lg">
-              <h2 className="text-xl font-medium mb-3">{t('settings.account.actions_title')}</h2>
-              <p className="text-sm text-gray-500 mb-4">{t('settings.account.actions_description')}</p>
+              <h2 className="text-xl text-center font-medium mb-3">{t('settings.account.actions_title')}</h2>
+              <p className="text-sm text-center text-gray-500 mb-4">{t('settings.account.actions_description')}</p>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <button
@@ -372,18 +372,19 @@ const SettingsPage: React.FC = () => {
         )}
          {activeTab === 'about' && (
           <div className="p-4 border border-gray-200 rounded-lg">
-            <h2 className="text-xl font-medium mb-2">{t('settings.about.title')}</h2>
-            <h3 className="text-lg text-gray-600 mb-4">{t('settings.about.subtitle')}</h3>
+            <h2 className="text-xl font-medium mb-2 text-center">{t('settings.about.title')}</h2>
+            <h3 className="text-lg text-gray-600 mb-4 text-center">{t('settings.about.subtitle')}</h3>
             
             <div className="space-y-4">
               <div>
-                <h4 className="font-medium mb-1">{t('settings.about.what_is_title')}</h4>
+                <h4 className="font-medium mb-1 text-center">{t('settings.about.what_is_title')}</h4>
                 <p className="text-sm text-gray-600">
-                  {t('settings.about.what_is_description')}
+                  <span className="ml-6">{t('settings.about.what_is_description').split('. ')[0]}.</span>{' '}
+                  {t('settings.about.what_is_description').split('. ').slice(1).join('. ')}
                 </p>
                 
                 <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-300">
-                  <h4 className="font-medium text-blue-800 mb-2">{t('settings.about.features_title')}</h4>
+                  <h4 className="font-medium text-blue-800 mb-2 text-center">{t('settings.about.features_title')}</h4>
                   <ul className="text-sm text-blue-600 list-disc pl-5 space-y-1">
                     <li>{t('settings.about.feature1')}</li>
                     <li>{t('settings.about.feature2')}</li>
@@ -394,7 +395,7 @@ const SettingsPage: React.FC = () => {
               </div>
               
               <div>
-                <h4 className="font-medium mb-1">{t('settings.about.how_to_use_title')}</h4>
+                <h4 className="font-medium mb-1 text-center">{t('settings.about.how_to_use_title')}</h4>
                 <ol className="text-sm text-gray-600 list-decimal pl-5 space-y-1">
                   <li>{t('settings.about.step1')}</li>
                   <li>{t('settings.about.step2')}</li>

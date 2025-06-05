@@ -206,6 +206,7 @@
     "error_message": "错误：{{error}}",
     "loading_message": "正在加载目标...",
     "no_goals_found": "在“{{filter}}”筛选器下未找到目标。尝试创建一个！",
+    "max_active_goals_reached": "每个类别最多允许3个活跃目标。",
     "filters": {
       "all": "所有",
       "active":"活跃",
@@ -246,6 +247,7 @@
     "create_new": "创建新任务",
     "error_message": "错误：{{error}}",
     "no_tasks_found": "在“{{filter}}”筛选器下未找到任务。尝试创建一个！",
+    "no_tasks_found_today": "你今天能做些什么来推动你的目标进展？",
     "filters": {
       "today": "今天",
       "all": "全部"

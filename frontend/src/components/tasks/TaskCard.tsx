@@ -2,7 +2,7 @@ import React from 'react';
 import type { Task } from '../../services/api';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '../ui/card';
-import { Button } from '../ui/button';
+import { Edit, Check, Trash2 } from 'lucide-react';
 
 interface TaskCardProps {
   task: Task;
@@ -17,35 +17,35 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onToggleSta
   return (
     <Card className="shadow-md hover:shadow-lg transition-shadow duration-200">
       <CardContent className="p-4">
-        <h3 className="text-lg font-semibold mb-2">{task.title}</h3>
-        <p className="text-sm text-gray-600">
-          {t('tasks.status')}: {t(`tasks.statuses.${task.status}`)}
+        <h3 className="text-lg font-semibold mb-2 mt-2 text-left">{task.title}</h3>
+        <p className="text-sm text-gray-600 text-left">
+          {t('tasks.status')}: <span className={`${task.status === 'complete' ? 'text-green-600 font-bold' : task.status === 'incomplete' ? 'text-red-600 font-bold' : 'text-gray-600'}`}>{t(`tasks.statuses.${task.status}`)}</span>
         </p>
-        <div className="mt-4 flex justify-between">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onToggleStatus(task)}
-            className="text-blue-600 border-blue-600 hover:bg-blue-50"
+        <div className="mt-4 flex justify-center space-x-8">
+          <button
+            onClick={() => onEdit(task)}
+            aria-label={t('common.edit_button')}
+            className="p-2 rounded-md transition-colors"
+            disabled={!task.id}
           >
-            {task.status === 'pending' ? t('tasks.markComplete') : task.status === 'complete' ? t('tasks.markIncomplete') : t('tasks.markPending')}
-          </Button>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onEdit(task)}
-            >
-              {t('common.edit')}
-            </Button>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => onDelete(task.id)}
-            >
-              {t('common.delete')}
-            </Button>
-          </div>
+            <Edit className={`w-5 h-5 ${task.id ? 'text-blue-500' : 'text-gray-300'}`} />
+          </button>
+          <button
+            onClick={() => onToggleStatus(task)}
+            aria-label={task.status === 'pending' ? t('tasks.markComplete') : task.status === 'complete' ? t('tasks.markIncomplete') : t('tasks.markPending')}
+            className={`p-2 rounded-md transition-colors ${task.status === 'pending' ? 'hover:text-green-600' : task.status === 'complete' ? 'hover:text-yellow-600' : 'hover:text-blue-600'}`}
+            disabled={!task.id}
+          >
+            <Check className={`w-5 h-5 ${task.id ? (task.status === 'pending' ? 'text-green-500' : task.status === 'complete' ? 'text-yellow-500' : 'text-blue-500') : 'text-gray-300'}`} />
+          </button>
+          <button
+            onClick={() => onDelete(task.id)}
+            aria-label={t('common.delete_button')}
+            className="p-2 rounded-md transition-colors hover:text-red-600"
+            disabled={!task.id}
+          >
+            <Trash2 className={`w-5 h-5 ${task.id ? 'text-red-500' : 'text-gray-300'}`} />
+          </button>
         </div>
       </CardContent>
     </Card>
