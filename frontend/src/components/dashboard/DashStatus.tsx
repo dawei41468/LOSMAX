@@ -56,7 +56,7 @@ const DashStatus: React.FC<DashStatusProps> = ({ todayTasks, activeGoals }) => {
                 <div key={category} className="flex items-center">
                   <CategoryHeader category={category} />
                   <span className={`ml-2 text-sm font-medium ${getCategoryColorClass(category, 'text')}`}>
-                    ({groupedGoalsByCategory[category].length})
+                    ({groupedGoalsByCategory[category].length}/3)
                   </span>
                 </div>
               ))}
