@@ -83,7 +83,7 @@ function AuthFormComponent({
             name="email"
             type="email"
             placeholder={t('auth.emailPlaceholder')}
-            autoComplete="email"
+            autoComplete="username"
             required
             className="w-full px-2 py-4 sm:py-3 border-0 border-b border-gray-200 focus:border-gray-400 focus:ring-0 focus:outline-none rounded-none text-lg sm:text-base"
           />

@@ -42,6 +42,28 @@ const SettingsPage: React.FC = () => {
 
   const [isDeletingAccount, setIsDeletingAccount] = useState(false); // Renamed for clarity
 
+  // Fetch user preferences on component mount
+  React.useEffect(() => {
+    const fetchPreferences = async () => {
+      try {
+        const response = await api.get<UserPreferencesResponse>('/preferences');
+        setMorningDeadline(response.data.morning_deadline);
+        setEveningDeadline(response.data.evening_deadline);
+        setNotificationsEnabled(response.data.notifications_enabled);
+      } catch (error: unknown) {
+        console.error('Failed to fetch preferences:', error);
+        let errorMessage = t('settings.toast.fetch_preferences_error');
+        if (axios.isAxiosError(error) && error.response?.data?.detail) {
+          errorMessage = error.response.data.detail;
+        } else if (typeof error === 'object' && error !== null && 'response' in error && typeof (error as { response?: { data?: { error?: string } } }).response?.data?.error === 'string') {
+          errorMessage = (error as { response: { data: { error: string } } }).response.data.error;
+        }
+        toast.error(errorMessage);
+      }
+    };
+    fetchPreferences();
+  }, [t]); // Depend on t to re-fetch if language changes
+
   const handleDeleteAccount = async () => {
     setIsDeletingAccount(true);
     try {
@@ -275,8 +297,8 @@ const SettingsPage: React.FC = () => {
                   setIsChangingPassword(true);
                   try {
                     await api.patch('/auth/change-password', {
-                      currentPassword,
-                      newPassword
+                      current_password: currentPassword,
+                      new_password: newPassword
                     });
                     
                     setShowPasswordChange(false);
@@ -292,7 +314,10 @@ const SettingsPage: React.FC = () => {
                     console.error('Password change failed:', error);
                     let errorMessage = t('settings.toast.password_change_error');
                      if (axios.isAxiosError(error) && error.response?.data?.detail) {
-                         errorMessage = error.response.data.detail;
+                         // If detail is an object (e.g., Pydantic validation errors), stringify it
+                         errorMessage = typeof error.response.data.detail === 'string'
+                           ? error.response.data.detail
+                           : JSON.stringify(error.response.data.detail);
                      } else if (typeof error === 'object' && error !== null && 'response' in error && typeof (error as { response?: { data?: { error?: string } } }).response?.data?.error === 'string') {
                          errorMessage = (error as { response: { data: { error: string } } }).response.data.error;
                      }
@@ -303,6 +328,8 @@ const SettingsPage: React.FC = () => {
                 }}
                 noValidate
               >
+                {/* Hidden username field for accessibility */}
+                <input type="text" name="username" autoComplete="username" className="hidden" value={authUserEmail || ''} readOnly />
                 <div className="space-y-4">
                   <div>
                     <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-1 text-left">

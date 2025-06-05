@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import TaskDialog from '../components/tasks/TaskDialog';
 import TaskCard from '../components/tasks/TaskCard';
 import ConfirmDeleteDialog from '../components/ui/ConfirmDeleteDialog';
+import { toast } from 'sonner'; // Import toast from sonner
 
 type FilterType = 'today' | 'all';
 
@@ -21,7 +22,6 @@ export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [goals, setGoals] = useState<Goal[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [currentFilter, setCurrentFilter] = useState<FilterType>('today');
   const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -31,7 +31,6 @@ export default function TasksPage() {
   const fetchUserTasks = useCallback(async (filter: FilterType) => {
     if (!isAuthenticated) return;
     setIsLoading(true);
-    setError(null);
     try {
       const fetchedTasks = await getTasks(undefined, filter);
       const fetchedGoals = await getGoals('active');
@@ -39,22 +38,20 @@ export default function TasksPage() {
       setGoals(fetchedGoals);
     } catch (err: unknown) {
       console.error('Failed to fetch tasks or goals:', err);
-      // Check if the error message contains "404" to handle "Not Found" gracefully
-      if (err instanceof Error && err.message.includes('404')) {
-        setTasks([]); // Set tasks to empty array to show "no tasks found" message
-      } else {
-        let errorMessage = 'Failed to load tasks or goals.';
-        if (err instanceof Error) {
-          errorMessage = err.message;
-        } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
-          errorMessage = (err as { detail: string }).detail;
+      let errorMessage = 'Failed to load tasks or goals.';
+      if (err instanceof Error) {
+        errorMessage = err.message;
+        if (err.message.includes('404')) {
+          setTasks([]); // Set tasks to empty array to show "no tasks found" message
         }
-        setError(errorMessage);
+      } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
+        errorMessage = (err as { detail: string }).detail;
       }
+      toast.error(t('tasks.error_message', { error: errorMessage }));
     } finally {
       setIsLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, t]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -66,7 +63,6 @@ export default function TasksPage() {
 
   const handleDialogSubmit = async (data: Omit<Task, 'id' | 'user_id' | 'created_at'>) => {
     setIsLoading(true);
-    setError(null);
     try {
       if (editingTask) {
         await updateTask(editingTask.id, { title: data.title });
@@ -85,7 +81,7 @@ export default function TasksPage() {
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      setError(errorMessage);
+      toast.error(t('tasks.error_message', { error: errorMessage }));
     } finally {
       setIsLoading(false);
       setIsTaskDialogOpen(false);
@@ -103,7 +99,7 @@ export default function TasksPage() {
       setEditingTask(task);
       setIsTaskDialogOpen(true);
     } else {
-      setError("Cannot edit task without a valid ID.");
+      toast.error(t('tasks.error_message', { error: "Cannot edit task without a valid ID." }));
     }
   };
 
@@ -112,7 +108,7 @@ export default function TasksPage() {
       setTaskToDelete(taskId);
       setShowDeleteConfirm(true);
     } else {
-      setError("Cannot delete task without a valid ID.");
+      toast.error(t('tasks.error_message', { error: "Cannot delete task without a valid ID." }));
     }
   };
 
@@ -120,7 +116,6 @@ export default function TasksPage() {
     if (!taskToDelete) return;
 
     setIsLoading(true);
-    setError(null);
     try {
       await deleteTask(taskToDelete);
       fetchUserTasks(currentFilter); // Refetch tasks
@@ -132,7 +127,7 @@ export default function TasksPage() {
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      setError(errorMessage);
+      toast.error(t('tasks.error_message', { error: errorMessage }));
     } finally {
       setIsLoading(false);
       setShowDeleteConfirm(false);
@@ -142,11 +137,10 @@ export default function TasksPage() {
 
   const handleToggleStatus = async (task: Task) => {
     if (!task.id) {
-      setError("Cannot update status of task without a valid ID.");
+      toast.error(t('tasks.error_message', { error: "Cannot update status of task without a valid ID." }));
       return;
     }
     setIsLoading(true);
-    setError(null);
     const newStatus = task.status === 'pending' ? 'complete' : task.status === 'complete' ? 'incomplete' : 'pending';
     try {
       const updatedTask = await updateTask(task.id, { status: newStatus });
@@ -159,7 +153,7 @@ export default function TasksPage() {
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      setError(errorMessage);
+      toast.error(t('tasks.error_message', { error: errorMessage }));
     } finally {
       setIsLoading(false);
     }
@@ -190,9 +184,6 @@ export default function TasksPage() {
           {t('tasks.create_new')}
         </button>
       </div>
-
-      {/* Error Message */}
-      {error && <div className="mx-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">{t('tasks.error_message', { error })}</div>}
 
       {/* Filter Buttons */}
       <div className="px-4 mb-6 flex flex-wrap gap-2 justify-center">
@@ -228,7 +219,7 @@ export default function TasksPage() {
       />
 
       {isLoading && <p className="text-center py-4">{t('common.loading')}</p>}
-      {!isLoading && tasks.length === 0 && !error && (
+      {!isLoading && tasks.length === 0 && (
         <p className="text-center py-4 text-gray-500 text-xl">
           {currentFilter === 'today' ? (
             <em>{t('tasks.no_tasks_found_today')}</em>
@@ -248,7 +239,7 @@ export default function TasksPage() {
               </h2>
               {Object.entries(groupedTasksByCategory[category]).map(([goalId, tasksInGoal]) => (
                 <div key={goalId} className="mb-4">
-                  <h3 className="text-lg font-medium mb-2 text-left" style={{ color: getCategoryColorClass(goals.find(g => g.id === goalId)?.category as GoalCategory || 'Work', 'primary') }}>
+                  <h3 className={`text-lg font-medium mb-2 text-left ${getCategoryColorClass(goals.find(g => g.id === goalId)?.category as GoalCategory || 'Work', 'primary')}`}>
                     {goals.find(g => g.id === goalId)?.title || t('tasks.uncategorized')}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
