@@ -66,14 +66,11 @@ const ProgressPage: React.FC = () => {
     const progress = totalTasks > 0 ? completedTasks / totalTasks : 0;
 
     return {
-      id: goal.id,
-      title: goal.title,
-      targetDate: goal.target_date ? new Date(goal.target_date) : new Date(),
+      ...goal, // Spread existing goal properties
       progress,
-      daysRemaining: goal.target_date
+      days_remaining: goal.target_date
         ? Math.ceil(((new Date(goal.target_date)).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
         : 0,
-      completedAt: goal.completed_at ? new Date(goal.completed_at) : undefined
     };
   };
 
@@ -99,7 +96,7 @@ const ProgressPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 px-4 py-2">
+    <div className="space-y-6 py-2 md:p-4">
       {/* Overall Progress Section */}
       <div>
         <h2 className="text-xl font-bold mb-3">{t('progressPage.overview')}</h2>
@@ -115,9 +112,9 @@ const ProgressPage: React.FC = () => {
       <div>
         <h2 className="text-xl font-bold mb-3">{t('progressPage.analytics.title')}</h2>
         
-        <div className="flex items-center gap-1 mb-6">
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-2">
           <button
-            className={`px-3 py-1 rounded-full text-sm ${activeFilter === 'all' ? 'bg-gray-200' : ''}`}
+            className={`px-2 py-1 rounded-full text-sm ${activeFilter === 'all' ? 'bg-gray-200' : ''}`}
             onClick={() => setActiveFilter('all')}
           >
             {t('progressPage.analytics.all')}
@@ -125,7 +122,7 @@ const ProgressPage: React.FC = () => {
           {(["Family", "Work", "Health", "Personal"] as GoalCategory[]).map(category => (
             <button
               key={category}
-              className={`p-2 rounded-full ${activeFilter === category ? categoryColors[category as GoalCategory]?.primaryBg : ''}`}
+              className={`p-1.5 rounded-full ${activeFilter === category ? categoryColors[category as GoalCategory]?.primaryBg : ''}`}
               style={{}}
               onClick={() => setActiveFilter(category)}
             >
@@ -138,7 +135,7 @@ const ProgressPage: React.FC = () => {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'completed')}
-            className="border rounded px-2 py-1 text-sm"
+            className="border border-blue-200 rounded-md px-2 py-1 text-sm bg-gray-50 hover:bg-gray-100 focus:outline-none"
           >
             <option value="all">{t('progressPage.analytics.allGoals')}</option>
             <option value="active">{t('progressPage.analytics.active')}</option>

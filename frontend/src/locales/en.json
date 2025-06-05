@@ -32,12 +32,8 @@
     "stats": {
       "totalGoals": "Total Goals",
       "completedGoals": "Completed Goals",
-      "inProgressGoals": "In Progress Goals",
-      "avgTaskCompletion": "Avg. Task Completion",
-      "totalGoalsDesc": "Total number of goals created.",
-      "completedGoalsDesc": "Goals that have been marked as completed.",
-      "inProgressGoalsDesc": "Goals that are currently active and not yet completed.",
-      "avgTaskCompletionDesc": "Average completion rate of all tasks."
+      "inProgressGoals": "Active Goals",
+      "avgTaskCompletion": "Avg. Task Completion"
     },
     "analytics": {
       "title": "Goals Analytics",
@@ -46,11 +42,14 @@
       "completed": "Completed",
       "allGoals": "All Goals",
       "goalCount": "{{count}} Goals",
-      "daysRemaining": "{{count}} Days Remaining",
+      "daysRemaining": "{{count}} Days Left",
       "pastDue": "Past Due",
+      "dueToday": "Due Today",
       "targetDate": "Target Date",
       "completedOn": "Completed On: {{date}}",
-      "noGoalsFound": "No goals have been completed yet."
+      "noGoalsFound": "No goals have been completed yet.",
+      "daysLeftLabel": "Days Left",
+      "completionRate": "Completion rate of tasks: "
     }
   },
   "auth": {
@@ -149,7 +148,12 @@
     "notifications": "Notifications",
     "enabled": "Enabled",
     "disabled": "Disabled",
-    "notAvailable": "N/A"
+    "notAvailable": "N/A",
+    "today_status": "Today's Status",
+    "task_completion": "Task Completion",
+    "completed_tasks_count": "{{completed}} of {{total}} tasks completed",
+    "active_goals_by_category": "Active Goals by Category",
+    "no_active_goals": "No active goals found."
   },
   "sidebar": {
     "losmax": "LOS"

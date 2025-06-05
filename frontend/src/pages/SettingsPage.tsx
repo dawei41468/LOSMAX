@@ -109,7 +109,7 @@ const SettingsPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col sm:p-2 max-w-4xl mx-auto text-left">
+    <div className="flex flex-col sm:p-2 max-w-4xl mx-auto text-left md:p-4">
       <div className="flex border-b border-gray-200">
         <button
           className={`flex-grow px-3 py-3 sm:flex-grow-0 sm:px-4 sm:py-2 font-medium text-sm sm:text-base ${activeTab === 'preferences' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}

@@ -76,7 +76,7 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
           {/* Language Switcher at the bottom */}
           <div className="absolute bottom-0 left-0 right-0 p-4 flex items-center justify-center bg-white border-t border-gray-200"> {/* Use absolute positioning and flex row */}
             <div className="text-sm font-medium text-gray-700 mr-2"> {/* Add margin right */}
-              {useTranslation().t('sidebar.language')} {/* Use translation key for Language */}
+              {useTranslation().t('common.language')} {/* Use translation key for Language */}
             </div>
             <LanguageSwitcher />
           </div>

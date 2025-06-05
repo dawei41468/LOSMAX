@@ -174,7 +174,7 @@ export default function TasksPage() {
   }, {} as Record<string, Record<string, Task[]>>);
 
   return (
-    <div className="py-6 no-scrollbar" style={{ overflowY: 'auto' }}>
+    <div className="py-6 no-scrollbar md:p-4" style={{ overflowY: 'auto' }}>
       {/* Header Section */}
       <div className="px-4 flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6">
         <button

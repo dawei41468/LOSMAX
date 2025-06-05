@@ -157,7 +157,7 @@ export default function GoalsPage() {
 
 
   return (
-    <div className="py-6 no-scrollbar" style={{ overflowY: 'auto' }}> {/* Removed px-4, kept py-6 for vertical spacing */}
+    <div className="py-6 no-scrollbar md:p-4" style={{ overflowY: 'auto' }}> {/* Removed px-4, kept py-6 for vertical spacing */}
       {/* Header Section */}
       <div className="px-4 flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6"> {/* Added px-4 here */}
         <button

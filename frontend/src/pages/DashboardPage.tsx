@@ -2,9 +2,12 @@ import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../contexts/auth.context';
 import type { AuthContextType } from '../contexts/auth.types';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../services/api'; // Import api service
+import { api, getTasks, getGoals } from '../services/api'; // Import api service
 import QuoteOfDay from '../components/dashboard/QuoteOfDay';
 import UserInfo from '../components/dashboard/UserInfo';
+import DashStatus from '../components/dashboard/DashStatus';
+import type { Task } from '../services/api';
+import type { Goal } from '../types/goals';
 
 // Define a type for the expected API response structure, matching Pydantic model
 interface UserPreferencesResponse {
@@ -20,6 +23,8 @@ export default function DashboardPage() {
 
   const [preferences, setPreferences] = useState<UserPreferencesResponse | null>(null);
   const [loadingPreferences, setLoadingPreferences] = useState(true);
+  const [todayTasks, setTodayTasks] = useState<Task[]>([]);
+  const [activeGoals, setActiveGoals] = useState<Goal[]>([]);
 
   useEffect(() => {
     const fetchPreferences = async () => {
@@ -40,6 +45,22 @@ export default function DashboardPage() {
     fetchPreferences();
   }, [isAuthenticated]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      if (isAuthenticated) {
+        try {
+          const fetchedTasks = await getTasks(undefined, 'today');
+          const fetchedGoals = await getGoals('active');
+          setTodayTasks(fetchedTasks);
+          setActiveGoals(fetchedGoals);
+        } catch (error) {
+          console.error('Error fetching tasks or goals for dashboard:', error);
+        }
+      }
+    };
+    fetchData();
+  }, [isAuthenticated]);
+
   // The ProtectedRoute component in App.tsx already handles redirection if not authenticated.
   // This check provides an additional layer or can be page-specific for loading.
   if (isAuthenticated === false) {
@@ -55,12 +76,12 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="mt-4 space-y-6">
-      {/* 
+    <div className="mt-4 space-y-6 md:p-4">
+      {/*
         The main title (e.g., "Dashboard") is now typically handled by DashboardLayout.tsx.
-        If you need a subtitle or a more specific title for this page's content, 
+        If you need a subtitle or a more specific title for this page's content,
         you can add it here. For example:
-        <h2 className="text-2xl font-semibold text-gray-700 mb-6">Overview</h2> 
+        <h2 className="text-2xl font-semibold text-gray-700 mb-6">Overview</h2>
       */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <UserInfo
@@ -72,7 +93,7 @@ export default function DashboardPage() {
           preferences={preferences}
         />
         <QuoteOfDay />
-        {/* Placeholder for dashboard widgets */}
+        <DashStatus todayTasks={todayTasks} activeGoals={activeGoals} />
       </div>
     </div>
   );
