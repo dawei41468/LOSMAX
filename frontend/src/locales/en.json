@@ -19,7 +19,39 @@
     "goals": "Goals",
     "tasks": "Tasks",
     "progress": "Progress",
-    "language": "Language"
+    "language": "Language",
+    "categories": {
+      "family": "Family",
+      "work": "Work",
+      "health": "Health",
+      "personal": "Personal"
+    }
+  },
+  "progressPage": {
+    "overview": "Overview",
+    "stats": {
+      "totalGoals": "Total Goals",
+      "completedGoals": "Completed Goals",
+      "inProgressGoals": "In Progress Goals",
+      "avgTaskCompletion": "Avg. Task Completion",
+      "totalGoalsDesc": "Total number of goals created.",
+      "completedGoalsDesc": "Goals that have been marked as completed.",
+      "inProgressGoalsDesc": "Goals that are currently active and not yet completed.",
+      "avgTaskCompletionDesc": "Average completion rate of all tasks."
+    },
+    "analytics": {
+      "title": "Goals Analytics",
+      "all": "All",
+      "active": "Active",
+      "completed": "Completed",
+      "allGoals": "All Goals",
+      "goalCount": "{{count}} Goals",
+      "daysRemaining": "{{count}} Days Remaining",
+      "pastDue": "Past Due",
+      "targetDate": "Target Date",
+      "completedOn": "Completed On: {{date}}",
+      "noGoalsFound": "No goals have been completed yet."
+    }
   },
   "auth": {
     "LOS": "LOS",
@@ -234,13 +266,7 @@
       "description_label": "Description (Optional)",
       "category_label": "Category",
       "target_date_label": "Target Date",
-      "create_goal_button": "Create Goal",
-      "categories": {
-        "Family": "Family",
-        "Work": "Work",
-        "Health": "Health",
-        "Personal": "Personal"
-      }
+      "create_goal_button": "Create Goal"
     }
   },
   "tasks": {

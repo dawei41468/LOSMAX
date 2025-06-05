@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import type { GoalCategory } from '../../types/goals';
 import { Heart, Briefcase, User } from 'lucide-react';
 
@@ -18,30 +19,34 @@ type IconProps = {
  * Each category has multiple color variants for different UI elements (text, background, icon, primary).
  * This ensures visual consistency across the application.
  */
-const categoryColors = {
+export const categoryColors = {
   Health: {
     text: 'text-green-700',
     bg: 'bg-green-100',
     icon: 'text-green-500',
-    primary: 'text-green-500'
+    primary: 'text-green-500',
+    primaryBg: 'bg-green-500'
   },
   Work: {
     text: 'text-blue-700',
     bg: 'bg-blue-100',
     icon: 'text-blue-500',
-    primary: 'text-blue-500'
+    primary: 'text-blue-500',
+    primaryBg: 'bg-blue-500'
   },
   Personal: {
     text: 'text-orange-700',
     bg: 'bg-orange-100',
     icon: 'text-orange-500',
-    primary: 'text-orange-500'
+    primary: 'text-orange-500',
+    primaryBg: 'bg-orange-500'
   },
   Family: {
     text: 'text-purple-700',
     bg: 'bg-purple-100',
     icon: 'text-purple-500',
-    primary: 'text-purple-500'
+    primary: 'text-purple-500',
+    primaryBg: 'bg-purple-500'
   }
 } as const;
 
@@ -104,10 +109,11 @@ export const getCategoryColorClass = (
  * @returns {React.ReactElement} The category header component.
  */
 export const CategoryHeader: React.FC<{category: GoalCategory}> = ({category}) => {
+  const { t } = useTranslation();
   return (
     <div className={`flex items-center gap-2 ${getCategoryColorClass(category)}`}>
       {getCategoryIcon(category)}
-      <span>{category}</span>
+      <span className="text-lg font-semibold">{t(`common.categories.${category.toLowerCase()}`)}</span>
     </div>
   );
 };

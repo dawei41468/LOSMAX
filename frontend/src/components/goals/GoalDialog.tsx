@@ -102,7 +102,7 @@ const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, init
               className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${initialGoal ? 'bg-gray-100 cursor-not-allowed' : ''}`}
             >
               {CATEGORIES.map((cat: GoalCategory) => (
-                <option key={cat} value={cat}>{t(`goals.dialog.categories.${cat}`)}</option>
+                <option key={cat} value={cat}>{t(`common.categories.${cat.toLowerCase()}`)}</option>
               ))}
             </select>
           </div>
