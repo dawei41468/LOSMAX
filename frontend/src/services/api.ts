@@ -99,8 +99,9 @@ export async function register(email: string, password: string, name: string) {
 export async function logout() {
   const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/logout`, {
     method: 'POST',
-    headers: getAuthHeaders(),
-    credentials: 'include'
+    headers: {
+      'Content-Type': 'application/json'
+    }
   });
 
   if (!response.ok) {
@@ -109,6 +110,32 @@ export async function logout() {
 
   return await response.json();
 }
+/**
+ * Admin API method to list users with pagination
+ * @param page - Page number (default: 1)
+ * @param limit - Items per page (default: 10)
+ * @returns Promise with paginated user data
+ */
+export async function listUsers(page = 1, limit = 10) {
+  const response = await api.get('/admin/users', {
+    params: { page, limit },
+    headers: getAuthHeaders()
+  });
+  return response.data;
+}
+
+/**
+ * Admin API method to delete a user
+ * @param userId - ID of user to delete
+ * @returns Promise with deletion result
+ */
+export async function deleteUser(userId: string) {
+  const response = await api.delete(`/admin/users/${userId}`, {
+    headers: getAuthHeaders()
+  });
+  return response.data;
+}
+
 
 /**
  * Basic API client function for login

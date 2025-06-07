@@ -5,7 +5,7 @@ from jose.exceptions import JWTError as PyJWTError
 from config.settings import settings
 from database import connect_to_mongo
 from models.user import UserInDB, UserCreate
-from routes import auth, goals, websocket, preferences, task # Added preferences and task router
+from routes import auth, goals, websocket, preferences, task, admin # Added preferences and task router
 from middleware.cors import setup_cors
 
 @asynccontextmanager
@@ -42,6 +42,7 @@ app.include_router(auth.router)
 app.include_router(goals.router)
 app.include_router(preferences.router) # Included preferences router
 app.include_router(task.router) # Included task router
+app.include_router(admin.router) # Included admin router
 
 async def test_goal_service():
     """Test GoalService functionality"""

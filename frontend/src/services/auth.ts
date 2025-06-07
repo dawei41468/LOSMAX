@@ -42,7 +42,7 @@ export async function login(
     localStorage.setItem('userRole', role);
   }
   setAuthState(true);
-  navigate('/dashboard');
+  navigate(role === 'Admin' ? '/admin' : '/dashboard');
 }
 
 export async function register(
@@ -79,7 +79,7 @@ export async function register(
     localStorage.setItem('userRole', role);
   }
   setAuthState(true);
-  navigate('/dashboard');
+  navigate(role === 'Admin' ? '/admin' : '/dashboard');
 }
 
 export async function logout(setAuthState: (authenticated: boolean) => void): Promise<void> {
