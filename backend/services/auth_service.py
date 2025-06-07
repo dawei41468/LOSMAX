@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Tuple
 from bson import ObjectId # Import ObjectId
-import jwt
-from jwt import PyJWTError
+from jose import jwt
+from jose.exceptions import JWTError as PyJWTError
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
@@ -116,15 +116,13 @@ class AuthService:
         if not user_doc:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect email or password",
-                headers={"Access-Control-Allow-Origin": "http://localhost:5173"}
+                detail="Incorrect email or password"
             )
             
         if not verify_password(password, user_doc["hashed_password"]):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect email or password",
-                headers={"Access-Control-Allow-Origin": "http://localhost:5173"}
+                detail="Incorrect email or password"
             )
         
         user_id_str = str(user_doc["_id"]) # Get string _id

@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel # Import BaseModel for request body model
-import jwt
-from jwt import PyJWTError
+from jose import jwt
+from jose.exceptions import JWTError as PyJWTError
 from config.settings import settings
 
 from models.user import User, UserCreate, Token, UserInDB # Added UserInDB
@@ -14,9 +14,10 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.post("/register", response_model=Token, status_code=status.HTTP_201_CREATED)
 async def register(user_data: UserCreate):
+    print(f"Attempting to register user: {user_data.email}")
     try:
         result = await AuthService.register_user(user_data)
-        print(f"Registered user {user_data.email}, role: {result.get('role')}, language: {result.get('language')}")
+        print(f"Successfully registered user {user_data.email}, role: {result.get('role')}, language: {result.get('language')}")
         return {
             "access_token": result["access_token"],
             "refresh_token": result["refresh_token"],
@@ -27,16 +28,16 @@ async def register(user_data: UserCreate):
             "role": result.get("role") # Add role
         }
     except ValueError as e:
-        print(f"Register error - {str(e)} - email:{user_data.email}")
+        print(f"Registration ValueError for {user_data.email}: {e}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
         )
     except Exception as e:
-        print(f"Register error - {str(e)} - email:{user_data.email}")
+        print(f"Unexpected error during registration for {user_data.email}: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Registration failed"
+            detail="Registration failed due to an internal server error."
         )
 
 @router.post("/login", response_model=Token)

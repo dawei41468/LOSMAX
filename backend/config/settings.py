@@ -1,5 +1,16 @@
+import os
 from pydantic_settings import BaseSettings
 from pathlib import Path
+
+# Determine the environment and set the appropriate .env file path
+app_env = os.getenv('APP_ENV', 'development')
+env_file_path = Path(__file__).parent.parent
+
+if app_env == 'production':
+    env_file = env_file_path / ".env.production"
+else:
+    # Default to .env.development if not in production
+    env_file = env_file_path / ".env.development"
 
 class Settings(BaseSettings):
     MONGODB_URL: str
@@ -11,32 +22,8 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     
     class Config:
-        env_file_path = Path(__file__).parent.parent
-        env_file = env_file_path / ".env"
+        # Set the env_file path directly in the Config
+        env_file = env_file
         env_file_encoding = "utf-8"
-
-        @classmethod
-        def customise_sources(
-            cls,
-            init_settings,
-            env_settings,
-            dotenv_settings,
-            file_secret_settings,
-        ):
-            from pydantic_settings import SettingsConfigDict
-            import os
-
-            app_env = os.getenv('APP_ENV', 'development')
-            if app_env == 'production':
-                dotenv_settings = SettingsConfigDict(env_file=cls.env_file_path / ".env.production", env_file_encoding="utf-8")
-            else:
-                dotenv_settings = SettingsConfigDict(env_file=cls.env_file_path / ".env.development", env_file_encoding="utf-8")
-
-            return (
-                init_settings,
-                env_settings,
-                dotenv_settings,
-                file_secret_settings,
-            )
 
 settings = Settings()

@@ -5,6 +5,7 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/', // Set the base URL for the application
   plugins: [react(), tailwindcss()],
   css: {
     transformer: 'lightningcss'

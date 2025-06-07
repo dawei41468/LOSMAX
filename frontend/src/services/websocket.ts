@@ -34,7 +34,9 @@ export class WebSocketService {
 
     const apiUrl = new URL(import.meta.env.VITE_API_BASE_URL);
     const protocol = apiUrl.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${apiUrl.host}/ws/${userId}?token=${encodeURIComponent(token)}`;
+    // We need to construct the WebSocket URL from the API base URL, but without the /api path
+    const wsHost = apiUrl.host;
+    const wsUrl = `${protocol}//${wsHost}/ws/${userId}?token=${encodeURIComponent(token)}`;
     console.log('Connecting to websocket:', wsUrl);
     this.socket = new WebSocket(wsUrl);
     

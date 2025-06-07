@@ -136,26 +136,19 @@ export async function login(email: string, password: string) {
 }
 
 export async function getGoals(status?: GoalStatus): Promise<Goal[]> {
-  let url = `${import.meta.env.VITE_API_BASE_URL}/goals`;
+  let url = `/goals/`;
   if (status) {
     url += `?status=${status}`;
   }
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: getAuthHeaders()
-  });
-
-  if (!response.ok) {
-    // Attempt to parse error response from backend
-    try {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || `Failed to fetch goals. Status: ${response.status}`);
-    } catch (_) { // eslint-disable-line no-unused-vars
-      throw new Error(`Failed to fetch goals. Status: ${response.status}`);
-    }
+  console.log('Fetching goals from URL:', url);
+  try {
+    const response = await api.get(url);
+    console.log('Received goals data:', response.data);
+    return response.data as Goal[];
+  } catch (error) {
+    console.error('Error fetching goals:', error);
+    throw error;
   }
-
-  return await response.json() as Goal[];
 }
 
 export interface CreateGoalPayload {
@@ -167,56 +160,19 @@ export interface CreateGoalPayload {
 }
 
 export async function createGoal(goalData: CreateGoalPayload): Promise<Goal> {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/goals`, {
-    method: 'POST',
-    headers: getAuthHeaders(),
-    body: JSON.stringify(goalData)
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.detail || 'Failed to create goal');
-  }
-
-  return await response.json() as Goal;
+  const response = await api.post('/goals/', goalData);
+  return response.data as Goal;
 }
 
 export type UpdateGoalPayload = Partial<Omit<Goal, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'days_remaining'>>;
 
 export async function updateGoal(goalId: string, goalData: UpdateGoalPayload): Promise<Goal> {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/goals/${goalId}`, {
-    method: 'PUT',
-    headers: getAuthHeaders(),
-    body: JSON.stringify(goalData)
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.detail || `Failed to update goal ${goalId}`);
-  }
-
-  return await response.json() as Goal;
+  const response = await api.put(`/goals/${goalId}`, goalData);
+  return response.data as Goal;
 }
 
 export async function deleteGoal(goalId: string): Promise<void> {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/goals/${goalId}`, {
-    method: 'DELETE',
-    headers: getAuthHeaders()
-  });
-
-  if (!response.ok) {
-    // DELETE might return 204 No Content on success, which is fine.
-    // Only throw if it's a client or server error status.
-    if (response.status >= 400) {
-      try {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || `Failed to delete goal ${goalId}. Status: ${response.status}`);
-      } catch (_) { // eslint-disable-line no-unused-vars
-        throw new Error(`Failed to delete goal ${goalId}. Status: ${response.status}`);
-      }
-    }
-  }
-  // No return needed for a successful delete (often 204 No Content)
+  await api.delete(`/goals/${goalId}`);
 }
 
 // Task-related API endpoints
@@ -230,7 +186,7 @@ export interface Task {
 }
 
 export async function getTasks(status?: 'pending' | 'complete' | 'incomplete', filter?: 'today' | 'all'): Promise<Task[]> {
-  let url = `${import.meta.env.VITE_API_BASE_URL}/tasks`;
+  let url = `/tasks/`;
   const params = new URLSearchParams();
   if (status) {
     params.append('status', status);
@@ -241,26 +197,20 @@ export async function getTasks(status?: 'pending' | 'complete' | 'incomplete', f
   if (params.toString()) {
     url += `?${params.toString()}`;
   }
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: getAuthHeaders()
-  });
-
-  if (!response.ok) {
-    try {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || `Failed to fetch tasks. Status: ${response.status}`);
-    } catch (e) {
-      throw new Error(`Failed to fetch tasks. Status: ${response.status}`);
-    }
+  console.log('Fetching tasks from URL:', url);
+  try {
+    const response = await api.get(url);
+    console.log('Received tasks data:', response.data);
+    const rawData = response.data;
+    const tasks = rawData.map((task: { _id?: string; id?: string; [key: string]: unknown }) => ({
+      ...task,
+      id: task._id || task.id
+    })) as Task[];
+    return tasks;
+  } catch (error) {
+    console.error('Error fetching tasks:', error);
+    throw error;
   }
-
-  const rawData = await response.json();
-  const tasks = rawData.map((task: { _id?: string; id?: string; [key: string]: unknown }) => ({
-    ...task,
-    id: task._id || task.id
-  })) as Task[];
-  return tasks;
 }
 
 export interface CreateTaskPayload {
@@ -269,51 +219,17 @@ export interface CreateTaskPayload {
 }
 
 export async function createTask(taskData: CreateTaskPayload): Promise<Task> {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/tasks`, {
-    method: 'POST',
-    headers: getAuthHeaders(),
-    body: JSON.stringify(taskData)
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.detail || 'Failed to create task');
-  }
-
-  return await response.json() as Task;
+  const response = await api.post('/tasks/', taskData);
+  return response.data as Task;
 }
 
 export type UpdateTaskPayload = Partial<Omit<Task, 'id' | 'user_id' | 'goal_id' | 'created_at'>>;
 
 export async function updateTask(taskId: string, taskData: UpdateTaskPayload): Promise<Task> {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/tasks/${taskId}`, {
-    method: 'PUT',
-    headers: getAuthHeaders(),
-    body: JSON.stringify(taskData)
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.detail || `Failed to update task ${taskId}`);
-  }
-
-  return await response.json() as Task;
+  const response = await api.put(`/tasks/${taskId}`, taskData);
+  return response.data as Task;
 }
 
 export async function deleteTask(taskId: string): Promise<void> {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/tasks/${taskId}`, {
-    method: 'DELETE',
-    headers: getAuthHeaders()
-  });
-
-  if (!response.ok) {
-    if (response.status >= 400) {
-      try {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || `Failed to delete task ${taskId}. Status: ${response.status}`);
-      } catch (_) { // eslint-disable-line no-unused-vars
-        throw new Error(`Failed to delete task ${taskId}. Status: ${response.status}`);
-      }
-    }
-  }
+  await api.delete(`/tasks/${taskId}`);
 }

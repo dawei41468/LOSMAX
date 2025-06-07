@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-import jwt
-from jwt import PyJWTError
+from jose import jwt
+from jose.exceptions import JWTError as PyJWTError
 from config.settings import settings
 from database import connect_to_mongo
 from models.user import UserInDB, UserCreate
@@ -22,6 +22,10 @@ print(f"Loaded settings: {settings}")
 @app.get("/")
 async def root():
     return {"Hello": "World"}
+
+@app.get("/api/health")
+async def health_check():
+    return {"status": "healthy", "version": "1.0.0"}
 
 @app.get("/test-user-model")
 async def test_user_model():
