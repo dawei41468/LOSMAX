@@ -33,7 +33,8 @@ class AdminService:
                 "email": user["email"],
                 "name": user.get("name"),
                 "role": user.get("role", "user"),
-                "createdAt": user.get("created_at")
+                "createdAt": user.get("created_at"),
+                "preferences": user.get("preferences")
             }
             for user in users
         ]
@@ -47,3 +48,24 @@ class AdminService:
                 raise ValueError("User not found")
         except Exception as e:
             raise ValueError(str(e))
+
+    @staticmethod
+    async def get_user_details(user_id: str) -> Optional[dict]:
+        db = await get_db()
+        user = await db.users.find_one({"_id": ObjectId(user_id)}, {"password": 0, "refresh_tokens": 0})
+        if user:
+            return {
+                "id": str(user["_id"]),
+                "email": user["email"],
+                "name": user.get("name"),
+                "role": user.get("role", "user"),
+                "createdAt": user.get("created_at"),
+                "language": user.get("language"),
+                "preferences": user.get("preferences")
+            }
+        return None
+
+    @staticmethod
+    async def update_user(user_id: str, user_data: dict) -> None:
+        db = await get_db()
+        await db.users.update_one({"_id": ObjectId(user_id)}, {"$set": user_data})

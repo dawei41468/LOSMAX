@@ -7,12 +7,21 @@ import { api } from '../../services/api';
 import { Trash2, Edit, Search, RefreshCw, Mail } from 'lucide-react';
 import Cookies from 'js-cookie';
 
+interface Preferences {
+  morning_deadline: string;
+  evening_deadline: string;
+  notifications_enabled: boolean;
+  language: string;
+}
+
 type User = {
   id: string;
   email: string;
   name?: string;
   role: string;
   createdAt: string;
+  language?: string;
+  preferences?: Preferences;
 };
 
 const ITEMS_PER_PAGE = 10;
@@ -28,6 +37,11 @@ export function UserManagement() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [selectedRole, setSelectedRole] = useState('user');
+  const [loadingPreferences, setLoadingPreferences] = useState(false);
+  const [userDetails, setUserDetails] = useState<Partial<User>>({});
 
   const fetchUsers = useCallback(async () => {
     if (userRole?.toLowerCase() !== 'admin') return;
@@ -45,7 +59,6 @@ export function UserManagement() {
       setUsers(data.users);
     } catch (error) {
       console.error('Failed to fetch users:', error);
-      // TODO: Add toast notification when implemented
     } finally {
       setLoading(false);
     }
@@ -58,25 +71,167 @@ export function UserManagement() {
   const handleDelete = async (userId: string) => {
     try {
       setIsDeleting(true);
-      try {
-        const csrfToken = Cookies.get('csrfToken');
-        await api.delete(`/admin/users/${userId}`, {
-          headers: { 'X-CSRF-Token': csrfToken },
-        });
-        setUsers(users.filter(user => user.id !== userId));
-      } finally {
-        setIsDeleting(false);
-      }
-      // TODO: Add toast notification when implemented
+      const csrfToken = Cookies.get('csrfToken');
+      await api.delete(`/admin/users/${userId}`, {
+        headers: { 'X-CSRF-Token': csrfToken },
+      });
+      setUsers(users.filter(user => user.id !== userId));
     } catch (error) {
       console.error('Failed to delete user:', error);
     } finally {
+      setIsDeleting(false);
       setIsDeleteDialogOpen(false);
+    }
+  };
+
+  const fetchUserDetails = async (userId: string) => {
+    setLoadingPreferences(true);
+    try {
+      const { data } = await api.get(`/admin/users/${userId}/details`);
+      setUserDetails(data);
+    } catch (error) {
+      console.error('Failed to fetch user details:', error);
+    } finally {
+      setLoadingPreferences(false);
+    }
+  };
+
+  const handleEditClick = (user: User) => {
+    setEditingUser(user);
+    setSelectedRole(user.role);
+    // Pre-populate with what we already have
+    setUserDetails({
+      name: user.name,
+      language: user.language,
+      preferences: user.preferences,
+    });
+    fetchUserDetails(user.id);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdateUser = async () => {
+    if (!editingUser) return;
+    
+    try {
+      const csrfToken = Cookies.get('csrfToken');
+      await api.patch(`/admin/users/${editingUser.id}`, {
+        role: selectedRole
+      }, {
+        headers: { 'X-CSRF-Token': csrfToken }
+      });
+      fetchUsers();
+      setIsEditDialogOpen(false);
+    } catch (error) {
+      console.error('Failed to update user:', error);
     }
   };
 
   return (
     <div className="p-4 space-y-4">
+      {isEditDialogOpen && editingUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md">
+            <h3 className="text-lg font-medium mb-4">Edit User</h3>
+            {loadingPreferences ? (
+              <div className="flex justify-center items-center h-32">
+                <RefreshCw className="h-8 w-8 animate-spin" />
+                <span className="ml-2">Loading details...</span>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">User ID</label>
+                  <input
+                    type="text"
+                    value={editingUser.id}
+                    readOnly
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Name</label>
+                  <input
+                    type="text"
+                    value={userDetails.name || ''}
+                    readOnly
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Email</label>
+                  <input
+                    type="email"
+                    value={editingUser.email}
+                    readOnly
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Role</label>
+                  <select
+                    value={selectedRole}
+                    onChange={(e) => setSelectedRole(e.target.value)}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  >
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Language</label>
+                  <input
+                    type="text"
+                    value={userDetails.language || ''}
+                    readOnly
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Morning Deadline</label>
+                  <input
+                    type="text"
+                    value={userDetails.preferences?.morning_deadline || 'Not set'}
+                    readOnly
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Evening Deadline</label>
+                  <input
+                    type="text"
+                    value={userDetails.preferences?.evening_deadline || 'Not set'}
+                    readOnly
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Notifications</label>
+                  <input
+                    type="text"
+                    value={userDetails.preferences?.notifications_enabled ? 'Enabled' : 'Disabled'}
+                    readOnly
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100"
+                  />
+                </div>
+                <div className="flex justify-end space-x-2 pt-4">
+                  <button
+                    onClick={() => setIsEditDialogOpen(false)}
+                    className="px-4 py-2 border rounded"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleUpdateUser}
+                    className="px-4 py-2 bg-blue-600 text-white rounded"
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">User Management</h2>
         <div className="flex space-x-2">
@@ -150,10 +305,10 @@ export function UserManagement() {
                 </div>
                 
                 <div className="col-span-5 flex justify-end space-x-2">
-                  <button 
-                    className="p-2 hover:bg-gray-100 rounded"
-                    onClick={() => {}}
-                  >
+                  <button
+                   className="p-2 hover:bg-gray-100 rounded"
+                   onClick={() => handleEditClick(user)}
+                 >
                     <Edit className="h-4 w-4" />
                   </button>
                   <button 
@@ -172,6 +327,7 @@ export function UserManagement() {
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
+          
               </div>
             ))}
           </div>

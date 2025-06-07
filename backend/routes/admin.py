@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from typing import Optional
-from models.user import User
+from models.user import User, UserUpdate
 from services.auth_service import get_current_user
 from services.admin_service import AdminService
 
@@ -52,6 +52,46 @@ async def delete_user(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str(e)
         )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
+
+@router.get("/users/{user_id}/details")
+async def get_user_details(
+    user_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role.lower() != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required"
+        )
+    
+    user = await AdminService.get_user_details(user_id)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    return user
+
+@router.patch("/users/{user_id}")
+async def update_user(
+    user_id: str,
+    user_data: UserUpdate,
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.role.lower() != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required"
+        )
+    
+    try:
+        await AdminService.update_user(user_id, user_data.dict(exclude_unset=True))
+        return {"message": "User updated successfully"}
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

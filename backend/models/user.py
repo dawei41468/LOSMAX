@@ -82,3 +82,9 @@ class UserPreferencesUpdate(BaseModel):
     evening_deadline: Optional[str] = None
     notifications_enabled: Optional[bool] = None
     language: Optional[str] = None
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    role: Optional[Literal["User", "Admin"]] = None
+    language: Optional[str] = None
+    preferences: Optional[UserPreferencesUpdate] = None
