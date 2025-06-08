@@ -283,7 +283,6 @@
       "all": "All"
     },
     "statuses": {
-      "pending": "Pending",
       "complete": "Complete",
       "incomplete": "Incomplete"
     },
@@ -297,7 +296,6 @@
     "edit": "Edit Task",
     "update": "Update Task",
     "markComplete": "Mark Complete",
-    "markIncomplete": "Mark Incomplete",
-    "markPending": "Mark Pending"
+    "markIncomplete": "Mark Incomplete"
   }
 }

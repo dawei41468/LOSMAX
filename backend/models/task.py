@@ -4,14 +4,13 @@ from typing import Optional
 from pydantic import BaseModel, Field, field_validator
 
 class TaskStatus(str, Enum):
-    pending = "pending"
     complete = "complete"
     incomplete = "incomplete"
 
 class TaskCreate(BaseModel):
     goal_id: str
     title: str = Field(..., min_length=1, max_length=100)
-    status: TaskStatus = TaskStatus.pending
+    status: TaskStatus = TaskStatus.incomplete
 
     @field_validator('goal_id')
     @classmethod

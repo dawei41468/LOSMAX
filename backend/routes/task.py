@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from typing import Optional
 
 from models.user import User
-from models.task import TaskCreate, Task
+from models.task import TaskCreate, Task, TaskStatus
 from services.auth_service import get_current_user
 from services.task_service import (
     create_task,
@@ -14,6 +14,17 @@ from services.task_service import (
 
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+def get_valid_status(status: Optional[str] = None) -> Optional[TaskStatus]:
+    if status is None:
+        return None
+    try:
+        return TaskStatus(status)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid status value: {status}. Allowed values are {', '.join([s.value for s in TaskStatus])}"
+        )
 
 @router.post("/", response_model=Task, status_code=status.HTTP_201_CREATED)
 async def create_new_task(
@@ -32,7 +43,7 @@ async def create_new_task(
 
 @router.get("/", response_model=list[Task])
 async def list_user_tasks(
-    status: Optional[str] = None,
+    status: Optional[TaskStatus] = Depends(get_valid_status),
     filter: Optional[str] = None,
     current_user: User = Depends(get_current_user)
 ):

@@ -208,11 +208,11 @@ export interface Task {
   user_id: string;
   goal_id: string; // Tasks are tied to a specific goal
   title: string;
-  status: 'pending' | 'complete' | 'incomplete'; // Updated status options
+  status: 'complete' | 'incomplete';
   created_at: string; // ISO string
 }
 
-export async function getTasks(status?: 'pending' | 'complete' | 'incomplete', filter?: 'today' | 'all'): Promise<Task[]> {
+export async function getTasks(status?: 'complete' | 'incomplete', filter?: 'today' | 'all'): Promise<Task[]> {
   let url = `/tasks/`;
   const params = new URLSearchParams();
   if (status) {

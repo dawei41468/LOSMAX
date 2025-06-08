@@ -285,7 +285,6 @@
       "all": "全部"
     },
     "statuses": {
-      "pending": "待处理",
       "complete": "已完成",
       "incomplete": "未完成"
     },
@@ -298,7 +297,6 @@
     "create": "创建任务",
     "edit": "编辑任务",
     "markComplete": "标记为已完成",
-    "markIncomplete": "标记为未完成",
-    "markPending": "标记为待处理"
+    "markIncomplete": "标记为未完成"
   }
 }

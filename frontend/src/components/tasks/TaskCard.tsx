@@ -19,7 +19,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onToggleSta
       <CardContent className="p-4">
         <h3 className="text-lg font-semibold mb-2 mt-2 text-left">{task.title}</h3>
         <p className="text-sm text-gray-600 text-left">
-          {t('tasks.status')}: <span className={`${task.status === 'complete' ? 'text-green-600 font-bold' : task.status === 'incomplete' ? 'text-red-600 font-bold' : 'text-gray-600'}`}>{t(`tasks.statuses.${task.status}`)}</span>
+          {t('tasks.status')}: <span className={`${task.status === 'complete' ? 'text-green-600 font-bold' : 'text-red-600 font-bold'}`}>{t(`tasks.statuses.${task.status}`)}</span>
         </p>
         <div className="mt-4 flex justify-center space-x-8">
           <button
@@ -32,11 +32,11 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onToggleSta
           </button>
           <button
             onClick={() => onToggleStatus(task)}
-            aria-label={task.status === 'pending' ? t('tasks.markComplete') : task.status === 'complete' ? t('tasks.markIncomplete') : t('tasks.markPending')}
-            className={`p-2 rounded-md transition-colors ${task.status === 'pending' ? 'hover:text-green-600' : task.status === 'complete' ? 'hover:text-yellow-600' : 'hover:text-blue-600'}`}
+            aria-label={task.status === 'complete' ? t('tasks.markIncomplete') : t('tasks.markComplete')}
+            className={`p-2 rounded-md transition-colors ${task.status === 'complete' ? 'hover:text-yellow-600' : 'hover:text-green-600'}`}
             disabled={!task.id}
           >
-            <Check className={`w-5 h-5 ${task.id ? (task.status === 'pending' ? 'text-green-500' : task.status === 'complete' ? 'text-yellow-500' : 'text-blue-500') : 'text-gray-300'}`} />
+            <Check className={`w-5 h-5 ${task.id ? (task.status === 'complete' ? 'text-yellow-500' : 'text-green-500') : 'text-gray-300'}`} />
           </button>
           <button
             onClick={() => onDelete(task.id)}

@@ -141,7 +141,7 @@ export default function TasksPage() {
       return;
     }
     setIsLoading(true);
-    const newStatus = task.status === 'pending' ? 'complete' : task.status === 'complete' ? 'incomplete' : 'pending';
+    const newStatus = task.status === 'complete' ? 'incomplete' : 'complete';
     try {
       const updatedTask = await updateTask(task.id, { status: newStatus });
       setTasks(prevTasks => prevTasks.map(t => t.id === updatedTask.id ? updatedTask : t));

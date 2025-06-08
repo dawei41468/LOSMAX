@@ -42,7 +42,7 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ isOpen, onClose, onSubmit, init
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !goalId) return;
-    onSubmit({ title, goal_id: goalId, status: 'pending' });
+    onSubmit({ title, goal_id: goalId, status: 'incomplete' });
   };
 
   if (!isOpen) return null;
