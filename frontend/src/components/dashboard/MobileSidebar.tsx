@@ -40,11 +40,11 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
         }`}
       >
         <div className="h-full flex flex-col">
-          <div className="flex items-center h-16 flex-shrink-0 px-4 border-b border-gray-200">
-            <h1 className="text-xl font-bold text-primary">LOSMAX</h1> {/* Changed to LOSMAX */}
+          <div className="flex items-center justify-between h-22 flex-shrink-0 px-4 border-b border-gray-200">
+            <h1 className="text-2xl font-medium text-primary flex-1 text-center">LOSMAX</h1>
             <button
               onClick={onClose}
-              className="ml-auto text-gray-500 hover:text-gray-700"
+              className="text-gray-500 hover:text-gray-700"
             >
               <XIcon className="h-6 w-6" />
             </button>

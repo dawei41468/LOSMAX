@@ -52,7 +52,7 @@ export function LanguageSwitcher() {
     <div className="flex items-center space-x-1">
       <button
         className={`px-2 py-1 text-sm font-medium rounded-md bg-white ${
-          i18n.language === 'en' ? 'border border-primary text-primary' : 'text-gray-700 hover:bg-gray-100'
+          i18n.language === 'en' ? 'border border-blue-700 text-blue-700' : 'text-gray-700 hover:bg-gray-100'
         }`}
         onClick={() => changeLanguage('en')}
       >
@@ -61,7 +61,7 @@ export function LanguageSwitcher() {
       <div className="w-px h-4 bg-gray-300"></div> {/* Vertical separator */}
       <button
         className={`px-2 py-1 text-sm font-medium rounded-md bg-white ${
-          i18n.language === 'zh' ? 'border border-primary text-primary' : 'text-gray-700 hover:bg-gray-100'
+          i18n.language === 'zh' ? 'border border-blue-700 text-blue-700' : 'text-gray-700 hover:bg-gray-100'
         }`}
         onClick={() => changeLanguage('zh')}
       >

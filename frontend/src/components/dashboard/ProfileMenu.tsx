@@ -38,18 +38,18 @@ export const ProfileMenu: React.FC = () => {
       </button>
       
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-grey-200 z-50">
           {/* Only render this section if userEmail is available */}
           {userEmail && (
             <div className="p-3 border-b border-gray-200 text-left">
               {/* Display userName if it's available */}
               {userName && (
-                <p className="text-sm font-medium truncate" title={userName}>
+                <p className="ml-1.5 text-sm font-medium truncate" title={userName}>
                   {userName}
                 </p>
               )}
               {/* Always display userEmail if available. Add margin if userName was also displayed. */}
-              <p className={`text-xs text-gray-500 truncate ${userName ? 'mt-1' : ''}`} title={userEmail}>
+              <p className={`ml-1.5 text-xs text-gray-500 truncate ${userName ? 'mt-1' : ''}`} title={userEmail}>
                 {userEmail}
               </p>
             </div>

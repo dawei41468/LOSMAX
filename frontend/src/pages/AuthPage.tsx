@@ -49,15 +49,16 @@ function AuthFormComponent({
   };
 
   return (
-    <div className="w-full min-h-screen sm:max-w-md bg-white rounded-none sm:rounded-lg shadow-md p-6 sm:p-8">
-      <header className="mb-4 sm:mb-6 text-center mt-30">
+    /* w-full min-h-screen sm:max-w-md bg-white rounded-none sm:rounded-lg shadow-md p-6 sm:p-2 */
+    <div className="">
+      <header className="mb-4 sm:mb-6 text-center mt-0">
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">{t('auth.LOS')}</h1>
         <h2 className="text-sm sm:text-sm mt-1 text-gray-500 uppercase tracking-wider">{t('auth.lifeOrganizationSystem')}</h2>
         <div className="mt-3 sm:mt-4 border-b border-gray-200 w-10 sm:w-12 mx-auto"></div>
         <h3 className="text-base sm:text-lg mt-3 sm:mt-4 font-medium">{title}</h3>
       </header>
       
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 w-65">
         {showNameField && (
           <div className="space-y-2">
             <label htmlFor="name" className="sr-only">

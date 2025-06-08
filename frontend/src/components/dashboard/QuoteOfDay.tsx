@@ -17,22 +17,22 @@ const QuoteOfDay: React.FC = () => {
   const quoteNumber = (dayOfYear % totalQuotes) + 1;
 
   return (
-    <Card className="border border-purple-300 bg-purple-50 rounded-lg p-4 mx-auto w-full max-w-3xl">
+    <Card className="border border-purple-300 bg-purple-50 rounded-lg p-4 mx-auto w-full max-w-3xl relative">
       <div className="flex items-start gap-2">
         <Quote className="text-purple-400 w-5 h-5 stroke-[2]" />
         <div>
           <h3 className="text-base font-medium text-purple-800">
             {t('dashboard.quotes.daily')}
           </h3>
-          <div className="mt-2 text-sm">
+          <div className="mt-2 mb-2 text-sm">
             <p className="italic text-purple-600">
               {t(`dashboard.quotes.${quoteNumber}`)}
             </p>
-            <div className="text-xs text-purple-400 mt-1">
-              #{quoteNumber}
-            </div>
           </div>
         </div>
+      </div>
+      <div className="absolute bottom-2 right-4 text-xs text-purple-400">
+        #{quoteNumber}
       </div>
     </Card>
   );

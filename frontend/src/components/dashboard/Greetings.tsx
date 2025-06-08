@@ -16,7 +16,7 @@ export function Greeting() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold">
+      <h2 className="text-2xl font-medium">
         {getTimeBasedGreeting(t)}, {userName || t('dasboard.user_fallback')}!
       </h2>
     </div>
