@@ -47,6 +47,9 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onToggleSta
             <Trash2 className={`w-5 h-5 ${task.id ? 'text-red-500' : 'text-gray-300'}`} />
           </button>
         </div>
+        <div className="text-xs text-gray-500 mt-4 text-right">
+          Date: {new Date(task.created_at).toLocaleDateString()}
+        </div>
       </CardContent>
     </Card>
   );
