@@ -38,7 +38,7 @@ export const ProfileMenu: React.FC = () => {
       </button>
       
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-grey-200 z-50">
+        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
           {/* Only render this section if userEmail is available */}
           {userEmail && (
             <div className="p-3 border-b border-gray-200 text-left">
