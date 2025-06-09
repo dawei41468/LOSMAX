@@ -30,7 +30,7 @@ const DashStatus: React.FC<DashStatusProps> = ({ todayTasks, activeGoals }) => {
       <div className="mb-6">
         <h3 className="text-lg font-medium text-gray-700">{t('dashboard.task_completion')}</h3>
         <div className="flex items-center mt-2">
-          <div className="w-full bg-gray-100 rounded-full h-2.5 dark:bg-gray-700 ml-2">
+          <div className="w-full bg-gray-100 rounded-full h-2.5 dark:bg-gray-700 ml-2 border border-gray-400">
             <div
               className="bg-blue-600 h-2.5 rounded-full"
               style={{ width: `${completionPercentage}%` }}
