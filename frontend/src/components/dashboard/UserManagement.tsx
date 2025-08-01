@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { useTheme } from '../../contexts/ThemeContext';
 import ConfirmDeleteDialog from '../ui/ConfirmDeleteDialog';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
@@ -28,6 +29,7 @@ const ITEMS_PER_PAGE = 10;
 
 export function UserManagement() {
   const { userRole, setAuthState } = useAuth();
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -129,8 +131,8 @@ export function UserManagement() {
   return (
     <div className="p-4 space-y-4">
       {isEditDialogOpen && editingUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-full max-w-md">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+         <div className="bg-card p-6 rounded-lg w-full max-w-md" style={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff' }}>
             <h3 className="text-lg font-medium mb-4">Edit User</h3>
             {loadingPreferences ? (
               <div className="flex justify-center items-center h-32">
@@ -222,7 +224,7 @@ export function UserManagement() {
                   </button>
                   <button
                     onClick={handleUpdateUser}
-                    className="px-4 py-2 bg-blue-600 text-white rounded"
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded"
                   >
                     Save
                   </button>
@@ -247,7 +249,7 @@ export function UserManagement() {
         </div>
       </div>
 
-      <div className="bg-white p-4 rounded-lg shadow">
+      <div className="bg-card p-4 rounded-lg shadow">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />

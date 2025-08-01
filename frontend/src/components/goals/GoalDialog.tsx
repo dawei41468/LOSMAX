@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from '../../contexts/ThemeContext';
 import type { Goal, GoalCategory } from '../../types/goals'; // Use type-only import, removed GoalStatus
 
 // Define CATEGORIES locally as done in GoalsPage.tsx for LOSMAX
@@ -13,7 +14,8 @@ interface GoalDialogProps {
 }
 
 const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, initialGoal }) => {
-  const { t } = useTranslation();
+const { t } = useTranslation();
+const { theme } = useTheme();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState<GoalCategory>(CATEGORIES[0] as GoalCategory);
@@ -66,8 +68,8 @@ const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, init
   }
 
   return (
-    <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-4 z-50"> {/* Changed bg-opacity-50 to bg-black/30 */}
-      <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md"> {/* Main dialog content container */}
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+      <div className="p-6 rounded-lg shadow-xl w-full max-w-md" style={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff' }}>
         <h2 className="text-xl font-semibold mb-4 text-center">{initialGoal ? t('goals.dialog.edit_title') : t('goals.dialog.create_title')}</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -132,7 +134,7 @@ const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, init
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring"
             >
               {initialGoal ? t('common.save_changes_button') : t('goals.dialog.create_goal_button')}
             </button>

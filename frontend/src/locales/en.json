@@ -12,6 +12,9 @@
       "active": "Active",
       "completed": "Completed"
     },
+    "notifications": "Notifications",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
     "email": "Email",
     "password": "Password",
     "settings": "Settings",
@@ -25,7 +28,16 @@
       "work": "Work",
       "health": "Health",
       "personal": "Personal"
-    }
+    },
+    "theme": "Theme",
+    "losmax": "LOSMAX",
+    "life": "LIFE",
+    "organization": "ORGANIZATION",
+    "system": "SYSTEM",
+    "lifeOrganizationSystem": "LIFE ORGANIZATION SYSTEM",
+    "los": "LOS",
+    "profile": "Profile",
+    "home": "Home"
   },
   "progressPage": {
     "overview": "Overview",
@@ -74,14 +86,12 @@
       "goals": "Your Goals",
       "tasks": "Daily Tasks",
       "progress": "Progress",
-      "settings": "Settings",
       "dashboard": "Dashboard"
     },
     "subtitles": {
       "goals": "Manage your long-term goals for each life category",
       "tasks": "Set your tasks for today before your morning deadline",
-      "progress": "Track your progress and completion rates across all life areas",
-      "settings": "Manage your account and application preferences",
+      "progress": "Track your overall progress and completion rates.",
       "dashboard": "Track your daily progress across all life areas"
     },
     "greetings": {
@@ -159,7 +169,28 @@
     "losmax": "LOS"
   },
   "profile": {
-    "signout": "Sign Out"
+    "title": "User Center",
+    "subtitle": "Manage your account settings and preferences",
+    "signout": "Sign Out",
+    "anonymous": "Anonymous",
+    "no_email": "No email provided",
+    "tabs": {
+      "info": "My Info",
+      "preference": "Preference",
+      "about": "About"
+    },
+    "nickname": "Nickname",
+    "uid": "UID",
+    "role": "Role",
+    "language": "Language",
+    "info_content": "This is your personal information section.",
+    "preference_title": "Your Preferences",
+    "preference_content": "Manage your account preferences and settings here.",
+    "about_title": "About Your Account",
+    "about_content": "Learn more about your account and our services.",
+    "display_name_title": "Display Name",
+    "display_name_description": "Update your Nickname",
+    "nickname_label": "Nickname"
   },
   "settings": {
     "tabs": {
@@ -215,7 +246,7 @@
     },
     "about": {
       "title": "About LOS",
-      "subtitle": "Your Life Organization System, Maximized.",
+      "subtitle": "Your Life Organization System.",
       "what_is_title": "What is LOS?",
       "what_is_description": "LOS is a comprehensive tool designed to help you organize your life, manage tasks, set goals, and track your progress effectively. It combines powerful features with a user-friendly interface to enhance your productivity and well-being.",
       "features_title": "Key Features:",
@@ -238,7 +269,7 @@
     "warning": "This action is permanent."
   },
   "goals": {
-    "create_new": "Create New Goal",
+    "create_new": "+ New Goal",
     "error_message": "Error: {{error}}",
     "loading_message": "Loading goals...",
     "no_goals_found": "No goals found for the \"{{filter}}\" filter. Try creating one!",
@@ -274,7 +305,7 @@
     }
   },
   "tasks": {
-    "create_new": "Create New Task",
+    "create_new": "+ New Task",
     "error_message": "Error: {{error}}",
     "no_tasks_found": "No tasks found for the \"{{filter}}\" filter. Try creating one!",
     "no_tasks_found_today": "What can you do today to make progress on your goals?",

@@ -12,6 +12,9 @@
       "active": "活跃",
       "completed": "已完成"
     },
+    "notifications": "通知",
+    "enabled": "已启用",
+    "disabled": "已禁用",
     "email": "邮箱",
     "password": "密码",
     "settings": "设置",
@@ -25,7 +28,13 @@
       "work": "工作",
       "health": "健康",
       "personal": "个人"
-    }
+    },
+    "theme": "主题",
+    "losmax": "LOSMAX",
+    "lifeOrganizationSystem": "生活管理系统",
+    "los": "LOS",
+    "profile": "个人",
+    "home": "首页"
   },
   "progressPage": {
     "overview": "总览",
@@ -76,14 +85,12 @@
       "goals": "您的目标",
       "tasks": "日常任务",
       "progress": "进度",
-      "settings": "设置",
       "dashboard": "仪表盘"
     },
     "subtitles": {
       "goals": "管理您在每个生活类别的长期目标",
       "tasks": "在早晨截止时间前设定您今天的任务",
       "progress": "追踪您在所有生活领域的进度和完成率",
-      "settings": "管理您的账户和应用偏好",
       "dashboard": "追踪您在所有生活领域的日常进度"
     },
     "greetings": {
@@ -161,7 +168,28 @@
     "losmax": "LOS"
   },
   "profile": {
-    "signout": "登出"
+    "title": "用户中心",
+    "subtitle": "管理您的账户设置和偏好",
+    "signout": "登出",
+    "anonymous": "匿名用户",
+    "no_email": "未提供邮箱",
+    "tabs": {
+      "info": "我的信息",
+      "preference": "偏好设置",
+      "about": "关于"
+    },
+    "nickname": "昵称",
+    "uid": "用户ID",
+    "role": "角色",
+    "language": "语言",
+    "info_content": "这是您的个人信息部分。",
+    "preference_title": "您的偏好设置",
+    "preference_content": "在此管理您的账户偏好和设置。",
+    "about_title": "关于您的账户",
+    "about_content": "了解更多关于您的账户和我们的服务。",
+    "display_name_title": "显示名称",
+    "display_name_description": "更新您的昵称",
+    "nickname_label": "昵称"
   },
   "settings": {
     "tabs": {
@@ -216,16 +244,16 @@
       "password_change_error": "更改密码失败。请检查您当前的密码并重试。"
     },
     "about": {
-      "title": "关于 LOSMAX",
-      "subtitle": "您的生活管理系统，极致版。",
-      "what_is_title": "什么是 LOSMAX？",
-      "what_is_description": "LOSMAX 是一款旨在帮助您组织生活、管理任务、设定目标并有效追踪进度的综合工具。它结合了强大的功能和用户友好的界面，以提高您的生产力和幸福感。",
+      "title": "关于 LOS",
+      "subtitle": "您的生活管理系统。",
+      "what_is_title": "什么是 LOS？",
+      "what_is_description": "LOS 是一款旨在帮助您组织生活、管理任务、设定目标并有效追踪进度的综合工具。它结合了强大的功能和用户友好的界面，以提高您的生产力和幸福感。",
       "features_title": "主要特点：",
       "feature1": "目标设定与追踪",
       "feature2": "带截止时间的任务管理",
       "feature3": "进度可视化",
       "feature4": "用户偏好与定制",
-      "how_to_use_title": "如何使用 LOSMAX：",
+      "how_to_use_title": "如何使用 LOS：",
       "step1": "在“目标”部分设定清晰、可实现的目标。",
       "step2": "在“任务”部分将您的目标分解为可管理的任务。",
       "step3": "在“进度”中更新您的任务状态并监控您的整体进展。",
@@ -240,14 +268,14 @@
     "warning": "此操作是永久性的。"
   },
   "goals": {
-    "create_new": "创建新目标",
+    "create_new": "+ 新目标",
     "error_message": "错误：{{error}}",
     "loading_message": "正在加载目标...",
     "no_goals_found": "在“{{filter}}”筛选器下未找到目标。尝试创建一个！",
     "max_active_goals_reached": "每个类别最多允许3个活跃目标。",
     "filters": {
       "all": "所有",
-      "active":"活跃",
+      "active": "活跃",
       "completed": "已完成"
     },
     "categories": {
@@ -276,7 +304,7 @@
     }
   },
   "tasks": {
-    "create_new": "创建新任务",
+    "create_new": "+ 新任务",
     "error_message": "错误：{{error}}",
     "no_tasks_found": "在“{{filter}}”筛选器下未找到任务。尝试创建一个！",
     "no_tasks_found_today": "你今天能做些什么来推动你的目标进展？",

@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useCallback } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AuthContext } from '../contexts/auth.context';
 import type { AuthContextType } from '../contexts/auth.types';
@@ -60,6 +60,11 @@ export default function TasksPage() {
       fetchUserTasks(currentFilter);
     }
   }, [isAuthenticated, navigate, currentFilter, fetchUserTasks]);
+
+  // Scroll to top on page load
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleDialogSubmit = async (data: Omit<Task, 'id' | 'user_id' | 'created_at'>) => {
     setIsLoading(true);
@@ -174,29 +179,38 @@ export default function TasksPage() {
   }, {} as Record<string, Record<string, Task[]>>);
 
   return (
-    <div className="py-6 no-scrollbar md:p-4" style={{ overflowY: 'auto' }}>
-      {/* Header Section */}
-      <div className="px-4 flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6">
-        <button
-          onClick={openCreateDialog}
-          className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none"
-        >
-          {t('tasks.create_new')}
-        </button>
+    <div className="no-scrollbar md:p-4" style={{ overflowY: 'auto' }}>
+      {/* Fixed top bar */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-background h-20 flex flex-col justify-center items-center" style={{ backgroundColor: 'var(--background)' }}>
+        <h1 className="text-xl font-semibold">{t('dashboard.titles.tasks')}</h1>
+        <p className="text-sm text-muted">{t('dashboard.subtitles.tasks')}</p>
       </div>
-
-      {/* Filter Buttons */}
-      <div className="px-4 mb-6 flex flex-wrap gap-2 justify-center">
-        {(['today', 'all'] as FilterType[]).map(filter => (
+      
+      {/* Content with top padding to account for fixed header */}
+      <div className="pt-24">
+        {/* Fixed Action Bar beneath Top Bar */}
+        <div className="fixed top-20 left-0 right-0 z-40 bg-background flex flex-row justify-between items-center px-6 py-2" style={{ backgroundColor: 'var(--background)' }}>
+          {/* Filter Select Menu */}
+          <div className="flex justify-start">
+            <select
+              value={currentFilter}
+              onChange={(e) => setCurrentFilter(e.target.value as FilterType)}
+              className="border border-blue-200 rounded-md px-2 py-1 text-xs bg-gray-200 text-stone-800 hover:bg-gray-100 focus:outline-none sm:px-3 sm:py-1.5 sm:text-sm"
+            >
+              {(['today', 'all'] as FilterType[]).map(filter => (
+                <option key={filter} value={filter}>
+                  {t(`tasks.filters.${filter}`)}
+                </option>
+              ))}
+            </select>
+          </div>
           <button
-            key={filter}
-            onClick={() => setCurrentFilter(filter)}
-            className={`px-3 py-1.5 text-xs rounded-md transition-colors sm:px-4 sm:py-2 sm:text-sm ${currentFilter === filter ? 'border border-blue-600 text-blue-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+            onClick={openCreateDialog}
+            className="w-auto px-4 py-2 text-sm font-medium border border-blue-500 text-blue-500 rounded-md hover:bg-blue-500/10 transition-colors focus:outline-none"
           >
-            {t(`tasks.filters.${filter}`)}
+            {t('tasks.create_new')}
           </button>
-        ))}
-      </div>
+        </div>
 
       {isTaskDialogOpen && (
         <TaskDialog
@@ -258,6 +272,7 @@ export default function TasksPage() {
             </div>
           ))
       )}
+      </div>
     </div>
   );
 }

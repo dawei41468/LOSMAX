@@ -21,32 +21,32 @@ type IconProps = {
  */
 export const categoryColors = {
   Health: {
-    text: 'text-green-700',
-    bg: 'bg-green-100',
-    icon: 'text-green-500',
-    primary: 'text-green-500',
-    primaryBg: 'bg-green-500'
+    text: 'text-[var(--category-health)]',
+    bg: 'bg-[color-mix(in_srgb,var(--category-health)_10%,transparent)]',
+    icon: 'text-[var(--category-health)]',
+    primary: 'text-[var(--category-health)]',
+    primaryBg: 'bg-[var(--category-health)]'
   },
   Work: {
-    text: 'text-blue-700',
-    bg: 'bg-blue-100',
-    icon: 'text-blue-500',
-    primary: 'text-blue-500',
-    primaryBg: 'bg-blue-500'
+    text: 'text-[var(--category-work)]',
+    bg: 'bg-[color-mix(in_srgb,var(--category-work)_10%,transparent)]',
+    icon: 'text-[var(--category-work)]',
+    primary: 'text-[var(--category-work)]',
+    primaryBg: 'bg-[var(--category-work)]'
   },
   Personal: {
-    text: 'text-orange-700',
-    bg: 'bg-orange-100',
-    icon: 'text-orange-500',
-    primary: 'text-orange-500',
-    primaryBg: 'bg-orange-500'
+    text: 'text-[var(--category-personal)]',
+    bg: 'bg-[color-mix(in_srgb,var(--category-personal)_10%,transparent)]',
+    icon: 'text-[var(--category-personal)]',
+    primary: 'text-[var(--category-personal)]',
+    primaryBg: 'bg-[var(--category-personal)]'
   },
   Family: {
-    text: 'text-purple-700',
-    bg: 'bg-purple-100',
-    icon: 'text-purple-500',
-    primary: 'text-purple-500',
-    primaryBg: 'bg-purple-500'
+    text: 'text-[var(--category-family)]',
+    bg: 'bg-[color-mix(in_srgb,var(--category-family)_10%,transparent)]',
+    icon: 'text-[var(--category-family)]',
+    primary: 'text-[var(--category-family)]',
+    primaryBg: 'bg-[var(--category-family)]'
   }
 } as const;
 

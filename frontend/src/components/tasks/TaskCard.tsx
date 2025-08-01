@@ -15,40 +15,43 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onToggleSta
   const { t } = useTranslation();
 
   return (
-    <Card className="shadow-md hover:shadow-lg transition-shadow duration-200">
-      <CardContent className="p-4">
-        <h3 className="text-lg font-semibold mb-2 mt-2 text-left">{task.title}</h3>
-        <p className="text-sm text-gray-600 text-left">
-          {t('tasks.status')}: <span className={`${task.status === 'complete' ? 'text-green-600 font-bold' : 'text-red-600 font-bold'}`}>{t(`tasks.statuses.${task.status}`)}</span>
-        </p>
-        <div className="mt-4 flex justify-center space-x-8">
+    <Card className="task-card">
+      <CardContent className="card-content">
+        <h3 className="text-lg font-semibold mb-2">{task.title}</h3>
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-sm text-muted">{t('tasks.status')}:</span>
+          <span className={`badge badge-sm ${task.status === 'complete' ? 'badge-completed' : 'badge-pending'}`}>
+            {t(`tasks.statuses.${task.status}`)}
+          </span>
+        </div>
+        <div className="flex justify-center gap-4">
           <button
             onClick={() => onEdit(task)}
             aria-label={t('common.edit_button')}
-            className="p-2 rounded-md transition-colors"
+            className="btn btn-ghost btn-sm"
             disabled={!task.id}
           >
-            <Edit className={`w-5 h-5 ${task.id ? 'text-blue-500' : 'text-gray-300'}`} />
+            <Edit className="w-4 h-4" />
           </button>
           <button
             onClick={() => onToggleStatus(task)}
             aria-label={task.status === 'complete' ? t('tasks.markIncomplete') : t('tasks.markComplete')}
-            className={`p-2 rounded-md transition-colors ${task.status === 'complete' ? 'hover:text-yellow-600' : 'hover:text-green-600'}`}
+            className="btn btn-ghost btn-sm"
             disabled={!task.id}
           >
-            <Check className={`w-5 h-5 ${task.id ? (task.status === 'complete' ? 'text-yellow-500' : 'text-green-500') : 'text-gray-300'}`} />
+            <Check className={`w-4 h-4 ${task.status === 'complete' ? 'text-warning' : 'text-success'}`} />
           </button>
           <button
             onClick={() => onDelete(task.id)}
             aria-label={t('common.delete_button')}
-            className="p-2 rounded-md transition-colors hover:text-red-600"
+            className="btn btn-ghost btn-sm"
             disabled={!task.id}
           >
-            <Trash2 className={`w-5 h-5 ${task.id ? 'text-red-500' : 'text-gray-300'}`} />
+            <Trash2 className="w-4 h-4 text-destructive" />
           </button>
         </div>
-        <div className="text-xs text-gray-500 mt-4 text-right">
-          Date: {new Date(task.created_at).toLocaleDateString()}
+        <div className="text-xs text-muted mt-4 text-right">
+          {new Date(task.created_at).toLocaleDateString()}
         </div>
       </CardContent>
     </Card>

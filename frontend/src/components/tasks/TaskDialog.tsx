@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from '../../contexts/ThemeContext';
 import type { Task } from '../../services/api';
 import type { Goal } from '../../types/goals';
 import { getGoals } from '../../services/api';
@@ -14,6 +15,7 @@ interface TaskDialogProps {
 
 const TaskDialog: React.FC<TaskDialogProps> = ({ isOpen, onClose, onSubmit, initialTask }) => {
   const { t } = useTranslation();
+  const { theme } = useTheme();
   const [title, setTitle] = useState(initialTask?.title || '');
   const [goalId, setGoalId] = useState(initialTask?.goal_id || '');
   const [goals, setGoals] = useState<Goal[]>([]);
@@ -48,8 +50,8 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ isOpen, onClose, onSubmit, init
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/30 flex items-center justify-center p-4 z-50">
-      <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+      <div className="relative rounded-lg shadow-xl max-w-md w-full mx-4" style={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff' }}>
         <div className="p-6">
           <h2 className="text-2xl font-bold mb-4">
             {initialTask ? t('tasks.edit') : t('tasks.create')}

@@ -19,6 +19,10 @@ type FilterStatus = GoalStatus | 'all';
 export default function GoalsPage() {
   const { t } = useTranslation();
   const { isAuthenticated } = useContext(AuthContext) as AuthContextType;
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const navigate = useNavigate();
   const [goals, setGoals] = useState<Goal[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -157,81 +161,91 @@ export default function GoalsPage() {
 
 
   return (
-    <div className="py-6 no-scrollbar md:p-4" style={{ overflowY: 'auto' }}> {/* Removed px-4, kept py-6 for vertical spacing */}
-      {/* Header Section */}
-      <div className="px-4 flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6"> {/* Added px-4 here */}
-        <button
-          onClick={openCreateDialog}
-          className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none"
-        >
-          {t('goals.create_new')}
-        </button>
+    <div className="no-scrollbar md:p-4" style={{ overflowY: 'auto' }}>
+      {/* Fixed top bar */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-background h-20 flex flex-col justify-center items-center" style={{ backgroundColor: 'var(--background)' }}>
+        <h1 className="text-xl font-semibold">{t('dashboard.titles.goals')}</h1>
+        <p className="text-sm text-muted">{t('dashboard.subtitles.goals')}</p>
       </div>
-
-      {/* Filter Buttons */}
-      <div className="px-4 mb-6 flex flex-wrap gap-2 justify-center"> {/* Added px-4 here, use flex-wrap and gap */}
-        {(['active', 'completed', 'all'] as FilterStatus[]).map(filter => (
+      
+      {/* Content with top padding to account for fixed header */}
+      <div className="pt-24">
+        {/* Fixed Action Bar beneath Top Bar */}
+        <div className="fixed top-20 left-0 right-0 z-40 bg-background flex flex-row justify-between items-center px-6 py-2" style={{ backgroundColor: 'var(--background)' }}>
+          {/* Filter Select Menu */}
+          <div className="flex justify-start">
+            <select
+              value={currentFilter}
+              onChange={(e) => setCurrentFilter(e.target.value as FilterStatus)}
+              className="border border-blue-200 rounded-md px-2 py-1 text-xs bg-gray-200 text-stone-800 hover:bg-gray-100 focus:outline-none sm:px-3 sm:py-1.5 sm:text-sm"
+            >
+              {(['active', 'completed', 'all'] as FilterStatus[]).map(filter => (
+                <option key={filter} value={filter}>
+                  {t(`goals.filters.${filter}`)}
+                </option>
+              ))}
+            </select>
+          </div>
           <button
-            key={filter}
-            onClick={() => setCurrentFilter(filter)}
-            className={`px-3 py-1.5 text-xs rounded-md transition-colors sm:px-4 sm:py-2 sm:text-sm ${currentFilter === filter ? 'border border-blue-600 text-blue-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+            onClick={openCreateDialog}
+            className="w-auto px-4 py-2 text-sm font-medium border border-blue-500 text-blue-500 rounded-md hover:bg-blue-500/10 transition-colors focus:outline-none"
           >
-            {t(`goals.filters.${filter}`)}
+            {t('goals.create_new')}
           </button>
-        ))}
-      </div>
+        </div>
 
-      {isGoalDialogOpen && (
-        <GoalDialog
-          isOpen={isGoalDialogOpen}
-          onClose={() => {
-            setIsGoalDialogOpen(false);
-            setEditingGoal(null);
-          }}
-          onSubmit={handleDialogSubmit}
-          initialGoal={editingGoal || undefined} // Pass undefined if not editing
+        {isGoalDialogOpen && (
+          <GoalDialog
+            isOpen={isGoalDialogOpen}
+            onClose={() => {
+              setIsGoalDialogOpen(false);
+              setEditingGoal(null);
+            }}
+            onSubmit={handleDialogSubmit}
+            initialGoal={editingGoal || undefined}
+          />
+        )}
+
+        <ConfirmDeleteDialog
+          isOpen={showDeleteConfirm}
+          onClose={() => setShowDeleteConfirm(false)}
+          onConfirm={handleDeleteGoal}
+          itemName="goal"
+          isDeleting={isLoading}
         />
-      )}
 
-      <ConfirmDeleteDialog
-        isOpen={showDeleteConfirm}
-        onClose={() => setShowDeleteConfirm(false)}
-        onConfirm={handleDeleteGoal}
-        itemName="goal"
-        isDeleting={isLoading}
-      />
+        {isLoading && <p className="text-center py-4">{t('common.loading')}</p>}
+        {!isLoading && goals.length === 0 && (
+          <p className="text-center py-4 text-gray-500">
+            {t('goals.no_goals_found', { filter: t(`goals.filters.${currentFilter}`) })}
+          </p>
+        )}
 
-      {isLoading && <p className="text-center py-4">{t('common.loading')}</p>}
-      {!isLoading && goals.length === 0 && (
-        <p className="text-center py-4 text-gray-500">
-          {t('goals.no_goals_found', { filter: t(`goals.filters.${currentFilter}`) })}
-        </p>
-      )}
-
-      {Object.keys(groupedGoals).length > 0 && !isLoading && (
-        (['Family', 'Work', 'Health', 'Personal'] as GoalCategory[])
-          .filter(category => groupedGoals[category] && groupedGoals[category].length > 0) // Filter out categories that have no goals
-          .map(category => (
-            <div key={category} className="mb-6">
-              <h2 className="text-xl font-semibold mb-3 flex items-center">
-                <CategoryHeader
-                  category={category}
-                />
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {groupedGoals[category].map(goal => (
-                  <GoalCard
-                    key={goal.id}
-                    goal={goal}
-                    onEdit={openEditDialog}
-                    onDelete={() => confirmDeleteGoal(goal.id)} // Use confirmDeleteGoal
-                    onToggleStatus={handleToggleStatus}
+        {Object.keys(groupedGoals).length > 0 && !isLoading && (
+          (['Family', 'Work', 'Health', 'Personal'] as GoalCategory[])
+            .filter(category => groupedGoals[category] && groupedGoals[category].length > 0)
+            .map(category => (
+              <div key={category} className="mb-6">
+                <h2 className="text-xl font-semibold mb-3 flex items-center">
+                  <CategoryHeader
+                    category={category}
                   />
-                ))}
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {groupedGoals[category].map(goal => (
+                    <GoalCard
+                      key={goal.id}
+                      goal={goal}
+                      onEdit={openEditDialog}
+                      onDelete={() => confirmDeleteGoal(goal.id)}
+                      onToggleStatus={handleToggleStatus}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
-          ))
-      )}
+            ))
+        )}
+      </div>
     </div>
-  );
+);
 }

@@ -6,6 +6,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { LanguageSwitch } from '../components/ui/language-toggle';
 import { login, register } from '../services/auth';
 import { AuthContext } from '../contexts/auth.context';
+import LOSHeader from '../components/ui/losheader';
 
 interface AuthFormProps {
   title: string;
@@ -49,18 +50,16 @@ function AuthFormComponent({
   };
 
   return (
-    /* w-full min-h-screen sm:max-w-md bg-white rounded-none sm:rounded-lg shadow-md p-6 sm:p-2 */
-    <div className="">
-      <header className="mb-4 sm:mb-6 text-center mt-0">
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">{t('auth.LOS')}</h1>
-        <h2 className="text-sm sm:text-sm mt-1 text-gray-500 uppercase tracking-wider">{t('auth.lifeOrganizationSystem')}</h2>
-        <div className="mt-3 sm:mt-4 border-b border-gray-200 w-10 sm:w-12 mx-auto"></div>
-        <h3 className="text-base sm:text-lg mt-3 sm:mt-4 font-medium">{title}</h3>
+    <div className="auth-card">
+      <header className="auth-header">
+        <LOSHeader variant="auth" />
+        <div className="auth-divider"></div>
+        <h3 className="auth-form-title">{title}</h3>
       </header>
       
-      <form onSubmit={handleSubmit} className="space-y-4 w-65">
+      <form onSubmit={handleSubmit} className="auth-form">
         {showNameField && (
-          <div className="space-y-2">
+          <div className="form-group">
             <label htmlFor="name" className="sr-only">
               {t('auth.name')}
             </label>
@@ -71,11 +70,11 @@ function AuthFormComponent({
               placeholder={t('auth.namePlaceholder')}
               autoComplete="name"
               required
-              className="w-full px-2 py-4 sm:py-3 border-0 border-b border-gray-200 focus:border-gray-400 focus:ring-0 focus:outline-none rounded-none text-lg sm:text-base"
+              className="form-input-underline"
             />
           </div>
         )}
-        <div className="space-y-2">
+        <div className="form-group">
           <label htmlFor="email" className="sr-only">
             {t('common.email')}
           </label>
@@ -86,15 +85,15 @@ function AuthFormComponent({
             placeholder={t('auth.emailPlaceholder')}
             autoComplete="username"
             required
-            className="w-full px-2 py-4 sm:py-3 border-0 border-b border-gray-200 focus:border-gray-400 focus:ring-0 focus:outline-none rounded-none text-lg sm:text-base"
+            className="form-input-underline"
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="form-group">
           <label htmlFor="password" className="sr-only">
             {t('common.password')}
           </label>
-          <div className="relative">
+          <div className="form-input-with-icon">
             <input
               id="password"
               name="password"
@@ -103,40 +102,52 @@ function AuthFormComponent({
               autoComplete="current-password"
               required
               minLength={6}
-              className="w-full px-2 py-4 sm:py-3 border-0 border-b border-gray-200 focus:border-gray-400 focus:ring-0 focus:outline-none rounded-none text-lg sm:text-base"
+              className="form-input-underline"
             />
             <button
               type="button"
               tabIndex={-1}
-              className="absolute right-0 top-1/2 -translate-y-1/2 p-2 text-gray-500 hover:text-gray-700"
+              className="form-input-icon"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? <FaEyeSlash className="h-4 w-4" /> : <FaEye className="h-4 w-4" />}
+              {showPassword ? <FaEyeSlash className="icon-sm" /> : <FaEye className="icon-sm" />}
             </button>
           </div>
         </div>
 
         <button
           type="submit"
-          className="w-full py-4 sm:py-3 px-4 bg-gray-900 text-white hover:bg-gray-800 focus:outline-none rounded-md disabled:opacity-50 text-base sm:text-sm"
+          className="btn btn-primary btn-full-width"
           disabled={isLoading}
         >
           {isLoading ? t('common.loading') : submitText}
         </button>
       </form>
 
-      <div className="mt-8 sm:mt-6 relative">
+      <div className="auth-footer">
         {secondaryAction && (
-          <div className="text-center">
-            <button
-              onClick={secondaryAction.onClick}
-              className="text-gray-500 hover:text-gray-700 text-sm"
-            >
-              {secondaryAction.text}
-            </button>
-          </div>
+          <span className="auth-footer-text">
+            {secondaryAction.text.includes('account') ? (
+              <>
+                {secondaryAction.text.includes('Don\'t have') ? "Don't have an account?" : "Already have an account?"}{' '}
+                <button
+                  onClick={secondaryAction.onClick}
+                  className="auth-footer-link"
+                >
+                  {secondaryAction.text.includes('Don\'t have') ? "Sign up" : "Sign in"}
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={secondaryAction.onClick}
+                className="auth-footer-link"
+              >
+                {secondaryAction.text}
+              </button>
+            )}
+          </span>
         )}
-        <LanguageSwitch className="absolute left-0 bottom-0" />
+        <LanguageSwitch className="auth-language-switch" />
       </div>
     </div>
   );
@@ -175,31 +186,31 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="page-auth">
       {isSignUp ? (
-    <AuthFormComponent
-      title={t('auth.signUpTitle')}
-      submitText={t('auth.signUp')}
-      onSubmit={handleSignUp}
-      secondaryAction={{
-        text: t('auth.alreadyHaveAccount'),
-        onClick: () => setIsSignUp(false)
-      }}
-      isLoading={isLoading}
-      showNameField={true}
-    />
-  ) : (
-    <AuthFormComponent
-      title={t('auth.signInTitle')}
-      submitText={t('auth.signIn')}
-      onSubmit={handleSignIn}
-      secondaryAction={{
-        text: t('auth.dontHaveAccount'),
-        onClick: () => setIsSignUp(true)
-      }}
-      isLoading={isLoading}
-      showNameField={false}
-    />
+        <AuthFormComponent
+          title={t('auth.signUpTitle')}
+          submitText={t('auth.signUp')}
+          onSubmit={handleSignUp}
+          secondaryAction={{
+            text: t('auth.alreadyHaveAccount'),
+            onClick: () => setIsSignUp(false)
+          }}
+          isLoading={isLoading}
+          showNameField={true}
+        />
+      ) : (
+        <AuthFormComponent
+          title={t('auth.signInTitle')}
+          submitText={t('auth.signIn')}
+          onSubmit={handleSignIn}
+          secondaryAction={{
+            text: t('auth.dontHaveAccount'),
+            onClick: () => setIsSignUp(true)
+          }}
+          isLoading={isLoading}
+          showNameField={false}
+        />
       )}
     </div>
   )

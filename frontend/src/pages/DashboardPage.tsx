@@ -1,58 +1,42 @@
 import { useContext, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuthContext } from '../contexts/auth.context';
 import type { AuthContextType } from '../contexts/auth.types';
 import { useNavigate } from 'react-router-dom';
-import { api, getTasks, getGoals } from '../services/api'; // Import api service
+import { getTasks, getGoals } from '../services/api';
 import QuoteOfDay from '../components/dashboard/QuoteOfDay';
-import UserInfo from '../components/dashboard/UserInfo';
-import DashStatus from '../components/dashboard/DashStatus';
+import { Greeting } from '../components/dashboard/Greetings';
+import TaskStatus from '../components/dashboard/TaskStatus';
+import OverviewStats from '../components/dashboard/OverviewStats';
 import type { Task } from '../services/api';
 import type { Goal } from '../types/goals';
 
-// Define a type for the expected API response structure, matching Pydantic model
-interface UserPreferencesResponse {
-  morning_deadline: string;
-  evening_deadline: string;
-  notifications_enabled: boolean;
-  language: string; // Language is part of preferences, but also in AuthContext
-}
-
 export default function DashboardPage() {
-  const { isAuthenticated, userName, userId, userEmail, userRole, userLanguage } = useContext(AuthContext) as AuthContextType;
+  const { t } = useTranslation();
+  const { isAuthenticated, userName } = useContext(AuthContext) as AuthContextType;
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const navigate = useNavigate();
 
-  const [preferences, setPreferences] = useState<UserPreferencesResponse | null>(null);
-  const [loadingPreferences, setLoadingPreferences] = useState(true);
   const [todayTasks, setTodayTasks] = useState<Task[]>([]);
   const [activeGoals, setActiveGoals] = useState<Goal[]>([]);
-
-  useEffect(() => {
-    const fetchPreferences = async () => {
-      if (isAuthenticated) {
-        try {
-          setLoadingPreferences(true);
-          const response = await api.get('/preferences');
-          setPreferences(response.data as UserPreferencesResponse);
-        } catch (error) {
-          console.error('Error fetching preferences for dashboard:', error);
-          // Optionally, set an error state to display a message to the user
-        } finally {
-          setLoadingPreferences(false);
-        }
-      }
-    };
-
-    fetchPreferences();
-  }, [isAuthenticated]);
+  const [allGoals, setAllGoals] = useState<Goal[]>([]);
+  const [allTasks, setAllTasks] = useState<Task[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       if (isAuthenticated) {
         try {
-          const fetchedTasks = await getTasks(undefined, 'today');
-          const fetchedGoals = await getGoals('active');
-          setTodayTasks(fetchedTasks);
-          setActiveGoals(fetchedGoals);
+          const fetchedTodayTasks = await getTasks(undefined, 'today');
+          const fetchedActiveGoals = await getGoals('active');
+          const fetchedAllGoals = await getGoals(); // Fetch all goals for progress stats
+          const fetchedAllTasks = await getTasks(); // Fetch all tasks for progress stats
+          setTodayTasks(fetchedTodayTasks);
+          setActiveGoals(fetchedActiveGoals);
+          setAllGoals(fetchedAllGoals);
+          setAllTasks(fetchedAllTasks);
         } catch (error) {
           console.error('Error fetching tasks or goals for dashboard:', error);
         }
@@ -61,39 +45,50 @@ export default function DashboardPage() {
     fetchData();
   }, [isAuthenticated]);
 
+  // Calculate stats for OverviewStats
+  const totalGoals = allGoals.length || 0;
+  const completedGoals = allGoals.filter(g => !!g.completed_at).length || 0;
+  const inProgressGoals = totalGoals - completedGoals;
+  const allTasksCount = allTasks.length || 0;
+  const completedTasksCount = allTasks.filter(t => t.status === 'complete').length || 0;
+  const avgProgress = allTasksCount > 0
+    ? Math.round((completedTasksCount / allTasksCount) * 100)
+    : 0;
+
   // The ProtectedRoute component in App.tsx already handles redirection if not authenticated.
   // This check provides an additional layer or can be page-specific for loading.
   if (isAuthenticated === false) {
     // This navigation might be redundant if ProtectedRoute always catches it first.
     // Consider if navigation here is still needed or if a simple null/message is better.
-    navigate('/auth', { replace: true }); 
+    navigate('/auth', { replace: true });
     return null;
   }
 
-  if (isAuthenticated === null || (isAuthenticated && loadingPreferences)) {
-    // Display a loading message while authentication status or preferences are being determined
+  if (isAuthenticated === null) {
+    // Display a loading message while authentication status is being determined
     return <div className="p-6">Loading dashboard...</div>;
   }
 
   return (
-    <div className="mt-4 space-y-6 md:p-4">
-      {/*
-        The main title (e.g., "Dashboard") is now typically handled by DashboardLayout.tsx.
-        If you need a subtitle or a more specific title for this page's content,
-        you can add it here. For example:
-        <h2 className="text-2xl font-semibold text-gray-700 mb-6">Overview</h2>
-      */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <UserInfo
-          userName={userName}
-          userId={userId}
-          userEmail={userEmail}
-          userRole={userRole}
-          userLanguage={userLanguage}
-          preferences={preferences}
-        />
+    <div className="space-y-6 md:p-4">
+      {/* Fixed top bar */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-background h-20 flex flex-col justify-center items-center" style={{ backgroundColor: 'var(--background)' }}>
+        <h1 className="text-xl font-semibold">{t('dashboard.titles.dashboard')}</h1>
+        <p className="text-sm text-muted">{t('dashboard.subtitles.dashboard')}</p>
+      </div>
+      
+      {/* Content with top padding to account for fixed header */}
+      <div className="pt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <Greeting userName={userName} />
         <QuoteOfDay />
-        <DashStatus todayTasks={todayTasks} activeGoals={activeGoals} />
+        <TaskStatus todayTasks={todayTasks} activeGoals={activeGoals} />
+        <div className="border border-gray-200 mt-6"></div>
+        <OverviewStats
+          totalGoals={totalGoals}
+          completedGoals={completedGoals}
+          inProgressGoals={inProgressGoals}
+          avgProgress={avgProgress}
+        />
       </div>
     </div>
   );
