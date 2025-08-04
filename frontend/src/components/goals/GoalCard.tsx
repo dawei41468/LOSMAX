@@ -4,6 +4,7 @@ import type { Goal } from '../../types/goals';
 import { Edit, Check, Trash2 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../ui/card';
 import { formatDate, formatDateShort } from '../../lib/utils'; // Utility function to format dates
+import { StatusBadge } from '../ui/BadgeUI';
 
 interface GoalCardProps {
   goal: Goal;
@@ -52,15 +53,6 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onEdit, onDelete, onToggleSta
     return categoryColors[goal.category] || 'text-foreground';
   };
 
-  const getStatusBadgeColor = () => {
-    const statusColors: Record<string, string> = {
-      active: 'bg-[var(--status-active)] text-[var(--foreground)]',
-      completed: 'bg-[var(--status-completed)] text-[var(--foreground)]',
-      paused: 'bg-[var(--status-paused)] text-[var(--foreground)]',
-      cancelled: 'bg-[var(--status-cancelled)] text-[var(--foreground)]',
-    };
-    return statusColors[goal.status] || 'bg-secondary text-secondary-foreground';
-  };
 
   return (
     <Card
@@ -73,9 +65,7 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onEdit, onDelete, onToggleSta
           <CardTitle size="sm" color="none" className={getCategoryColor()}>
             {goal.title}
           </CardTitle>
-          <span className={`badge ${getStatusBadgeColor()}`}>
-            {t(`common.${goal.status}`)}
-          </span>
+          <StatusBadge status={goal.status} />
         </div>
       </CardHeader>
 

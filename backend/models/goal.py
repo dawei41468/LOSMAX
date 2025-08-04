@@ -32,10 +32,6 @@ class Goal(GoalBase):
     updated_at: datetime
     completed_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
-
 class GoalInDB(Goal):
     """Database representation of a goal including sensitive fields"""
-    class Config:
-        from_attributes = True
+    pass

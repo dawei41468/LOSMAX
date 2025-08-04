@@ -3,6 +3,7 @@ import type { Task } from '../../types/tasks';
 import { useTranslation } from 'react-i18next';
 import { Edit, Check, Trash2 } from 'lucide-react';
 import { formatDate, formatDateShort } from '../../lib/utils';
+import { StatusBadge } from '../ui/BadgeUI';
 
 interface TaskCardProps {
   task: Task;
@@ -15,9 +16,6 @@ interface TaskCardProps {
 const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onToggleStatus, useShortDate = true }) => {
   const { t } = useTranslation();
 
-  const getStatusBadgeColor = () => {
-    return task.status === 'completed' ? 'badge-success' : 'badge-warning';
-  };
 
   return (
     <div className="p-2 border rounded-lg hover:shadow-md transition-shadow bg-card text-card-foreground">
@@ -29,9 +27,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onToggleSta
           <span className="text-xs text-muted-foreground">
             {useShortDate ? formatDateShort(task.created_at) : formatDate(task.created_at)}
           </span>
-          <span className={`badge badge-xs ${getStatusBadgeColor()}`}>
-            {t(`common.${task.status}`)}
-          </span>
+          <StatusBadge status={task.status} />
         </div>
         <div className="flex items-center">
           <button

@@ -63,10 +63,9 @@
   --category-family: #8b5cf6;
   --category-personal: #f59e0b;
   /* Status colors */
-  --status-active: #f59e0b;
+  --status-active: var(--brand-info); /* Changed to blue */
   --status-completed: #10b981;
-  --status-paused: #6b7280;
-  --status-cancelled: #ef4444;
+  --status-incomplete: #f59e0b; /* Old status-active color */
 }
 
 /* ===== DARK THEME OVERRIDES ===== */
@@ -98,10 +97,9 @@ html.dark {
   --category-family: #a78bfa;
   --category-personal: #fbbf24;
   /* Status colors for dark theme */
-  --status-active: #fbbf24;
+  --status-active: #60a5fa; /* Changed to blue for dark theme */
   --status-completed: #34d399;
-  --status-paused: #9ca3af;
-  --status-cancelled: #f87171;
+  --status-incomplete: #fbbf24; /* Old status-active color for dark theme */
 }
 
 /* ===== THEME TRANSITIONS ===== */

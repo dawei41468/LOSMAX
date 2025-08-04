@@ -5,7 +5,7 @@ import type { AuthContextType } from '../contexts/auth.types';
 import { createTask, getTasks, updateTask, deleteTask, getGoals } from '../services/api';
 import { CategoryHeader, getCategoryColorClass } from '../components/ui/CategoryUI';
 import type { GoalCategory } from '../types/goals';
-import type { Task } from '../services/api';
+import type { Task } from '../types/tasks';
 import type { Goal } from '../types/goals';
 import { useNavigate } from 'react-router-dom';
 import TaskDialog from '../components/tasks/TaskDialog';
@@ -147,7 +147,7 @@ export default function TasksPage() {
       return;
     }
     setIsLoading(true);
-    const newStatus = task.status === 'complete' ? 'incomplete' : 'complete';
+    const newStatus = task.status === 'completed' ? 'incomplete' : 'completed';
     try {
       const updatedTask = await updateTask(task.id, { status: newStatus });
       setTasks(prevTasks => prevTasks.map(t => t.id === updatedTask.id ? updatedTask : t));
@@ -177,7 +177,7 @@ export default function TasksPage() {
     }
     acc[category][task.goal_id].push(task);
     return acc;
-  }, {} as Record<string, Record<string, Task[]>>);
+  }, {} as Record<GoalCategory | 'Uncategorized', Record<string, Task[]>>);
 
   return (
     <div className="no-scrollbar md:p-4" style={{ overflowY: 'auto' }}>

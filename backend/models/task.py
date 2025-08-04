@@ -4,7 +4,7 @@ from typing import Optional
 from pydantic import BaseModel, Field, field_validator
 
 class TaskStatus(str, Enum):
-    complete = "complete"
+    completed = "completed"
     incomplete = "incomplete"
 
 class TaskCreate(BaseModel):

@@ -4,6 +4,7 @@ import type { Goal } from '../../types/goals';
 import { useTranslation } from 'react-i18next';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { formatDateShort } from '../../lib/utils'; // Utility function to format dates
+import { StatusBadge } from '../ui/BadgeUI';
 
 interface ProgressGoalCardProps {
   goal: Goal & { progress: number; days_remaining: number };
@@ -25,18 +26,9 @@ const ProgressGoalCard: React.FC<ProgressGoalCardProps> = ({ goal, isCompleted }
     return categoryColors[goal.category] || 'text-foreground';
   };
 
-  const getCategoryBadgeColor = () => {
-    const categoryColors: Record<string, string> = {
-      family: 'badge-purple',
-      work: 'badge-blue',
-      personal: 'badge-yellow',
-      health: 'badge-green',
-    };
-    return categoryColors[goal.category] || 'badge-secondary';
-  };
 
   return (
-    <Card variant="outline" size="sm" className="hover:shadow-md transition-shadow">
+    <Card variant="elevated" size="none" className="hover:shadow-md transition-shadow">
       <CardHeader spacing="tight">
         <CardTitle size="sm" className={getCategoryColor()}>
           {goal.title}
@@ -49,12 +41,10 @@ const ProgressGoalCard: React.FC<ProgressGoalCardProps> = ({ goal, isCompleted }
             <span className="text-muted-foreground">{t('component.goalCard.targetDate')}: {formatDateShort(goal.target_date)}</span>
           </div>
           
-          {isCompleted ? (
-            <span className={`badge badge-success`}>
-              {t('common.completed')}
-            </span>
-          ) : (
-            <div className={`badge ${getCategoryBadgeColor()}`}>
+          <StatusBadge status={goal.status} />
+          {/* Display days remaining only if not completed */}
+          {!isCompleted && (
+            <div className="badge">
               <span className="font-bold">{goal.days_remaining}</span>
               <span className="text-xs ml-1">{t('component.goalCard.daysLeft', { count: goal.days_remaining })}</span>
             </div>
