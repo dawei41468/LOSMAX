@@ -30,9 +30,12 @@ const ProgressGoalCard: React.FC<ProgressGoalCardProps> = ({ goal, isCompleted }
   return (
     <Card variant="elevated" size="none" className="hover:shadow-md transition-shadow">
       <CardHeader spacing="tight">
-        <CardTitle size="sm" className={getCategoryColor()}>
-          {goal.title}
-        </CardTitle>
+        <div className="flex items-start justify-between w-full">
+          <CardTitle size="sm" color="none" className={getCategoryColor()}>
+            {goal.title}
+          </CardTitle>
+          <StatusBadge status={goal.status} />
+        </div>
       </CardHeader>
 
       <CardContent size="sm" spacing="tight">
@@ -41,7 +44,6 @@ const ProgressGoalCard: React.FC<ProgressGoalCardProps> = ({ goal, isCompleted }
             <span className="text-muted-foreground">{t('component.goalCard.targetDate')}: {formatDateShort(goal.target_date)}</span>
           </div>
           
-          <StatusBadge status={goal.status} />
           {/* Display days remaining only if not completed */}
           {!isCompleted && (
             <div className="badge">
@@ -56,12 +58,12 @@ const ProgressGoalCard: React.FC<ProgressGoalCardProps> = ({ goal, isCompleted }
             <Progress value={progressPercentage} className="w-full" />
           </div>
           
-          <p className="text-center text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground text-left">
             {t('component.progressGoalCard.completionRate', { rate: progressPercentage })}
           </p>
           
           {isCompleted && goal.completed_at && (
-            <p className="text-xs text-muted-foreground text-center">
+            <p className="text-xs text-muted-foreground text-left">
               {t('component.progressGoalCard.completedOn', { date: formatDateShort(goal.completed_at)})}
             </p>
           )}
