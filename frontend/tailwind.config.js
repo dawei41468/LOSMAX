@@ -6,6 +6,14 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   darkMode: 'class',
+  safelist: [
+    'text-family', 'text-work', 'text-personal', 'text-health',
+    'border-family', 'border-work', 'border-personal', 'border-health',
+    'bg-status-warning', 'text-status-warning',
+    'bg-status-success', 'text-status-success',
+    'bg-status-secondary', 'text-status-secondary',
+    'bg-status-destructive', 'text-status-destructive',
+  ],
   theme: {
     extend: {
       colors: {
@@ -42,10 +50,29 @@ module.exports = {
         },
         input: 'var(--input)',
         ring: 'var(--ring)',
+        family: '#8b5cf6', // Light theme purple
+        work: '#3b82f6', // Light theme blue
+        personal: '#f59e0b', // Light theme orange
+        health: '#10b981', // Light theme green
+        status: {
+          warning: '#f59e0b',
+          success: '#10b981',
+          secondary: '#f5f5f5',
+          destructive: '#ef4444',
+        },
       },
       borderColor: {
         DEFAULT: 'var(--border)',
-        ...colors,
+        family: '#8b5cf6',
+        work: '#3b82f6',
+        personal: '#f59e0b',
+        health: '#10b981',
+        status: {
+          warning: '#f59e0b',
+          success: '#10b981',
+          secondary: '#f5f5f5',
+          destructive: '#ef4444',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',

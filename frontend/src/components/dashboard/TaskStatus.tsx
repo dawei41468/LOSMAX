@@ -1,4 +1,6 @@
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import React from 'react';
+import { useTheme } from '../../contexts/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { CategoryHeader } from '../ui/CategoryUI';
 import type { Task } from '../../services/api';
@@ -11,6 +13,7 @@ interface TaskStatusProps {
 
 const TaskStatus: React.FC<TaskStatusProps> = ({ todayTasks, activeGoals }) => {
   const { t } = useTranslation();
+  const { theme } = useTheme();
 
   const completedTasksCount = todayTasks.filter(t => t.status === 'complete').length;
   const totalTasksCount = todayTasks.length;
@@ -24,46 +27,53 @@ const TaskStatus: React.FC<TaskStatusProps> = ({ todayTasks, activeGoals }) => {
   }, {} as Record<GoalCategory, Goal[]>);
 
   return (
-    <div className="card card-blue">
-      <h2 className="card-title">{t('dashboard.today_status')}</h2>
-
-      <div className="mb-6">
-        <h3 className="card-subtitle">{t('dashboard.task_completion')}</h3>
-        <div className="flex items-center mt-2">
-          <div className="progress-bar">
-            <div
-              className="progress-fill"
-              style={{ width: `${completionPercentage}%` }}
-            ></div>
+    <Card 
+      variant="default" 
+      border="accent" 
+      className={`max-w-3xl ${theme === 'dark' ? 'border-blue-300 bg-blue-950 text-blue-300' : 'border-blue-500 bg-blue-50 text-gray-900'}`}
+    >
+      <CardHeader>
+        <CardTitle>{t('component.taskStatus.title')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="mb-6">
+          <h3 className="card-subtitle">{t('component.taskStatus.completion')}</h3>
+          <div className="flex items-center mt-2">
+            <div className="progress-bar">
+              <div
+                className="progress-fill"
+                style={{ width: `${completionPercentage}%` }}
+              ></div>
+            </div>
+            <span className="ml-3 text-sm font-semibold">{completionPercentage}%</span>
           </div>
-          <span className="ml-3 text-sm font-semibold">{completionPercentage}%</span>
+          <p className="text-muted mt-1">
+            {t('component.taskStatus.completedCount', { completed: completedTasksCount, total: totalTasksCount })}
+          </p>
         </div>
-        <p className="text-muted mt-1">
-          {t('dashboard.completed_tasks_count', { completed: completedTasksCount, total: totalTasksCount })}
-        </p>
-      </div>
 
-      <div>
-        <h3 className="card-subtitle mb-3">{t('dashboard.active_goals_by_category')}</h3>
-        {Object.keys(groupedGoalsByCategory).length === 0 && (
-          <p className="text-muted">{t('dashboard.no_active_goals')}</p>
-        )}
-        {Object.keys(groupedGoalsByCategory).length > 0 && (
-          <div className="space-y-3">
-            {(['Family', 'Work', 'Health', 'Personal'] as GoalCategory[])
-              .filter(category => groupedGoalsByCategory[category] && groupedGoalsByCategory[category].length > 0)
-              .map(category => (
-                <div key={category} className="flex items-center">
-                  <CategoryHeader category={category} />
-                  <span className={`ml-2 text-sm font-semibold text-${category}`}>
-                    ({groupedGoalsByCategory[category].length}/3)
-                  </span>
-                </div>
-              ))}
-          </div>
-        )}
-      </div>
-    </div>
+        <div>
+          <h3 className="card-subtitle mb-3">{t('component.taskStatus.activeGoals')}</h3>
+          {Object.keys(groupedGoalsByCategory).length === 0 && (
+            <p className="text-muted">{t('component.taskStatus.noActiveGoals')}</p>
+          )}
+          {Object.keys(groupedGoalsByCategory).length > 0 && (
+            <div className="space-y-3">
+              {(['Family', 'Work', 'Health', 'Personal'] as GoalCategory[])
+                .filter(category => groupedGoalsByCategory[category] && groupedGoalsByCategory[category].length > 0)
+                .map(category => (
+                  <div key={category} className="flex items-center">
+                    <CategoryHeader category={category} />
+                    <span className={`ml-2 text-sm font-semibold text-${category}`}>
+                      ({groupedGoalsByCategory[category].length}/3)
+                    </span>
+                  </div>
+                ))}
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

@@ -1,10 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
-import type { Task } from '../../services/api';
+import type { Task } from '../../types/tasks';
 import type { Goal } from '../../types/goals';
 import { getGoals } from '../../services/api';
 import { Button } from '../ui/button';
+import {
+  DialogOverlay,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
+import {
+  Form,
+  FormField,
+  FormLabel,
+  FormInput,
+} from '@/components/ui/form';
+import { SelectField } from '@/components/ui/select';
 
 interface TaskDialogProps {
   isOpen: boolean;
@@ -45,74 +60,79 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ isOpen, onClose, onSubmit, init
     e.preventDefault();
     if (!title || !goalId) return;
     onSubmit({ title, goal_id: goalId, status: 'incomplete' });
+    onClose(); // Close dialog on successful submission
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="relative rounded-lg shadow-xl max-w-md w-full mx-4" style={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff' }}>
-        <div className="p-6">
-          <h2 className="text-2xl font-bold mb-4">
-            {initialTask ? t('tasks.edit') : t('tasks.create')}
-          </h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1 text-left">
-                {t('tasks.title')}
-              </label>
-              <input
-                id="title"
-                type="text"
-                value={title}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
-                required
-                placeholder={t('tasks.titlePlaceholder')}
-                className="w-full p-2 border rounded-md"
-              />
-            </div>
-            <div>
-              <label htmlFor="goal" className="block text-sm font-medium text-gray-700 mb-1 text-left">
-                {t('tasks.associatedGoal')}
-              </label>
-              <select
-                id="goal"
-                value={goalId}
-                onChange={(e) => setGoalId(e.target.value)}
-                required
-                disabled={!!initialTask || isLoadingGoals}
-                className="w-full p-2 border rounded-md"
-              >
-                <option value="" disabled>
-                  {isLoadingGoals ? t('common.loading') : t('tasks.selectGoal')}
+    <DialogOverlay>
+      <DialogContent 
+        onClose={onClose} 
+        className="rounded-lg shadow-xl max-w-md mx-auto" 
+        style={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff' }}
+      >
+        <DialogHeader className="p-4 pb-0">
+          <DialogTitle className="text-2xl font-bold mb-2 text-center sm:text-left">
+            {initialTask ? t('component.taskDialog.editTitle') : t('component.taskDialog.createTitle')}
+          </DialogTitle>
+        </DialogHeader>
+        <Form onSubmit={handleSubmit} className="space-y-2 p-4 pt-0">
+          <FormField>
+            <FormLabel htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1 text-left">
+              {t('component.taskDialog.yourTask')}
+            </FormLabel>
+            <FormInput
+              id="title"
+              type="text"
+              value={title}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
+              required
+              placeholder={t('component.taskDialog.taskPlaceholder')}
+              className="w-full p-2 border rounded-md"
+            />
+          </FormField>
+          <FormField>
+            <FormLabel htmlFor="goalId" className="block text-sm font-medium text-gray-700 mb-1 text-left">
+              {t('component.taskDialog.associatedGoal')} <span className="text-red-500">*</span>
+            </FormLabel>
+            <SelectField
+              id="goalId"
+              value={goalId}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setGoalId(e.target.value)}
+              required
+              disabled={!!initialTask || isLoadingGoals}
+              placeholder={isLoadingGoals ? t('actions.loading') : t('component.taskDialog.selectGoal')}
+              className="w-full p-2 border rounded-md"
+            >
+              {goals.map(goal => (
+                <option key={goal.id} value={goal.id}>
+                  {goal.title}
                 </option>
-                {goals.map((goal) => (
-                  <option key={goal.id} value={goal.id}>
-                    {goal.title}
-                  </option>
-                ))}
-              </select>
-              {initialTask && (
-                <p className="text-xs text-gray-500 mt-1">{t('tasks.goalCannotChange')}</p>
-              )}
-              {goalId && goals.find(g => g.id === goalId)?.description && (
-                <p className="text-xs text-gray-500 mt-1 italic">
-                  {goals.find(g => g.id === goalId)?.description}
-                </p>
-              )}
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={onClose}>
-                {t('common.cancel')}
-              </Button>
-              <Button type="submit" disabled={!title || !goalId}>
-                {initialTask ? t('tasks.update') : t('tasks.create')}
-              </Button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+              ))}
+            </SelectField>
+            {initialTask && (
+              <DialogDescription className="text-xs text-gray-500 mt-1">
+                {t('component.taskDialog.goalCannotChange')}
+              </DialogDescription>
+            )}
+            {goalId && goals.find(g => g.id === goalId)?.description && (
+              <DialogDescription className="text-xs text-gray-500 mt-1 italic">
+                {goals.find(g => g.id === goalId)?.description}
+              </DialogDescription>
+            )}
+          </FormField>
+          <DialogFooter className="flex flex-row justify-end gap-2">
+            <Button type="button" variant="outline" onClick={onClose}>
+              {t('actions.cancel')}
+            </Button>
+            <Button type="submit" disabled={!title || !goalId}>
+              {initialTask ? t('component.taskDialog.updateButton') : t('component.taskDialog.createButton')}
+            </Button>
+          </DialogFooter>
+        </Form>
+      </DialogContent>
+    </DialogOverlay>
   );
 };
 

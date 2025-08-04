@@ -9,6 +9,7 @@ import { CategoryHeader, getCategoryColorClass, categoryColors } from '../compon
 import { toast } from 'sonner';
 import ProgressGoalCard from '../components/progress/ProgressGoalCard';
 import { Home, HeartPulse, Briefcase, User } from 'lucide-react';
+import { Select, SelectItem } from '@/components/ui/select';
 
 const ProgressPage: React.FC = () => {
   const { t } = useTranslation();
@@ -42,11 +43,11 @@ const ProgressPage: React.FC = () => {
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      toast.error(t('common.error_message', { error: errorMessage }));
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
-  }, [isAuthenticated, t]);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     fetchProgressData();
@@ -86,53 +87,57 @@ const ProgressPage: React.FC = () => {
   }, {} as Record<string, Goal[]>);
 
   if (isLoading) {
-    return <div className="text-center py-4">{t('common.loading')}</div>;
+    return <div className="text-center py-4">{t('actions.loading')}</div>;
   }
 
   return (
     <div className="no-scrollbar md:p-4" style={{ overflowY: 'auto' }}>
       {/* Fixed top bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-background flex flex-col justify-center items-center" style={{ backgroundColor: 'var(--background)' }}>
-        <div className="h-20 flex flex-col justify-center items-center">
-          <h1 className="text-xl font-semibold">{t('dashboard.titles.progress')}</h1>
-          <p className="text-sm text-muted">{t('dashboard.subtitles.progress')}</p>
-        </div>
-        <div className="w-full px-6 py-2 flex justify-between items-center" style={{ backgroundColor: 'var(--background)' }}>
-          <select
+      <div className="fixed top-0 left-0 right-0 z-50 bg-background h-20 flex flex-col justify-center items-center" style={{ backgroundColor: 'var(--background)' }}>
+        <h1 className="text-xl font-semibold">{t('content.progress.title')}</h1>
+        <p className="text-sm text-muted">{t('content.progress.subtitle')}</p>
+      </div>
+      
+      {/* Fixed Action Bar beneath Top Bar */}
+      <div className="fixed top-20 left-0 right-0 z-40 bg-background flex flex-row justify-between items-center px-6 py-2" style={{ backgroundColor: 'var(--background)' }}>
+        <div className="flex justify-start">
+          <Select
+            variant="subtle"
+            size="sm"
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as 'all' | 'active' | 'completed')}
-            className="border border-blue-200 rounded-md px-2 py-1 text-sm bg-gray-200 text-stone-800 hover:bg-gray-100 focus:outline-none"
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setStatusFilter(e.target.value as 'all' | 'active' | 'completed')}
+            className="min-w-[120px]"
           >
-            <option value="all">{t('progressPage.analytics.allGoals')}</option>
-            <option value="active">{t('progressPage.analytics.active')}</option>
-            <option value="completed">{t('progressPage.analytics.completed')}</option>
-          </select>
-          <div className="flex flex-wrap items-center gap-2">
+            <SelectItem value="all">{t('common.filter.all')}</SelectItem>
+            <SelectItem value="active">{t('common.filter.active')}</SelectItem>
+            <SelectItem value="completed">{t('common.filter.completed')}</SelectItem>
+          </Select>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            className={`px-2 py-1 rounded-full text-sm ${activeFilter === 'all' ? 'bg-gray-200' : ''}`}
+            onClick={() => setActiveFilter('all')}
+          >
+            {t('common.filter.all')}
+          </button>
+          {(["Family", "Work", "Health", "Personal"] as GoalCategory[]).map(category => (
             <button
-              className={`px-2 py-1 rounded-full text-sm ${activeFilter === 'all' ? 'bg-gray-200' : ''}`}
-              onClick={() => setActiveFilter('all')}
+              key={category}
+              className={`p-1.5 rounded-full ${activeFilter === category ? categoryColors[category as GoalCategory]?.primaryBg : ''}`}
+              style={{}}
+              onClick={() => setActiveFilter(category)}
             >
-              {t('progressPage.analytics.all')}
+              {category === 'Family' && <Home className={`h-4 w-4 ${activeFilter === category ? 'text-primary-foreground' : getCategoryColorClass(category as GoalCategory, 'primary')}`} />}
+              {category === 'Health' && <HeartPulse className={`h-4 w-4 ${activeFilter === category ? 'text-primary-foreground' : getCategoryColorClass(category as GoalCategory, 'primary')}`} />}
+              {category === 'Work' && <Briefcase className={`h-4 w-4 ${activeFilter === category ? 'text-primary-foreground' : getCategoryColorClass(category as GoalCategory, 'primary')}`} />}
+              {category === 'Personal' && <User className={`h-4 w-4 ${activeFilter === category ? 'text-primary-foreground' : getCategoryColorClass(category as GoalCategory, 'primary')}`} />}
             </button>
-            {(["Family", "Work", "Health", "Personal"] as GoalCategory[]).map(category => (
-              <button
-                key={category}
-                className={`p-1.5 rounded-full ${activeFilter === category ? categoryColors[category as GoalCategory]?.primaryBg : ''}`}
-                style={{}}
-                onClick={() => setActiveFilter(category)}
-              >
-                {category === 'Family' && <Home className={`h-4 w-4 ${activeFilter === category ? 'text-primary-foreground' : getCategoryColorClass(category as GoalCategory, 'primary')}`} />}
-                {category === 'Health' && <HeartPulse className={`h-4 w-4 ${activeFilter === category ? 'text-primary-foreground' : getCategoryColorClass(category as GoalCategory, 'primary')}`} />}
-                {category === 'Work' && <Briefcase className={`h-4 w-4 ${activeFilter === category ? 'text-primary-foreground' : getCategoryColorClass(category as GoalCategory, 'primary')}`} />}
-                {category === 'Personal' && <User className={`h-4 w-4 ${activeFilter === category ? 'text-primary-foreground' : getCategoryColorClass(category as GoalCategory, 'primary')}`} />}
-              </button>
-            ))}
-          </div>
+          ))}
         </div>
       </div>
       
-      {/* Main content area with padding for fixed header */}
-      <div className="pt-28">
+      {/* Main content area with padding for fixed header and action bar */}
+      <div className="pt-24">
         {/* Goals Analytics Section */}
       <div>
         <div className="mb-2"></div>
@@ -154,7 +159,7 @@ const ProgressPage: React.FC = () => {
                         color: categoryColors[category as GoalCategory]?.text
                       }}
                     >
-                      {t('progressPage.analytics.goalCount', { count: goalsInCategory.length })}
+                      {t('content.progress.goalCount', { count: goalsInCategory.length })}
                     </span>
                   </div>
                   <div className="space-y-2">
@@ -171,7 +176,7 @@ const ProgressPage: React.FC = () => {
             })}
           </div>
         ) : (
-          <p className="text-gray-500">{t('progressPage.analytics.noGoalsFound')}</p>
+          <p className="text-gray-500">{t('feedback.info.noGoalsFound')}</p>
         )}
       </div>
     </div>

@@ -32,7 +32,7 @@ In the production environment, the application is deployed on a single server, w
 ### Frontend
 - **Service:** Nginx
 - **URL** `https://cna-los.life`
-- **Details:** Nginx serves the static, optimized build of the React application located at `/usr/share/nginx/html/losmax`. The `location /` block in the Nginx configuration (`losmax.conf`) handles all non-API requests by serving the frontend's `index.html` file.
+- **Details:** Nginx serves the static, optimized build of the React application located at `/usr/share/nginx/html/losmax`. The `location /` block in the Nginx configuration (`losmax-nginx.conf`) handles all non-API requests by serving the frontend's `index.html` file.
 
 ### Backend
 - **Service:** PM2 / Gunicorn / Uvicorn
@@ -41,7 +41,7 @@ In the production environment, the application is deployed on a single server, w
 
 ### Reverse Proxy and Routing
 - **Service:** Nginx
-- **Configuration:** `/etc/nginx/conf.d/losmax.conf`
+- **Configuration:** `losmax-nginx.conf` (located in project root)
 - **HTTP API:** All incoming requests to `https://cna-los.life/api/` are proxied by Nginx to the backend service running at `http://127.0.0.1:8000/`. The `/api/` prefix is stripped from the request path before it is sent to the backend.
 - **WebSocket API:** All WebSocket connections to `wss://cna-los.life/ws/` are proxied by Nginx to the backend's WebSocket endpoint at `http://127.0.0.1:8000/ws/`.
 

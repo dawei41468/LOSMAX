@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import './styles/theme-system.css';
+@import './styles/theme-animations.css';
 
 /* Your custom CSS here */
 
@@ -15,62 +17,8 @@ body,
   scrollbar-width: none;  /* Firefox */
 }
 
-/* Enhanced Design System Variables */
+/* Additional custom variables */
 :root {
-  /* Core Colors */
-  --background: #ffffff;
-  --foreground: #0a0a0a;
-  --card: #ffffff;
-  --card-foreground: #0a0a0a;
-  --popover: #ffffff;
-  --popover-foreground: #0a0a0a;
-  --primary: #2563eb;
-  --primary-foreground: #fafafa;
-  --secondary: #f5f5f5;
-  --secondary-foreground: #171717;
-  --muted: #f5f5f5;
-  --muted-foreground: #a3a3a3;
-  --accent: #f5f5f5;
-  --accent-foreground: #171717;
-  --accent-hover: #e5e5e5;
-  --destructive: #ef4444;
-  --destructive-foreground: #fafafa;
-  --border: #e5e5e5;
-  --input: #e5e5e5;
-  --ring: #2563eb;
-  --radius: 0.5rem;
-
-  /* Extended Color System */
-  --success: #10b981;
-  --success-foreground: #ffffff;
-  --warning: #f59e0b;
-  --warning-foreground: #ffffff;
-  --info: #3b82f6;
-  --info-foreground: #ffffff;
-  
-  /* Category Colors */
-  --category-family: #8b5cf6;
-  --category-work: #3b82f6;
-  --category-personal: #f59e0b;
-  --category-health: #10b981;
-
-  /* Status Colors */
-  --status-pending: #f59e0b;
-  --status-in-progress: #3b82f6;
-  --status-completed: #10b981;
-  --status-cancelled: #ef4444;
-  --status-on-hold: #6b7280;
-
-  /* Priority Colors */
-  --priority-low: #10b981;
-  --priority-medium: #f59e0b;
-  --priority-high: #ef4444;
-  --priority-urgent: #dc2626;
-
-  /* Typography */
-  --font-family-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-family-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
-
   /* Spacing Scale */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
@@ -320,47 +268,9 @@ body {
   font-size: 0.875rem;
 }
 
-/* Status Badges */
-.badge-pending {
-  background-color: color-mix(in srgb, var(--status-pending) 10%, transparent);
-  color: var(--status-pending);
-}
+/* Status Badges - now handled by Tailwind */
 
-.badge-in-progress {
-  background-color: color-mix(in srgb, var(--status-in-progress) 10%, transparent);
-  color: var(--status-in-progress);
-}
-
-.badge-completed {
-  background-color: color-mix(in srgb, var(--status-completed) 10%, transparent);
-  color: var(--status-completed);
-}
-
-.badge-cancelled {
-  background-color: color-mix(in srgb, var(--status-cancelled) 10%, transparent);
-  color: var(--status-cancelled);
-}
-
-/* Category Badges */
-.badge-family {
-  background-color: color-mix(in srgb, var(--category-family) 10%, transparent);
-  color: var(--category-family);
-}
-
-.badge-work {
-  background-color: color-mix(in srgb, var(--category-work) 10%, transparent);
-  color: var(--category-work);
-}
-
-.badge-personal {
-  background-color: color-mix(in srgb, var(--category-personal) 10%, transparent);
-  color: var(--category-personal);
-}
-
-.badge-health {
-  background-color: color-mix(in srgb, var(--category-health) 10%, transparent);
-  color: var(--category-health);
-}
+/* Category Badges - now handled by Tailwind */
 
 /* Typography */
 .text-xs { font-size: 0.75rem; line-height: 1rem; }

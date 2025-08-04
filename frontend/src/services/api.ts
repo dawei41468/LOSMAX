@@ -5,7 +5,9 @@ interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 import { refreshToken } from './auth';
-import type { Goal, GoalCategory, GoalStatus } from '../types/goals'; // Added Goal types
+import type { Goal, GoalStatus, CreateGoalPayload, UpdateGoalPayload } from '../types/goals'; // Added Goal types
+import type { Task, CreateTaskPayload, UpdateTaskPayload } from '../types/tasks'; // Added Task types
+
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -178,20 +180,10 @@ export async function getGoals(status?: GoalStatus): Promise<Goal[]> {
   }
 }
 
-export interface CreateGoalPayload {
-  title: string;
-  description?: string;
-  category: GoalCategory;
-  target_date: string; // ISO string
-  status?: GoalStatus; // Optional, backend defaults to active
-}
-
 export async function createGoal(goalData: CreateGoalPayload): Promise<Goal> {
   const response = await api.post('/goals/', goalData);
   return response.data as Goal;
 }
-
-export type UpdateGoalPayload = Partial<Omit<Goal, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'days_remaining'>>;
 
 export async function updateGoal(goalId: string, goalData: UpdateGoalPayload): Promise<Goal> {
   const response = await api.put(`/goals/${goalId}`, goalData);
@@ -203,16 +195,7 @@ export async function deleteGoal(goalId: string): Promise<void> {
 }
 
 // Task-related API endpoints
-export interface Task {
-  id: string;
-  user_id: string;
-  goal_id: string; // Tasks are tied to a specific goal
-  title: string;
-  status: 'complete' | 'incomplete';
-  created_at: string; // ISO string
-}
-
-export async function getTasks(status?: 'complete' | 'incomplete', filter?: 'today' | 'all'): Promise<Task[]> {
+export async function getTasks(status?: 'completed' | 'incomplete', filter?: 'today' | 'all'): Promise<Task[]> {
   let url = `/tasks/`;
   const params = new URLSearchParams();
   if (status) {
@@ -240,18 +223,10 @@ export async function getTasks(status?: 'complete' | 'incomplete', filter?: 'tod
   }
 }
 
-export interface CreateTaskPayload {
-  title: string;
-  goal_id: string; // Required, as tasks must be tied to a goal
-}
-
 export async function createTask(taskData: CreateTaskPayload): Promise<Task> {
   const response = await api.post('/tasks/', taskData);
   return response.data as Task;
 }
-
-export type UpdateTaskPayload = Partial<Omit<Task, 'id' | 'user_id' | 'goal_id' | 'created_at'>>;
-
 export async function updateTask(taskId: string, taskData: UpdateTaskPayload): Promise<Task> {
   const response = await api.put(`/tasks/${taskId}`, taskData);
   return response.data as Task;

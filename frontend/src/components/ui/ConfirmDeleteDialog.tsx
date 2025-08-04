@@ -1,6 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
+import { DialogOverlay, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from './dialog';
+import { Button } from './button';
 
 interface ConfirmDeleteDialogProps {
   isOpen: boolean;
@@ -25,37 +27,43 @@ const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-      <div className="p-4 sm:p-6 rounded-lg shadow-xl max-w-md w-full mx-4 sm:mx-0" style={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff' }}>
-        <h3 className="text-lg font-medium mb-2 text-card-foreground">
-          {t('confirm_delete_dialog.title', { item: itemName })}
-        </h3>
-        <p className="text-sm text-muted-foreground mb-4">
-          {message || t('confirm_delete_dialog.message', { item: itemName })}
-        </p>
-        <p className="text-sm text-red-600 font-semibold mb-6">
-          {t('confirm_delete_dialog.warning')}
-        </p>
-        <div className="flex justify-end gap-3">
-          <button
+    <DialogOverlay>
+      <DialogContent 
+        className="rounded-lg shadow-xl max-w-md mx-auto" 
+        onClose={onClose}
+        style={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff' }}
+      >
+        <DialogHeader className="p-4 pb-0">
+          <DialogTitle className="text-2xl font-bold mb-2 text-center sm:text-left">
+            {t('confirmDialog.title', { item: itemName })}
+          </DialogTitle>
+          <DialogDescription className="text-sm text-muted-foreground mb-4">
+            {message || t('confirmDialog.message', { item: itemName })}
+          </DialogDescription>
+          <DialogDescription className="text-sm text-red-600 font-semibold mb-6">
+            {t('confirmDialog.warning')}
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="flex flex-row justify-end gap-2 p-4 pt-0">
+          <Button
             type="button"
-            className="px-4 py-2 border border-border rounded-md text-sm font-medium text-card-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+            variant="outline"
             onClick={onClose}
             disabled={isDeleting}
           >
-            {t('common.cancel')}
-          </button>
-          <button
+            {t('actions.cancel')}
+          </Button>
+          <Button
             type="button"
-            className="px-4 py-2 bg-destructive text-destructive-foreground rounded-md text-sm font-medium hover:bg-destructive/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring transition-colors disabled:opacity-50"
+            variant="destructive"
             onClick={onConfirm}
             disabled={isDeleting}
           >
-            {isDeleting ? t('common.deleting') : t('common.confirm_delete')}
-          </button>
-        </div>
-      </div>
-    </div>
+            {isDeleting ? t('actions.deleting') : t('actions.confirmDelete')}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </DialogOverlay>
   );
 };
 

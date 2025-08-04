@@ -22,46 +22,46 @@ export function BottomNav({ className }: BottomNavProps) {
   };
 
   return (
-    <div className={`bottom-nav ${className}`}>
+    <div className={`bottom-nav border-t shadow-t-lg py-2 ${className}`} style={{ backgroundColor: 'var(--background)' }}>
       <nav className="bottom-nav-nav w-full grid grid-cols-5 gap-0">
         <Link
           to="/dashboard"
           className={`flex flex-col items-center rounded-lg ${isActive('/dashboard') ? 'text-primary' : 'text-muted-foreground'}`}
         >
-          <Home className="w-5 h-5" />
-          <span className="text-xs mt-1 w-16 text-center truncate">{t('common.home')}</span>
+          <Home className="w-5 h-5" strokeWidth={1} />
+          <span className="text-xs mt-1 w-16 text-center truncate">{t('navigation.home')}</span>
         </Link>
 
         <Link
           to="/goals"
           className={`flex flex-col items-center rounded-lg ${isActive('/goals') ? 'text-primary' : 'text-muted-foreground'}`}
         >
-          <ClipboardList className="w-5 h-5" />
-          <span className="text-xs mt-1 w-16 text-center truncate">{t('common.goals')}</span>
+          <ClipboardList className="w-5 h-5" strokeWidth={1} />
+          <span className="text-xs mt-1 w-16 text-center truncate">{t('navigation.goals')}</span>
         </Link>
 
         <Link
           to="/tasks"
           className={`flex flex-col items-center rounded-lg ${isActive('/tasks') ? 'text-primary' : 'text-muted-foreground'}`}
         >
-          <CheckCircle className="w-5 h-5" />
-          <span className="text-xs mt-1 w-16 text-center truncate">{t('common.tasks')}</span>
+          <CheckCircle className="w-5 h-5" strokeWidth={1} />
+          <span className="text-xs mt-1 w-16 text-center truncate">{t('navigation.tasks')}</span>
         </Link>
 
         <Link
           to="/progress"
           className={`flex flex-col items-center rounded-lg ${isActive('/progress') ? 'text-primary' : 'text-muted-foreground'}`}
         >
-          <BarChart2 className="w-5 h-5" />
-          <span className="text-xs mt-1 w-16 text-center truncate">{t('common.progress')}</span>
+          <BarChart2 className="w-5 h-5" strokeWidth={1} />
+          <span className="text-xs mt-1 w-16 text-center truncate">{t('navigation.progress')}</span>
         </Link>
 
         <Link
           to="/profile"
           className={`flex flex-col items-center rounded-lg ${isActive('/profile') ? 'text-primary' : 'text-muted-foreground'}`}
         >
-          <User className="w-5 h-5" />
-          <span className="text-xs mt-1 w-16 text-center truncate">{t('common.profile')}</span>
+          <User className="w-5 h-5" strokeWidth={1} />
+          <span className="text-xs mt-1 w-16 text-center truncate">{t('navigation.profile')}</span>
         </Link>
       </nav>
     </div>

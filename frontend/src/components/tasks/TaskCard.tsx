@@ -1,60 +1,66 @@
 import React from 'react';
-import type { Task } from '../../services/api';
+import type { Task } from '../../types/tasks';
 import { useTranslation } from 'react-i18next';
-import { Card, CardContent } from '../ui/card';
 import { Edit, Check, Trash2 } from 'lucide-react';
+import { formatDate, formatDateShort } from '../../lib/utils';
 
 interface TaskCardProps {
   task: Task;
   onEdit: (task: Task) => void;
   onDelete: (taskId: string) => void;
   onToggleStatus: (task: Task) => void;
+  useShortDate?: boolean;
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onToggleStatus }) => {
+const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onToggleStatus, useShortDate = true }) => {
   const { t } = useTranslation();
 
+  const getStatusBadgeColor = () => {
+    return task.status === 'completed' ? 'badge-success' : 'badge-warning';
+  };
+
   return (
-    <Card className="task-card">
-      <CardContent className="card-content">
-        <h3 className="text-lg font-semibold mb-2">{task.title}</h3>
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-sm text-muted">{t('tasks.status')}:</span>
-          <span className={`badge badge-sm ${task.status === 'complete' ? 'badge-completed' : 'badge-pending'}`}>
-            {t(`tasks.statuses.${task.status}`)}
+    <div className="p-2 border rounded-lg hover:shadow-md transition-shadow bg-card text-card-foreground">
+      <div className="text-md font-medium mb-1 text-left">
+        {task.title}
+      </div>
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">
+            {useShortDate ? formatDateShort(task.created_at) : formatDate(task.created_at)}
+          </span>
+          <span className={`badge badge-xs ${getStatusBadgeColor()}`}>
+            {t(`common.${task.status}`)}
           </span>
         </div>
-        <div className="flex justify-center gap-4">
+        <div className="flex items-center">
           <button
             onClick={() => onEdit(task)}
-            aria-label={t('common.edit_button')}
-            className="btn btn-ghost btn-sm"
+            aria-label={t('actions.edit')}
+            className="btn btn-ghost btn-xs p-1"
             disabled={!task.id}
           >
-            <Edit className="w-4 h-4" />
+            <Edit className="w-3 h-3" />
           </button>
           <button
             onClick={() => onToggleStatus(task)}
-            aria-label={task.status === 'complete' ? t('tasks.markIncomplete') : t('tasks.markComplete')}
-            className="btn btn-ghost btn-sm"
+            aria-label={task.status === 'completed' ? t('actions.markIncomplete') : t('actions.markComplete')}
+            className="btn btn-ghost btn-xs p-1"
             disabled={!task.id}
           >
-            <Check className={`w-4 h-4 ${task.status === 'complete' ? 'text-warning' : 'text-success'}`} />
+            <Check className={`w-3 h-3 ${task.status === 'completed' ? 'text-warning' : 'text-success'}`} />
           </button>
           <button
             onClick={() => onDelete(task.id)}
-            aria-label={t('common.delete_button')}
-            className="btn btn-ghost btn-sm"
+            aria-label={t('actions.delete')}
+            className="btn btn-ghost btn-xs p-1"
             disabled={!task.id}
           >
-            <Trash2 className="w-4 h-4 text-destructive" />
+            <Trash2 className="w-3 h-3 text-destructive" />
           </button>
         </div>
-        <div className="text-xs text-muted mt-4 text-right">
-          {new Date(task.created_at).toLocaleDateString()}
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 

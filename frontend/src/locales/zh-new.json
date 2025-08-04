@@ -1,0 +1,385 @@
+{
+  "navigation": {
+    "dashboard": "仪表盘",
+    "goals": "目标",
+    "tasks": "任务",
+    "progress": "进度",
+    "profile": "个人",
+    "home": "首页"
+  },
+  "common": {
+    "life": "生活",
+    "organization": "管理",
+    "system": "系统",
+    "lifeOrganizationSystem": "生活管理系统",
+    "status": "状态",
+    "active": "活跃",
+    "complete": "已完成",
+    "completed": "已完成",
+    "incomplete": "未完成",
+    "enabled": "已启用",
+    "disabled": "已禁用",
+    "filter": {
+      "all": "全部",
+      "active": "活跃",
+      "completed": "已完成",
+      "today": "今天"
+    }
+  },
+  "actions": {
+    "create": "创建",
+    "edit": "编辑",
+    "delete": "删除",
+    "save": "保存",
+    "saveChanges": "保存更改",
+    "cancel": "取消",
+    "update": "更新",
+    "confirm": "确认",
+    "confirmDelete": "确认删除",
+    "loading": "加载中...",
+    "deleting": "删除中...",
+    "complete": "完成",
+    "reopen": "重新打开",
+    "markComplete": "标记为完成",
+    "markIncomplete": "标记为未完成",
+    "signOut": "退出登录",
+    "signUp": "注册",
+    "signIn": "登录",
+    "changePassword": "修改密码",
+    "deleteAccount": "删除账户"
+  },
+  "feedback": {
+    "success": {
+      "settingsSaved": "设置已成功保存",
+      "goalCreated": "目标创建成功",
+      "goalUpdated": "目标更新成功",
+      "goalCompleted": "目标完成成功",
+      "goalDeleted": "目标删除成功",
+      "taskCreated": "任务创建成功",
+      "taskUpdated": "任务更新成功",
+      "taskCompleted": "任务标记为已完成",
+      "taskDeleted": "任务删除成功",
+      "passwordChanged": "密码修改成功",
+      "accountDeleted": "您的账户已成功删除",
+      "nameUpdated": "您的显示名称已更新"
+    },
+    "error": {
+      "generic": "发生未知错误",
+      "network": "网络错误，请检查您的连接",
+      "validation": "请检查您的输入并重试",
+      "authentication": "身份验证失败，请重新登录",
+      "login": "登录失败。请检查您的凭据并重试",
+      "signup": "注册失败。请重试，如果问题持续存在，请联系支持",
+      "fetchPreferences": "获取您的偏好设置失败。请重试",
+      "savePreferences": "保存您的偏好设置失败。请重试",
+      "settingsSave": "保存您的设置失败。请重试",
+      "updateName": "更新您的显示名称失败。请重试",
+      "passwordChange": "修改密码失败。请检查您当前的密码并重试",
+      "storage": "存储访问错误。请确保您的浏览器允许站点数据",
+      "passwordMismatch": "新密码不匹配",
+      "maxActiveGoals": "每个类别最多允许3个活跃目标"
+    },
+    "warning": {
+      "unsavedChanges": "您有未保存的更改",
+      "deleteConfirmation": "此操作无法撤销",
+      "deleteAccount": "您确定要永久删除您的账户吗？"
+    },
+    "info": {
+      "noGoalsFound": "没有找到\"{{filter}}\"过滤器的目标。尝试创建一个！",
+      "noTasksFound": "没有找到\"{{filter}}\"过滤器的任务。尝试创建一个！",
+      "noTasksToday": "今天您能做些什么来在目标上取得进展？",
+      "noCompletedGoals": "还没有完成的目标。"
+    }
+  },
+  "settings": {
+    "toast": {
+      "account_deletion_message": "您的账户已成功删除",
+      "account_deletion_error": "删除您的账户失败。请重试",
+      "password_mismatch": "新密码不匹配",
+      "password_changed_message_logout": "密码修改成功。请使用您的新密码重新登录",
+      "password_change_error": "修改密码失败。请检查您当前的密码并重试",
+      "name_updated_message": "您的显示名称已成功更新",
+      "update_name_error": "更新您的显示名称失败。请重试"
+    },
+    "account": {
+      "item_name": "账户",
+      "delete_confirm_message_p1": "您确定要永久删除您的账户吗？",
+      "delete_confirm_message_p2": "这将删除与 {{email}} 关联的所有数据。",
+      "delete_confirm_warning": "此操作无法撤销。",
+      "password_change_message": "输入您当前的和新密码来更新。",
+      "current_password": "当前密码",
+      "new_password": "新密码",
+      "confirm_password": "确认新密码"
+    }
+  },
+  "forms": {
+    "labels": {
+      "email": "邮箱",
+      "password": "密码",
+      "currentPassword": "当前密码",
+      "newPassword": "新密码",
+      "confirmPassword": "确认新密码",
+      "name": "姓名",
+      "displayName": "显示名称",
+      "nickname": "昵称",
+      "uid": "用户ID",
+      "role": "角色",
+      "notAvailable": "不可用",
+      "description": "描述",
+      "category": "类别",
+      "targetDate": "目标日期",
+      "goal": "目标",
+      "task": "任务",
+      "associatedGoal": "关联目标",
+      "morningDeadline": "早晨截止时间",
+      "eveningDeadline": "晚上截止时间",
+      "notifications": "通知",
+      "language": "语言",
+      "theme": "主题"
+    },
+    "placeholders": {
+      "email": "请输入您的邮箱",
+      "password": "请输入您的密码",
+      "currentPassword": "请输入您当前的密码",
+      "newPassword": "请输入您的新密码",
+      "confirmPassword": "请确认您的新密码",
+      "name": "请输入您的姓名",
+      "displayName": "请输入您的显示名称",
+      "nickname": "请输入您的昵称",
+      "description": "添加描述（可选）",
+      "goal": "您想实现什么目标？",
+      "task": "您今天要做什么？",
+      "selectGoal": "选择一个目标",
+      "morningDeadline": "例如：上午9:00",
+      "eveningDeadline": "例如：晚上10:00"
+    },
+    "validation": {
+      "required": "此字段为必填项",
+      "emailInvalid": "请输入有效的邮箱地址",
+      "dateFuture": "目标日期必须是今天或未来日期",
+      "passwordMatch": "密码不匹配"
+    }
+  },
+  "content": {
+    "categories": {
+      "family": "家庭",
+      "work": "工作",
+      "health": "健康",
+      "personal": "个人"
+    },
+    "auth": {
+      "title": "生活管理系统",
+      "subtitle": "组织您的生活，实现您的目标",
+      "signInTitle": "登录",
+      "signUpTitle": "创建账户",
+      "forgotPassword": "忘记密码？",
+      "alreadyHaveAccount": "已有账户？",
+      "dontHaveAccount": "没有账户？"
+    },
+    "dashboard": {
+      "title": "仪表盘",
+      "subtitle": "跟踪您在所有生活领域的日常进展",
+      "greetings": {
+        "morning": "早上好",
+        "afternoon": "下午好",
+        "evening": "晚上好",
+        "night": "晚安"
+      }
+    },
+    "goals": {
+      "title": "目标",
+      "subtitle": "管理每个生活类别的长期目标",
+      "empty": "没有找到目标。创建您的第一个目标！",
+      "createNew": "+ 新建目标"
+    },
+    "tasks": {
+      "title": "任务",
+      "subtitle": "在早晨截止时间前设定今天的任务",
+      "empty": "今天没有任务。您能做些什么来取得进展？",
+      "createNew": "+ 新建任务"
+    },
+    "progress": {
+      "title": "进度",
+      "subtitle": "跟踪您的总体进度和完成率",
+      "noActiveGoals": "未找到有效目标。",
+      "goalCount": "{{count}} 个目标"
+    },
+    "profile": {
+      "title": "用户中心",
+      "subtitle": "管理您的账户设置和偏好",
+      "signOut": "退出登录",
+      "anonymous": "匿名",
+      "noEmail": "未提供邮箱",
+      "tabs": {
+        "info": "我的信息",
+        "preference": "偏好设置",
+        "about": "关于"
+      },
+      "preference": {
+        "displayNameTitle": "显示名称",
+        "displayNameDescription": "此名称将公开显示。",
+        "deadlinesTitle": "任务截止时间",
+        "deadlinesDescription": "为您早晨和晚上的任务设置首选截止时间。",
+        "morningDeadlineHint": "例如：上午9:00。在此时间之前到期的任务被视为早晨任务。",
+        "eveningDeadlineHint": "例如：晚上10:00。在此时间之前到期的任务被视为晚上任务。",
+        "notificationsDescription": "启用或禁用应用程序通知。",
+        "accountActionsTitle": "账户操作",
+        "accountActionsDescription": "管理您的账户设置。"
+      },
+      "about": {
+        "title": "关于 LOS",
+        "subtitle": "了解应用程序的目的和功能。",
+        "whatIs": {
+          "title": "什么是 LOS？",
+          "description": "LOS 是一个生活管理系统，旨在帮助您设定清晰的目标，管理任务，并跟踪您实现更有意义生活的进展。灵感来源于 Landmark 教育原则。"
+        },
+        "features": {
+          "title": "主要功能",
+          "feature1": "目标设定：在不同生活领域中定义清晰、可操作的目标。",
+          "feature2": "每日任务：创建和管理与您长期目标相关的日常任务。",
+          "feature3": "进度跟踪：通过富有洞察力的分析和图表可视化您的进展。",
+          "feature4": "每日激励：通过精选语录获得每日的动力。"
+        },
+        "howToUse": {
+          "title": "如何使用",
+          "step1": "定义您的目标：从“目标”部分创建您的目标开始。",
+          "step2": "设定每日任务：每天创建能让您更接近目标的任务。",
+          "step3": "跟踪您的进度：使用“进度”选项卡查看您的进展情况。",
+          "step4": "保持一致：养成每天使用该应用的习惯。",
+          "step5": "反思与调整：定期回顾您的目标并根据需要进行调整。"
+        },
+        "versionInfo": "版本 1.0.0"
+      }
+    }
+  },
+  "component": {
+    "quoteOfDay": {
+      "title": "每日名言",
+      "quoteNumber": "名言 #{{number}}",
+      "quotes": [
+        "千里之行，始于足下。",
+        "求知若饥，虚心若愚。",
+        "成功不是终点，失败也不是终结，唯有勇气才是永恒。",
+        "做伟大工作的唯一方法是热爱你所做的事。",
+        "你的时间有限，不要浪费在过别人的生活上。",
+        "未来属于那些相信梦想之美的人。",
+        "不要看钟表，做它所做的事。继续前进。",
+        "相信你能做到，你就已经成功了一半。",
+        "取得成功的秘诀是开始行动。",
+        "重要的不是你走得多慢，而是你不停止。",
+        "我们最大的弱点在于放弃。成功的最可靠方法就是再试一次。",
+        "实现明天理想的唯一障碍是今天的疑虑。",
+        "你永远不会太老，不能设定另一个目标或梦想一个新梦想。",
+        "表现得好像你所做的事有所作为。确实如此。",
+        "通过实现目标所得到的，不如通过实现目标而成为什么样的人重要。",
+        "预测未来的最好方法是创造未来。",
+        "你不必伟大才能开始，但你必须开始才能伟大。",
+        "你为某件事越努力，当你实现它时感觉就越好。",
+        "梦想更大。做得更大。",
+        "累了不要停，完成再停。",
+        "带着决心醒来，带着满足入睡。",
+        "今天做些你未来的自己会感谢你的事。",
+        "小事成就大日子。",
+        "会很困难，但困难并不意味着不可能。",
+        "不要等待机会。创造机会。",
+        "有时我们被考验不是为了显示我们的弱点，而是为了发现我们的优势。",
+        "成功的关键是专注于目标，而不是障碍。",
+        "梦想它。相信它。建造它。",
+        "每天小步前进会带来大成果。",
+        "你不尝试的100%都会错过。",
+        "承诺于发生的事情，而不是如何发生。",
+        "承诺于实现预定结果，而不是坚持例行公事。",
+        "愿意挑战任何困难。",
+        "愿意转变心态并纠正行动。",
+        "客观事实是最终权威。",
+        "愿意放手。",
+        "清晰的愿景和目标，专注于行动计划。",
+        "带着紧迫感而不是绝望行动。",
+        "细节，细节，细节和完整计划。",
+        "你是严谨的、有纪律的、坚持不懈的。",
+        "炽热的渴望、坚定的信念、有效的行动、钢铁般的意志。",
+        "生活是一段灵感和使命的旅程。",
+        "注册：通过互动，激励他人看到可能性并采取行动。",
+        "CNA精神宗旨：激励使命，为创造一个可行的世界做出贡献，成就自我，成就他人，成就社会。",
+        "成功的关键是专注于目标，而不是障碍。",
+        "最高级别的注册：激励他人提升生命价值并采取行动。",
+        "CNA精神宗旨：激励人们承诺，活出人生立场，创造非凡成功的人生，追求卓越，持续改进，迈向人生愿景。"
+      ]
+    },
+    "taskStatus": {
+      "title": "今日任务状态",
+      "completion": "完成度",
+      "completedCount": "已完成 {{completed}} / {{total}} 个任务",
+      "activeGoals": "按类别分的活跃目标",
+      "noActiveGoals": "没有活跃的目标可以显示。"
+    },
+    "overview": {
+      "title": "总览",
+      "totalGoalsDesc": "已创建的目标总数",
+      "completedGoalsDesc": "已标记为完成的目标",
+      "inProgressGoalsDesc": "当前活跃且尚未完成的目标",
+      "avgTaskCompletionDesc": "所有任务的平均完成率"
+    },
+    "goalCard": {
+      "details": "详情",
+      "targetDate": "目标日期",
+      "daysLeft": "剩余天数",
+      "daysLeft_plural": "剩余天数",
+      "dueTodayOverdue": "（今天到期/已逾期）",
+      "complete": "完成",
+      "reopen": "重新打开"
+    },
+    "goalDialog": {
+      "createTitle": "创建新目标",
+      "editTitle": "编辑目标",
+      "yourGoal": "您的目标",
+      "description": "描述（可选）",
+      "category": "类别",
+      "targetDate": "目标日期",
+      "createButton": "创建目标",
+      "updateButton": "更新目标",
+      "dateError": "目标日期必须是今天或未来日期"
+    },
+    "taskDialog": {
+      "createTitle": "创建新任务",
+      "editTitle": "编辑任务",
+      "yourTask": "您的任务",
+      "taskPlaceholder": "您今天要做什么？",
+      "associatedGoal": "关联目标",
+      "selectGoal": "选择一个目标",
+      "goalCannotChange": "一旦设置，目标无法更改",
+      "createButton": "创建任务",
+      "updateButton": "更新任务"
+    },
+    "progressGoalCard": {
+      "completionRate": "任务完成率：",
+      "completedOn": "完成于：{{date}}",
+      "noGoalsFound": "还没有完成的目标。"
+    },
+    "changePasswordDialog": {
+      "title": "修改密码",
+      "message": "输入您当前的和新密码来更新。",
+      "currentPassword": "当前密码",
+      "newPassword": "新密码",
+      "confirmPassword": "确认新密码",
+      "cancel": "取消",
+      "changeButton": "修改密码"
+    }
+  },
+  "time": {
+    "today": "今天",
+    "tomorrow": "明天",
+    "daysRemaining": "剩余 {{count}} 天",
+    "daysRemaining_plural": "剩余 {{count}} 天",
+    "dueToday": "今天到期",
+    "overdue": "已逾期",
+    "completedOn": "完成于：{{date}}",
+    "notAvailable": "不可用",
+    "userId": "用户ID"
+  },
+  "confirmDialog": {
+    "title": "确认删除 {{item}}",
+    "message": "您确定要删除这个{{item}}吗？此操作无法撤销。",
+    "warning": "此操作是永久性的。"
+  }
+}

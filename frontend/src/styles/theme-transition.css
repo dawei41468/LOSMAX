@@ -1,0 +1,74 @@
+/* Theme Transition Animation Variables */
+:root {
+  --theme-ripple-color: rgba(59, 130, 246, 0.3);
+  --theme-transition-bg: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] {
+  --theme-ripple-color: rgba(147, 197, 253, 0.3);
+  --theme-transition-bg: rgba(255, 255, 255, 0.1);
+}
+
+/* Theme transition container */
+.theme-transition-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Enhanced theme transition styles */
+.theme-transition-overlay {
+  backdrop-filter: blur(1px);
+  transition: all 0.3s ease-out;
+}
+
+.theme-ripple {
+  will-change: transform, opacity;
+}
+
+/* Smooth theme color transitions for all elements */
+* {
+  transition: background-color 0.3s ease, 
+              color 0.3s ease, 
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
+}
+
+/* Prevent transitions during initial load */
+.no-transitions * {
+  transition: none !important;
+}
+
+/* Theme toggle button enhancements */
+.theme-toggle-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.theme-toggle-button:hover {
+  transform: scale(1.05);
+}
+
+.theme-toggle-button:active {
+  transform: scale(0.95);
+}
+
+/* Ripple effect for theme toggle */
+.theme-toggle-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: var(--theme-ripple-color);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.theme-toggle-button:active::before {
+  width: 200px;
+  height: 200px;
+}

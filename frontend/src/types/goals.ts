@@ -15,3 +15,13 @@ export interface Goal {
   updated_at: string; // ISO string from API
   days_remaining?: number; // To be calculated client-side
 }
+
+export interface CreateGoalPayload {
+  title: string;
+  description?: string;
+  category: GoalCategory;
+  target_date: string; // ISO string
+  status?: GoalStatus; // Optional, backend defaults to active
+}
+
+export type UpdateGoalPayload = Partial<Omit<Goal, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'days_remaining'>>;

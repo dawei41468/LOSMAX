@@ -1,0 +1,386 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "goals": "Goals",
+    "tasks": "Tasks",
+    "progress": "Progress",
+    "profile": "Profile",
+    "home": "Home"
+  },
+  "common": {
+    "life": "LIFE",
+    "organization": "ORGANIZATION",
+    "system": "SYSTEM",
+    "lifeOrganizationSystem": "LIFE ORGANIZATION SYSTEM",
+    "status": "Status",
+    "active":"Active",
+    "complete":"Complete",
+    "completed": "Complete",
+    "incomplete": "Incomplete",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "filter": {
+      "all": "All",
+      "active": "Active",
+      "completed": "Complete",
+      "today": "Today"
+    }
+  },
+  "actions": {
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "saveChanges": "Save Changes",
+    "cancel": "Cancel",
+    "update": "Update",
+    "confirm": "Confirm",
+    "confirmDelete": "Confirm Delete",
+    "loading": "Loading...",
+    "deleting": "Deleting...",
+    "complete": "Complete",
+    "reopen": "Reopen",
+    "markComplete": "Mark Complete",
+    "markIncomplete": "Mark Incomplete",
+    "signOut": "Sign Out",
+    "signUp": "Sign Up",
+    "signIn": "Sign In",
+    "changePassword": "Change Password",
+    "deleteAccount": "Delete Account"
+  },
+  "feedback": {
+    "success": {
+      "settingsSaved": "Settings saved successfully",
+      "goalCreated": "Goal created successfully",
+      "goalUpdated": "Goal updated successfully",
+      "goalCompleted": "Goal completed successfully",
+      "goalDeleted": "Goal deleted successfully",
+      "taskCreated": "Task created successfully",
+      "taskUpdated": "Task updated successfully",
+      "taskCompleted": "Task marked as complete",
+      "taskDeleted": "Task deleted successfully",
+      "passwordChanged": "Password changed successfully",
+      "accountDeleted": "Your account has been successfully deleted",
+      "nameUpdated": "Your display name has been updated"
+    },
+    "error": {
+      "generic": "An unexpected error occurred",
+      "network": "Network error. Please check your connection",
+      "validation": "Please check your input and try again",
+      "authentication": "Authentication failed. Please login again",
+      "login": "Login failed. Please check your credentials and try again",
+      "signup": "Signup failed. Please try again or contact support if the issue persists",
+      "fetchPreferences": "Failed to fetch your preferences. Please try again",
+      "savePreferences": "Failed to save your preferences. Please try again",
+      "settingsSave": "Failed to save your settings. Please try again",
+      "updateName": "Failed to update your display name. Please try again",
+      "passwordChange": "Failed to change password. Please check your current password and try again",
+      "storage": "Storage access error. Please ensure your browser allows site data",
+      "passwordMismatch": "New passwords do not match",
+      "maxActiveGoals": "Maximum of 3 active goals allowed per category"
+    },
+    "warning": {
+      "unsavedChanges": "You have unsaved changes",
+      "deleteConfirmation": "This action cannot be undone",
+      "deleteAccount": "Are you sure you want to permanently delete your account?"
+    },
+    "info": {
+      "noGoalsFound": "No goals found for the \"{{filter}}\" filter. Try creating one!",
+      "noTasksFound": "No tasks found for the \"{{filter}}\" filter. Try creating one!",
+      "noTasksToday": "What can you do today to make progress on your goals?",
+      "noCompletedGoals": "No goals have been completed yet."
+    }
+  },
+  "settings": {
+    "toast": {
+      "account_deletion_message": "Your account has been successfully deleted",
+      "account_deletion_error": "Failed to delete your account. Please try again",
+      "password_mismatch": "New passwords do not match",
+      "password_changed_message_logout": "Password changed successfully. Please login again with your new password",
+      "password_change_error": "Failed to change password. Please check your current password and try again",
+      "name_updated_message": "Your display name has been updated successfully",
+      "update_name_error": "Failed to update your display name. Please try again"
+    },
+    "account": {
+      "item_name": "account",
+      "delete_confirm_message_p1": "Are you sure you want to permanently delete your account?",
+      "delete_confirm_message_p2": "This will delete all data associated with {{email}}.",
+      "delete_confirm_warning": "This action cannot be undone.",
+      "password_change_message": "Enter your current and new password to update.",
+      "current_password": "Current Password",
+      "new_password": "New Password",
+      "confirm_password": "Confirm New Password"
+    }
+  },
+  "forms": {
+    "labels": {
+      "email": "Email",
+      "password": "Password",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm New Password",
+      "name": "Name",
+      "displayName": "Display Name",
+      "nickname": "Nickname",
+      "uid": "UserID",
+      "role": "Role",
+      "notAvailable": "N/A",
+      "description": "Description",
+      "category": "Category",
+      "targetDate": "Target Date",
+      "goal": "Goal",
+      "task": "Task",
+      "associatedGoal": "Associated Goal",
+      "morningDeadline": "Morning Deadline",
+      "eveningDeadline": "Evening Deadline",
+      "notifications": "Notifications",
+      "language": "Language",
+      "theme": "Theme"
+    },
+    "placeholders": {
+      "email": "Enter your email",
+      "password": "Enter your password",
+      "currentPassword": "Enter your current password",
+      "newPassword": "Enter your new password",
+      "confirmPassword": "Confirm your new password",
+      "name": "Enter your name",
+      "displayName": "Enter your display name",
+      "nickname": "Enter your nickname",
+      "description": "Add a description (optional)",
+      "goal": "What do you want to achieve?",
+      "task": "What will you do today?",
+      "selectGoal": "Select a Goal",
+      "morningDeadline": "e.g., 09:00 AM",
+      "eveningDeadline": "e.g., 10:00 PM"
+    },
+    "validation": {
+      "required": "This field is required",
+      "emailInvalid": "Please enter a valid email address",
+      "dateFuture": "Target date must be today or a future date",
+      "passwordMatch": "Passwords do not match"
+    }
+  },
+  "content": {
+    "categories": {
+      "family": "Family",
+      "work": "Work",
+      "health": "Health",
+      "personal": "Personal"
+    },
+    "auth": {
+      "title": "LIFE ORGANIZATION SYSTEM",
+      "subtitle": "Organize your life, achieve your goals",
+      "signInTitle": "Log In",
+      "signUpTitle": "Create Account",
+      "forgotPassword": "Forgot Password?",
+      "alreadyHaveAccount": "Already have an account?",
+      "dontHaveAccount": "Don't have an account?"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Track your daily progress across all life areas",
+      "greetings": {
+        "morning": "Good morning",
+        "afternoon": "Good afternoon",
+        "evening": "Good evening",
+        "night": "Good night"
+      }
+    },
+    "goals": {
+      "title": "Goals",
+      "subtitle": "Manage your long-term goals for each life category",
+      "empty": "No goals found. Create your first goal!",
+      "createNew": "+ New Goal"
+    },
+    "tasks": {
+      "title": "Tasks",
+      "subtitle": "Set your tasks for today before your morning deadline",
+      "empty": "No tasks for today. What can you do to make progress?",
+      "createNew": "+ New Task"
+    },
+    "progress": {
+      "title": "Progress",
+      "subtitle": "Track your overall progress and completion rates",
+      "noActiveGoals": "No active goals found.",
+      "goalCount": "{{count}} Goals"
+    },
+    "profile": {
+      "title": "User Center",
+      "subtitle": "Manage your account settings and preferences",
+      "signOut": "Sign Out",
+      "anonymous": "Anonymous",
+      "noEmail": "No email provided",
+      "tabs": {
+        "info": "My Info",
+        "preference": "Preference",
+        "about": "About"
+      },
+      "preference": {
+        "displayNameTitle": "Display Name",
+        "displayNameDescription": "This name will be displayed publicly.",
+        "deadlinesTitle": "Task Deadlines",
+        "deadlinesDescription": "Set your preferred deadlines for morning and evening tasks.",
+        "morningDeadlineHint": "e.g., 09:00 AM. Tasks due before this time are considered morning tasks.",
+        "eveningDeadlineHint": "e.g., 10:00 PM. Tasks due before this time are considered evening tasks.",
+        "notificationsDescription": "Enable or disable application notifications.",
+        "accountActionsTitle": "Account Actions",
+        "accountActionsDescription": "Manage your account settings."
+      },
+      "about": {
+        "title": "About LOS",
+        "subtitle": "Learn about the app's purpose and features.",
+        "whatIs": {
+          "title": "What is LOS?",
+          "description": "LOS is a Life Organization System designed to help you set clear goals, manage tasks, and track your progress toward a more meaningful life. Inspired by Landmark Education principles."
+        },
+        "features": {
+          "title": "Key Features",
+          "feature1": "Goal Setting: Define clear, actionable goals across different life areas.",
+          "feature2": "Daily Tasks: Create and manage daily tasks aligned with your long-term goals.",
+          "feature3": "Progress Tracking: Visualize your progress with insightful analytics and charts.",
+          "feature4": "Daily Motivation: Get inspired with carefully curated quotes every day."
+        },
+        "howToUse": {
+          "title": "How to Use",
+          "step1": "Define Your Goals: Start by creating your goals in the Goals section.",
+          "step2": "Set Daily Tasks: Create tasks each day that move you closer to your goals.",
+          "step3": "Track Your Progress: Use the Progress tab to see how you're doing.",
+          "step4": "Stay Consistent: Make it a daily habit to use the app.",
+          "step5": "Reflect and Adjust: Regularly review your goals and adjust as needed."
+        },
+        "versionInfo": "Version 1.0.0"
+      }
+    }
+  },
+
+  "component": {
+    "quoteOfDay": {
+      "title": "Quote of the Day",
+      "quoteNumber": "Quote #{{number}}",
+      "quotes": [
+        "The journey of a thousand miles begins with one step.",
+        "Stay hungry, stay foolish.",
+        "Success is not final, failure is not fatal: It is the courage to continue that counts.",
+        "The only way to do great work is to love what you do.",
+        "Your time is limited, don't waste it living someone else's life.",
+        "The future belongs to those who believe in the beauty of their dreams.",
+        "Don't watch the clock; do what it does. Keep going.",
+        "Believe you can and you're halfway there.",
+        "The secret of getting ahead is getting started.",
+        "It does not matter how slowly you go as long as you do not stop.",
+        "Our greatest weakness lies in giving up. The most certain way to succeed is always to try just one more time.",
+        "The only limit to our realization of tomorrow is our doubts of today.",
+        "You are never too old to set another goal or to dream a new dream.",
+        "Act as if what you do makes a difference. It does.",
+        "What you get by achieving your goals is not as important as what you become by achieving your goals.",
+        "The best way to predict the future is to create it.",
+        "You don't have to be great to start, but you have to start to be great.",
+        "The harder you work for something, the greater you'll feel when you achieve it.",
+        "Dream bigger. Do bigger.",
+        "Don't stop when you're tired. Stop when you're done.",
+        "Wake up with determination. Go to bed with satisfaction.",
+        "Do something today that your future self will thank you for.",
+        "Little things make big days.",
+        "It's going to be hard, but hard does not mean impossible.",
+        "Don't wait for opportunity. Create it.",
+        "Sometimes we're tested not to show our weaknesses, but to discover our strengths.",
+        "The key to success is to focus on goals, not obstacles.",
+        "Dream it. Believe it. Build it.",
+        "Small steps every day lead to big results.",
+        "You miss 100% of the shots you don't take.",
+        "Commit to what happens rather than how it happens.",
+        "Commit to achieving predetermined results rather than clinging to routines.",
+        "Be willing to challenge any difficulty.",
+        "Be willing to shift mindset and correct actions.",
+        "Objective facts are the ultimate authority.",
+        "Be willing to let go.",
+        "Clear vision and goals, with focus on action plans.",
+        "Act with urgency rather than desperation.",
+        "Details, details, details and a complete plan.",
+        "You are rigorous, disciplined, and persevering.",
+        "Fervent desire, firm belief, effective action, iron will.",
+        "Life is a journey of inspiration and calling.",
+        "Enrolment: Through interaction, inspire others to see possibilities and take action.",
+        "CNA spirit purpose: Inspire calling, contribute to creating a workable world, achieve self, achieve others, achieve society.",
+        "The key to success is to focus on goals, not obstacles.",
+        "Highest level of enrolment: Inspire others to enhance life value and take action.",
+        "CNA spirit purpose: Inspire people to commit, live out life positions, create extraordinary successful lives, pursue excellence, continuously improve, and move toward life vision."
+      ]
+    },
+    "taskStatus":{
+      "title": "Today's Task Status",
+      "completion": "Completion",
+      "completedCount": "{{completed}} of {{total}} tasks completed",
+      "activeGoals": "Active Goals by Category",
+      "noActiveGoals": "No active goals to display."
+    },
+    "overview": {
+      "title": "Overview",
+      "totalGoalsDesc": "Total number of goals created",
+      "completedGoalsDesc": "Goals marked as completed",
+      "inProgressGoalsDesc": "Currently active and incomplete goals",
+      "avgTaskCompletionDesc": "Average completion rate across all tasks"
+    },
+    "goalCard": {
+      "details": "Details",
+      "targetDate": "Target Date",
+      "daysLeft": "Days Left",
+      "daysLeft_plural": "Days Left",
+      "dueTodayOverdue": "(Due Today/Overdue)",
+      "complete": "Complete",
+      "reopen": "Reopen"
+    },
+    "goalDialog": {
+      "createTitle": "Create New Goal",
+      "editTitle": "Edit Goal",
+      "yourGoal": "Your Goal",
+      "description": "Description (Optional)",
+      "category": "Category",
+      "targetDate": "Target Date",
+      "createButton": "Create Goal",
+      "updateButton": "Update Goal",
+      "dateError": "Target date must be today or a future date"
+    },
+    "taskDialog": {
+      "createTitle": "Create New Task",
+      "editTitle": "Edit Task",
+      "yourTask": "Your Task",
+      "taskPlaceholder": "What will you do today?",
+      "associatedGoal": "Associated Goal",
+      "selectGoal": "Select a Goal",
+      "goalCannotChange": "Goal cannot be changed once set",
+      "createButton": "Create Task",
+      "updateButton": "Update Task"
+    },
+    "progressGoalCard": {
+      "completionRate": "Completion rate of tasks: ",
+      "completedOn": "Completed On: {{date}}",
+      "noGoalsFound": "No goals have been completed yet."
+    },
+    "changePasswordDialog": {
+      "title": "Change Password",
+      "message": "Enter your current and new password to update.",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm New Password",
+      "cancel": "Cancel",
+      "changeButton": "Change Password"
+    }
+  },
+  "time": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "daysRemaining": "{{count}} day remaining",
+    "daysRemaining_plural": "{{count}} days remaining",
+    "dueToday": "Due today",
+    "overdue": "Overdue",
+    "completedOn": "Completed on: {{date}}",
+    "notAvailable": "N/A",
+    "userId": "User ID"
+  },
+  "confirmDialog": {
+    "title": "Confirm Deletion of {{item}}",
+    "message": "Are you sure you want to delete this {{item}}? This action cannot be undone.",
+    "warning": "This action is permanent."
+  }
+}

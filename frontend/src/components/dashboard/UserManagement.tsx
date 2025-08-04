@@ -7,6 +7,7 @@ import { logout } from '../../services/auth';
 import { api } from '../../services/api';
 import { Trash2, Edit, Search, RefreshCw, Mail } from 'lucide-react';
 import Cookies from 'js-cookie';
+import { Select, SelectItem } from '@/components/ui/select';
 
 interface Preferences {
   morning_deadline: string;
@@ -170,14 +171,16 @@ export function UserManagement() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Role</label>
-                  <select
+                  <Select
+                    variant="outline"
+                    size="sm"
                     value={selectedRole}
-                    onChange={(e) => setSelectedRole(e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedRole(e.target.value)}
+                    className="min-w-[100px]"
                   >
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                  </select>
+                    <SelectItem value="user">User</SelectItem>
+                    <SelectItem value="admin">Admin</SelectItem>
+                  </Select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Language</label>
@@ -264,18 +267,17 @@ export function UserManagement() {
             />
           </div>
           
-          <select
+          <Select
+            variant="subtle"
+            size="sm"
             value={roleFilter}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-              setRoleFilter(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="border rounded p-2 w-full"
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setRoleFilter(e.target.value)}
+            className="min-w-[120px]"
           >
-            <option value="all">All Roles</option>
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
+            <SelectItem value="all">All Roles</SelectItem>
+            <SelectItem value="user">User</SelectItem>
+            <SelectItem value="admin">Admin</SelectItem>
+          </Select>
         </div>
 
         {loading && users.length === 0 ? (

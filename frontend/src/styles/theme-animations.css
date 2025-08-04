@@ -1,0 +1,181 @@
+/* Theme Ripple Transition Animations */
+
+/* Ripple container */
+.theme-ripple-container {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ripple effect styles */
+.theme-ripple {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  background: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.05) 40%,
+    rgba(0, 0, 0, 0.02) 70%,
+    transparent 100%
+  );
+  transform: scale(0);
+  animation: ripple-expand 0.6s ease-out forwards;
+}
+
+.theme-ripple.dark {
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 40%,
+    rgba(255, 255, 255, 0.02) 70%,
+    transparent 100%
+  );
+}
+
+@keyframes ripple-expand {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Enhanced theme switcher styles */
+.animated-theme-switcher {
+  position: relative;
+  overflow: hidden;
+}
+
+.animated-theme-switcher::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
+}
+
+.animated-theme-switcher:hover::before {
+  width: 100%;
+  height: 100%;
+  opacity: 0.1;
+}
+
+/* Smooth theme transition for all elements */
+.theme-transition-all * {
+  transition: background-color 300ms ease-in-out,
+              color 300ms ease-in-out,
+              border-color 300ms ease-in-out,
+              box-shadow 300ms ease-in-out;
+}
+
+/* Disable transitions during theme change */
+.theme-changing * {
+  transition: none !important;
+}
+
+/* Button press effect */
+.theme-switcher-press {
+  transform: scale(0.95);
+  transition: transform 150ms ease;
+}
+
+.theme-switcher-press:active {
+  transform: scale(0.9);
+}
+
+/* Glow effect for theme indicators */
+.theme-indicator-glow {
+  position: relative;
+}
+
+.theme-indicator-glow::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0);
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.3;
+  }
+}
+
+/* Segmented control animation */
+.segmented-theme-switcher {
+  position: relative;
+  display: flex;
+  gap: 2px;
+}
+
+.segmented-theme-option {
+  position: relative;
+  overflow: hidden;
+  transition: all 200ms ease;
+}
+
+.segmented-theme-option::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.segmented-theme-option:hover::before {
+  left: 100%;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .theme-ripple,
+  .theme-transition-all *,
+  .animated-theme-switcher::before,
+  .theme-indicator-glow::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .theme-ripple {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Focus-visible support */
+.animated-theme-switcher:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}

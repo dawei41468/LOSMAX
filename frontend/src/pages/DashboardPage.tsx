@@ -66,19 +66,19 @@ export default function DashboardPage() {
 
   if (isAuthenticated === null) {
     // Display a loading message while authentication status is being determined
-    return <div className="p-6">Loading dashboard...</div>;
+    return <div className="p-6">{t('feedback.info.loadingDashboard')}</div>;
   }
 
   return (
     <div className="space-y-6 md:p-4">
       {/* Fixed top bar */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-background h-20 flex flex-col justify-center items-center" style={{ backgroundColor: 'var(--background)' }}>
-        <h1 className="text-xl font-semibold">{t('dashboard.titles.dashboard')}</h1>
-        <p className="text-sm text-muted">{t('dashboard.subtitles.dashboard')}</p>
+        <h1 className="text-xl font-semibold">{t('content.dashboard.title')}</h1>
+        <p className="text-sm text-muted">{t('content.dashboard.subtitle')}</p>
       </div>
       
       {/* Content with top padding to account for fixed header */}
-      <div className="pt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="pt-14 justify-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <Greeting userName={userName} />
         <QuoteOfDay />
         <TaskStatus todayTasks={todayTasks} activeGoals={activeGoals} />

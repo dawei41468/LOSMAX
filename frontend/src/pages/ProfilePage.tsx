@@ -11,6 +11,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { api } from '../services/api';
 import ConfirmDeleteDialog from '../components/ui/ConfirmDeleteDialog';
+import ChangePasswordDialog from '../components/ui/ChangePasswordDialog';
 
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
@@ -26,10 +27,6 @@ const ProfilePage: React.FC = () => {
   const [eveningDeadline, setEveningDeadline] = useState('');
   const [showPasswordChange, setShowPasswordChange] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
   
   useEffect(() => {
     const fetchPreferences = async () => {
@@ -81,7 +78,7 @@ const ProfilePage: React.FC = () => {
           {/* First line - title center, controls right */}
           <div className="flex items-center justify-between px-4">
             <h1 className="text-xl font-semibold absolute left-1/2 transform -translate-x-1/2">
-              {t('profile.title')}
+              {t('content.profile.title')}
             </h1>
             <div className="flex items-center gap-1 ml-auto">
               <ThemeSwitcher />
@@ -92,7 +89,7 @@ const ProfilePage: React.FC = () => {
           {/* Second line - subtitle only */}
           <div className="flex items-center justify-center mt-1">
             <p className="text-sm text-muted whitespace-nowrap">
-              {t('profile.subtitle')}
+              {t('content.profile.subtitle')}
             </p>
           </div>
         </div>
@@ -115,24 +112,24 @@ const ProfilePage: React.FC = () => {
           </Card>
 
           {/* Tabs Section */}
-          <div className="sticky top-10 z-40 bg-background flex border-border" style={{ backgroundColor: 'var(--background)' }}>
+          <div className="sticky top-16 z-40 bg-background flex border-border" style={{ backgroundColor: 'var(--background)' }}>
             <button
               className={`flex-1 py-3 font-medium cursor-pointer ${activeTab === 'info' ? 'border-b-2 border-blue-500' : 'text-muted-foreground hover:text-foreground'}`}
               onClick={() => setActiveTab('info')}
             >
-              {t('profile.tabs.info')}
+              {t('content.profile.tabs.info')}
             </button>
             <button
               className={`flex-1 py-3 font-medium cursor-pointer ${activeTab === 'preference' ? 'border-b-2 border-blue-500' : 'text-muted-foreground hover:text-foreground'}`}
               onClick={() => setActiveTab('preference')}
             >
-              {t('profile.tabs.preference')}
+              {t('content.profile.tabs.preference')}
             </button>
             <button
               className={`flex-1 py-3 font-medium cursor-pointer ${activeTab === 'about' ? 'border-b-2 border-blue-500' : 'text-muted-foreground hover:text-foreground'}`}
               onClick={() => setActiveTab('about')}
             >
-              {t('profile.tabs.about')}
+              {t('content.profile.tabs.about')}
             </button>
           </div>
           {/* Info Tab Content */}
@@ -140,31 +137,31 @@ const ProfilePage: React.FC = () => {
             <div className="relative min-h-[calc(100vh-200px)]">
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="font-semibold">{t('profile.nickname')}:</span>
-                  <span>{userName || t('profile.notAvailable')}</span>
+                  <span className="font-semibold">{t('forms.labels.nickname')}:</span>
+                  <span>{userName || t('forms.labels.notAvailable')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="font-semibold">{t('profile.uid')}:</span>
-                  <span>{userId || t('profile.notAvailable')}</span>
+                  <span className="font-semibold">{t('forms.labels.uid')}:</span>
+                  <span>{userId || t('forms.labels.notAvailable')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="font-semibold">{t('profile.role')}:</span>
-                  <span>{userRole || t('profile.notAvailable')}</span>
+                  <span className="font-semibold">{t('forms.labels.role')}:</span>
+                  <span>{userRole || t('forms.labels.notAvailable')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="font-semibold">{t('profile.language')}:</span>
-                  <span>{userLanguage || t('profile.notAvailable')}</span>
+                  <span className="font-semibold">{t('forms.labels.language')}:</span>
+                  <span>{userLanguage || t('forms.labels.notAvailable')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="font-semibold">{t('settings.preferences.morning_deadline')}:</span>
-                  <span>{morningDeadline || t('profile.notAvailable')}</span>
+                  <span className="font-semibold">{t('forms.labels.morningDeadline')}:</span>
+                  <span>{morningDeadline || t('forms.labels.notAvailable')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="font-semibold">{t('settings.preferences.evening_deadline')}:</span>
-                  <span>{eveningDeadline || t('profile.notAvailable')}</span>
+                  <span className="font-semibold">{t('forms.labels.eveningDeadline')}:</span>
+                  <span>{eveningDeadline || t('forms.labels.notAvailable')}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="font-semibold">{t('settings.preferences.notifications_title')}:</span>
+                  <span className="font-semibold">{t('forms.labels.notifications')}:</span>
                   <span>{notificationsEnabled ? t('common.enabled') : t('common.disabled')}</span>
                 </div>
               </div>
@@ -180,7 +177,7 @@ const ProfilePage: React.FC = () => {
                   }}
                   className="w-full px-6 py-2 mt-4 border border-red-500 text-red-500 rounded-md hover:bg-red-500/10 transition-colors flex items-center justify-center gap-2"
                 >
-                  <LogOut className="h-4 w-4" /> <span>{t('profile.signout')}</span>
+                  <LogOut className="h-4 w-4" /> <span>{t('actions.signOut')}</span>
                 </button>
               </div>
             </div>
@@ -207,131 +204,22 @@ const ProfilePage: React.FC = () => {
                 message={`${t('settings.account.delete_confirm_message_p1')}\n\n${userEmail ? t('settings.account.delete_confirm_message_p2', { email: userEmail }) : ''}\n\n${t('settings.account.delete_confirm_warning')}`}
               />
 
-              {showPasswordChange && (
-                <div className="fixed inset-0 bg-background/80 flex items-center justify-center z-50">
-                  <div className="bg-card p-4 sm:p-6 rounded-lg max-w-md w-full mx-4 sm:mx-0">
-                    <h3 className="text-lg font-medium mb-2">{t('settings.account.password_change_title')}</h3>
-                    <p className="text-sm text-muted-foreground mb-6">
-                      {t('settings.account.password_change_message')}
-                    </p>
-                    <form
-                      onSubmit={async (e) => {
-                        e.preventDefault();
-                        if (newPassword !== confirmPassword) {
-                          toast.error(t('settings.toast.password_mismatch'));
-                          return;
-                        }
-
-                        setIsChangingPassword(true);
-                        try {
-                          await api.patch('/auth/change-password', {
-                            current_password: currentPassword,
-                            new_password: newPassword
-                          });
-                          
-                          setShowPasswordChange(false);
-                          setCurrentPassword('');
-                          setNewPassword('');
-                          setConfirmPassword('');
-                          
-                          toast.success(t('settings.toast.password_changed_message_logout'));
-
-                          navigate('/login');
-
-                        } catch (error: unknown) {
-                          console.error('Password change failed:', error);
-                          let errorMessage = t('settings.toast.password_change_error');
-                          if (axios.isAxiosError(error) && error.response?.data?.detail) {
-                            errorMessage = typeof error.response.data.detail === 'string'
-                              ? error.response.data.detail
-                              : JSON.stringify(error.response.data.detail);
-                          }
-                          toast.error(errorMessage);
-                        } finally {
-                          setIsChangingPassword(false);
-                        }
-                      }}
-                      noValidate
-                    >
-                      <input type="text" name="username" autoComplete="username" className="hidden" value={userEmail || ''} readOnly />
-                      <div className="space-y-4">
-                        <div>
-                          <label htmlFor="currentPassword" className="block text-sm font-medium text-foreground mb-1 text-left">
-                            {t('settings.account.current_password')}
-                          </label>
-                          <input
-                            id="currentPassword"
-                            name="currentPassword"
-                            type="password"
-                            className="w-full border border-input rounded-md px-3 py-3 sm:py-2 bg-background"
-                            value={currentPassword}
-                            onChange={(e) => setCurrentPassword(e.target.value)}
-                            required
-                            autoComplete="current-password"
-                          />
-                        </div>
-                        <div>
-                          <label htmlFor="newPassword" className="block text-sm font-medium text-foreground mb-1 text-left">
-                            {t('settings.account.new_password')}
-                          </label>
-                          <input
-                            id="newPassword"
-                            name="newPassword"
-                            type="password"
-                            className="w-full border border-input rounded-md px-3 py-2 bg-background"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            required
-                            autoComplete="new-password"
-                          />
-                        </div>
-                        <div>
-                          <label htmlFor="confirmPassword" className="block text-sm font-medium text-foreground mb-1 text-left">
-                            {t('settings.account.confirm_password')}
-                          </label>
-                          <input
-                            id="confirmPassword"
-                            name="confirmPassword"
-                            type="password"
-                            className="w-full border border-input rounded-md px-3 py-2 bg-background"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            required
-                            autoComplete="new-password"
-                          />
-                        </div>
-                      </div>
-                      <div className="flex justify-end gap-2 mt-6">
-                        <button
-                          type="button"
-                          className="px-4 py-2 border border-input rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-                          onClick={() => setShowPasswordChange(false)}
-                        >
-                          {t('common.cancel')}
-                        </button>
-                        <button
-                          type="submit"
-                          className="px-4 py-2 bg-primary text-primary-foreground rounded-md border border-primary hover:bg-blue-500/10 hover:text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                          disabled={isChangingPassword || !currentPassword || !newPassword || !confirmPassword}
-                        >
-                          {t('settings.buttons.change_password')}
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              )}
+              <ChangePasswordDialog
+                isOpen={showPasswordChange}
+                onClose={() => setShowPasswordChange(false)}
+                userEmail={userEmail || ''}
+              />
               {/* Preference Tab Content */}
               {activeTab === 'preference' && (
                 <div className="space-y-4">
 
                   <div className="p-4 border border-gray-200 rounded-lg">
-                    <h2 className="text-lg text-center font-medium mb-3">{t('profile.display_name_title')}</h2>
-                    <p className="text-sm text-center text-muted-foreground mb-4">{t('profile.display_name_description')}</p>
+                    <h2 className="text-lg text-center font-medium mb-3">{t('content.profile.preference.displayNameTitle')}</h2>
+                    <p className="text-sm text-center text-muted-foreground mb-4">{t('content.profile.preference.displayNameDescription')}</p>
                     
                     <div className="space-y-4">
                       <div>
-                        <label htmlFor="nicknameInput" className="block text-sm font-medium text-muted-foreground mb-1 text-left">{t('profile.nickname_label')}</label>
+                        <label htmlFor="nicknameInput" className="block text-sm font-medium text-muted-foreground mb-1 text-left">{t('forms.labels.nickname')}</label>
                         <div className="flex flex-col sm:flex-row gap-2">
                           <input
                             id="nicknameInput"
@@ -359,7 +247,7 @@ const ProfilePage: React.FC = () => {
                               }
                             }}
                           >
-                            {t('common.update_button')}
+                            {t('actions.update')}
                           </button>
                         </div>
                       </div>
@@ -367,12 +255,12 @@ const ProfilePage: React.FC = () => {
                   </div>
 
                   <div className="p-4 border border-gray-200 rounded-lg">
-                    <h2 className="text-lg text-center font-medium mb-3">{t('settings.preferences.deadlines_title')}</h2>
-                    <p className="text-sm text-center text-muted-foreground mb-4">{t('settings.preferences.deadlines_description')}</p>
+                    <h2 className="text-lg text-center font-medium mb-3">{t('content.profile.preference.deadlinesTitle')}</h2>
+                    <p className="text-sm text-center text-muted-foreground mb-4">{t('content.profile.preference.deadlinesDescription')}</p>
                     <div className="space-y-4">
                       <div>
                         <TimePicker
-                          label={t('settings.preferences.morning_deadline')}
+                          label={t('forms.labels.morningDeadline')}
                           value={morningDeadline}
                           onChange={(time: string) => {
                             setMorningDeadline(time);
@@ -380,11 +268,11 @@ const ProfilePage: React.FC = () => {
                           }}
                           context="morningDeadline"
                         />
-                        <p className="text-xs text-muted-foreground mt-1">{t('settings.preferences.morning_deadline_hint')}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{t('content.profile.preference.morningDeadlineHint')}</p>
                       </div>
                       <div>
                         <TimePicker
-                          label={t('settings.preferences.evening_deadline')}
+                          label={t('forms.labels.eveningDeadline')}
                           value={eveningDeadline}
                           onChange={(time: string) => {
                             setEveningDeadline(time);
@@ -392,15 +280,15 @@ const ProfilePage: React.FC = () => {
                           }}
                           context="eveningDeadline"
                         />
-                        <p className="text-xs text-muted-foreground mt-1">{t('settings.preferences.evening_deadline_hint')}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{t('content.profile.preference.eveningDeadlineHint')}</p>
                       </div>
                     </div>
                   </div>
 
                   <div className="p-4 border border-gray-200 rounded-lg">
-                    <h2 className="text-lg text-center font-medium mb-3">{t('settings.preferences.notifications_title')}</h2>
+                    <h2 className="text-lg text-center font-medium mb-3">{t('forms.labels.notifications')}</h2>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">{t('settings.preferences.notifications_description')}</span>
+                      <span className="text-sm text-muted-foreground">{t('content.profile.preference.notificationsDescription')}</span>
                       <div className="focus:ring-0 focus:ring-offset-0">
                         <input
                           type="checkbox"
@@ -417,20 +305,20 @@ const ProfilePage: React.FC = () => {
                   </div>
 
                   <div className="p-4 border border-gray-200 rounded-lg">
-                    <h2 className="text-lg text-center font-medium mb-3">{t('settings.account.actions_title')}</h2>
-                    <p className="text-sm text-center text-muted-foreground mb-4">{t('settings.account.actions_description')}</p>
+                    <h2 className="text-lg text-center font-medium mb-3">{t('content.profile.preference.accountActionsTitle')}</h2>
+                    <p className="text-sm text-center text-muted-foreground mb-4">{t('content.profile.preference.accountActionsDescription')}</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <button
                         className="px-4 py-2 border border-primary rounded-md hover:bg-blue-500/10 hover:text-primary transition-colors"
                         onClick={() => setShowPasswordChange(true)}
                       >
-                        {t('settings.buttons.change_password')}
+                        {t('actions.changePassword')}
                       </button>
                       <button
                         className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500/10 transition-colors"
                         onClick={() => setShowDeleteConfirm(true)}
                       >
-                        {t('settings.buttons.delete_account')}
+                        {t('actions.deleteAccount')}
                       </button>
                     </div>
                   </div>
@@ -440,43 +328,43 @@ const ProfilePage: React.FC = () => {
               {activeTab === 'about' && (
                 <div className="space-y-4">
                   <div className="p-4 border border-gray-200 rounded-lg">
-                    <h2 className="text-lg text-center font-medium mb-3">{t('settings.about.title')}</h2>
-                    <p className="text-sm text-center text-muted-foreground mb-4">{t('settings.about.subtitle')}</p>
+                    <h2 className="text-lg text-center font-medium mb-3">{t('content.profile.about.title')}</h2>
+                    <p className="text-sm text-center text-muted-foreground mb-4">{t('content.profile.about.subtitle')}</p>
                     
                     <div className="space-y-4">
                       <div>
-                        <h3 className="font-medium text-center mb-2">{t('settings.about.what_is_title')}</h3>
+                        <h3 className="font-medium text-center mb-2">{t('content.profile.about.whatIs.title')}</h3>
                         <p className="text-sm text-muted-foreground">
-                          <span className="ml-6">{t('settings.about.what_is_description').split('. ')[0]}.</span>{' '}
-                          {t('settings.about.what_is_description').split('. ').slice(1).join('. ')}
+                          <span className="ml-6">{t('content.profile.about.whatIs.description').split('. ')[0]}.</span>{' '}
+                          {t('content.profile.about.whatIs.description').split('. ').slice(1).join('. ')}
                         </p>
                      </div>
                       
                       <div>
-                        <h3 className="font-medium mb-2 text-center text-primary">{t('settings.about.features_title')}</h3>
+                        <h3 className="font-medium mb-2 text-center text-primary">{t('content.profile.about.features.title')}</h3>
                         <div className="card text-start">
                           <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
-                            <li>{t('settings.about.feature1')}</li>
-                            <li>{t('settings.about.feature2')}</li>
-                            <li>{t('settings.about.feature3')}</li>
-                            <li>{t('settings.about.feature4')}</li>
+                            <li>{t('content.profile.about.features.feature1')}</li>
+                            <li>{t('content.profile.about.features.feature2')}</li>
+                            <li>{t('content.profile.about.features.feature3')}</li>
+                            <li>{t('content.profile.about.features.feature4')}</li>
                           </ul>
                         </div>
                       </div>
                       
                       <div>
-                        <h3 className="font-medium text-center mb-2">{t('settings.about.how_to_use_title')}</h3>
+                        <h3 className="font-medium text-center mb-2">{t('content.profile.about.howToUse.title')}</h3>
                         <ol className="list-decimal pl-5 text-sm text-muted-foreground space-y-1">
-                          <li>{t('settings.about.step1')}</li>
-                          <li>{t('settings.about.step2')}</li>
-                          <li>{t('settings.about.step3')}</li>
-                          <li>{t('settings.about.step4')}</li>
-                          <li>{t('settings.about.step5')}</li>
+                          <li>{t('content.profile.about.howToUse.step1')}</li>
+                          <li>{t('content.profile.about.howToUse.step2')}</li>
+                          <li>{t('content.profile.about.howToUse.step3')}</li>
+                          <li>{t('content.profile.about.howToUse.step4')}</li>
+                          <li>{t('content.profile.about.howToUse.step5')}</li>
                         </ol>
                       </div>
                       
                       <div className="mt-8 pt-4 border-t border-gray-200 text-sm text-muted-foreground">
-                        {t('settings.about.version_info')}
+                        {t('content.profile.about.versionInfo')}
                       </div>
                     </div>
                   </div>

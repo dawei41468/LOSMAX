@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { GoalCategory } from '../../types/goals';
-import { Heart, Briefcase, User } from 'lucide-react';
+import { Heart, Briefcase, User, Home } from 'lucide-react';
 
 /**
  * Props for customizing icon appearance.
@@ -81,6 +81,8 @@ export const getCategoryIcon = (
       return <Briefcase {...iconProps} />;
     case 'Personal':
       return <User {...iconProps} />;
+    case 'Family':
+      return <Home {...iconProps} />;
     default:
       return <Briefcase {...iconProps} />;
   }
@@ -113,7 +115,7 @@ export const CategoryHeader: React.FC<{category: GoalCategory}> = ({category}) =
   return (
     <div className={`flex items-center gap-2 ${getCategoryColorClass(category)}`}>
       {getCategoryIcon(category)}
-      <span className="text-lg font-semibold">{t(`common.categories.${category.toLowerCase()}`)}</span>
+      <span className="text-lg font-semibold">{t(`content.categories.${category.toLowerCase()}`)}</span>
     </div>
   );
 };

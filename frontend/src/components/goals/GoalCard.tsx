@@ -2,12 +2,15 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Goal } from '../../types/goals';
 import { Edit, Check, Trash2 } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../ui/card';
+import { formatDate, formatDateShort } from '../../lib/utils'; // Utility function to format dates
 
 interface GoalCardProps {
   goal: Goal;
   onEdit: (goal: Goal) => void;
   onDelete: (goalId: string) => void;
   onToggleStatus: (goal: Goal) => void; // To mark complete or reopen
+  useShortDate?: boolean;
 }
 
 // Utility function to calculate days_remaining (can be moved to a utils file later)
@@ -21,7 +24,7 @@ const calculateDaysRemaining = (targetDateISOString: string): number => {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 };
 
-const GoalCard: React.FC<GoalCardProps> = ({ goal, onEdit, onDelete, onToggleStatus }) => {
+const GoalCard: React.FC<GoalCardProps> = ({ goal, onEdit, onDelete, onToggleStatus, useShortDate = true }) => {
   const { t } = useTranslation();
   const daysRemaining = calculateDaysRemaining(goal.target_date);
 
@@ -29,49 +32,102 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onEdit, onDelete, onToggleSta
     return daysRemaining === 0 && goal.status === 'active' ? 'text-error' : 'text-muted';
   };
 
+  const getBorderColor = () => {
+    const categoryBorderMap: Record<string, 'family' | 'work' | 'personal' | 'health'> = {
+      family: 'family',
+      work: 'work',
+      personal: 'personal',
+      health: 'health',
+    };
+    return categoryBorderMap[goal.category] || 'default';
+  };
+
+  const getCategoryColor = () => {
+    const categoryColors: Record<string, string> = {
+      family: '!text-[var(--category-family)]',
+      work: '!text-[var(--category-work)]',
+      personal: '!text-[var(--category-personal)]',
+      health: '!text-[var(--category-health)]',
+    };
+    return categoryColors[goal.category] || 'text-foreground';
+  };
+
+  const getStatusBadgeColor = () => {
+    const statusColors: Record<string, string> = {
+      active: 'bg-[var(--status-active)] text-[var(--foreground)]',
+      completed: 'bg-[var(--status-completed)] text-[var(--foreground)]',
+      paused: 'bg-[var(--status-paused)] text-[var(--foreground)]',
+      cancelled: 'bg-[var(--status-cancelled)] text-[var(--foreground)]',
+    };
+    return statusColors[goal.status] || 'bg-secondary text-secondary-foreground';
+  };
+
   return (
-    <div className={`card border-l-${goal.category}`}>
-      <div className="card-content">
-        <div className="card-header">
-          <h3 className={`heading-lg text-${goal.category.toLowerCase()}`}>{goal.title}</h3>
-          <span className={`badge badge-${goal.status}`}>
-            {t(`common.status.${goal.status}`)}
+    <Card
+      variant="elevated"
+      interactive={goal.status === 'active'}
+      border={getBorderColor()}
+      size="none">
+      <CardHeader>
+        <div className="flex items-start justify-between w-full">
+          <CardTitle size="sm" color="none" className={getCategoryColor()}>
+            {goal.title}
+          </CardTitle>
+          <span className={`badge ${getStatusBadgeColor()}`}>
+            {t(`common.${goal.status}`)}
           </span>
         </div>
-        {goal.description && (
-          <p className="text-sm text-muted">{t('goals.card.details')}: {goal.description}</p>
-        )}
-        <p className="text-sm text-muted">{t('goals.card.target_date')}: <span className="font-medium">{new Date(goal.target_date).toLocaleDateString()}</span></p>
-        <p className="text-sm text-muted">
-          {t('goals.card.days_remaining')}: <span className={`font-medium ${getDaysRemainingClass()}`}>
-            {daysRemaining} {daysRemaining === 0 && goal.status === 'active' ? t('goals.card.due_today_overdue') : ''}
+      </CardHeader>
+
+      {goal.description && (
+        <CardContent spacing="tight">
+          <p className="text-sm text-muted-foreground text-left">
+            {t('component.goalCard.details')}: {goal.description}
+          </p>
+        </CardContent>
+      )}
+
+      <CardContent spacing="tight">
+        <p className="text-sm text-left">
+          {t('component.goalCard.targetDate')}: {useShortDate ? formatDateShort(goal.target_date) : formatDate(goal.target_date)}
+        </p>
+        <p className="text-sm text-left">
+          {t('component.goalCard.daysLeft')}:{' '}
+          <span className={`font-medium ${getDaysRemainingClass()}`}>
+            {daysRemaining}
+            {daysRemaining === 0 && goal.status === 'active'
+              ? ` ${t('component.goalCard.dueTodayOverdue')}`
+              : ''}
           </span>
         </p>
-      </div>
-      <div className="flex gap-2 justify-end">
-        <button
-          onClick={() => onEdit(goal)}
-          aria-label={t('common.edit_button')}
-          className="btn btn-ghost btn-sm"
-        >
-          <Edit className="w-4 h-4" />
-        </button>
-        <button
-          onClick={() => onToggleStatus(goal)}
-          aria-label={goal.status === 'active' ? t('goals.card.complete_button') : t('goals.card.reopen_button')}
-          className={`btn btn-sm ${goal.status === 'active' ? 'btn-success' : 'btn-secondary'}`}
-        >
-          <Check className="w-4 h-4" />
-        </button>
-        <button
-          onClick={() => onDelete(goal.id)}
-          aria-label={t('common.delete_button')}
-          className="btn btn-destructive btn-sm"
-        >
-          <Trash2 className="w-4 h-4" />
-        </button>
-      </div>
-    </div>
+      </CardContent>
+
+      <CardFooter align="right" spacing="loose">
+        <div className="flex gap-4">
+          <button
+            onClick={() => onEdit(goal)}
+            aria-label={t('actions.edit')}
+            className="btn btn-ghost btn-sm"
+          >
+            <Edit className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => onToggleStatus(goal)}
+            aria-label={goal.status === 'active' ? t('actions.complete') : t('actions.reopen')}
+            className="btn btn-ghost btn-sm"
+          >
+            <Check className={`w-4 h-4 ${goal.status === 'active' ? 'text-success' : 'text-warning'}`} />
+          </button>
+          <button
+            onClick={() => onDelete(goal.id)}
+            aria-label={t('actions.delete')}
+            className="btn btn-ghost btn-sm"
+          >
+            <Trash2 className="w-4 h-4 text-destructive" />
+          </button>
+        </div>
+      </CardFooter>
+    </Card>
   );
 };
 

@@ -61,13 +61,13 @@ function AuthFormComponent({
         {showNameField && (
           <div className="form-group">
             <label htmlFor="name" className="sr-only">
-              {t('auth.name')}
+              {t('forms.labels.name')}
             </label>
             <input
               id="name"
               name="name"
               type="text"
-              placeholder={t('auth.namePlaceholder')}
+              placeholder={t('forms.placeholders.name')}
               autoComplete="name"
               required
               className="form-input-underline"
@@ -76,13 +76,13 @@ function AuthFormComponent({
         )}
         <div className="form-group">
           <label htmlFor="email" className="sr-only">
-            {t('common.email')}
+            {t('forms.labels.email')}
           </label>
           <input
             id="email"
             name="email"
             type="email"
-            placeholder={t('auth.emailPlaceholder')}
+            placeholder={t('forms.placeholders.email')}
             autoComplete="username"
             required
             className="form-input-underline"
@@ -91,14 +91,14 @@ function AuthFormComponent({
 
         <div className="form-group">
           <label htmlFor="password" className="sr-only">
-            {t('common.password')}
+            {t('forms.labels.password')}
           </label>
           <div className="form-input-with-icon">
             <input
               id="password"
               name="password"
               type={showPassword ? 'text' : 'password'}
-              placeholder={t('auth.passwordPlaceholder')}
+              placeholder={t('forms.placeholders.password')}
               autoComplete="current-password"
               required
               minLength={6}
@@ -120,7 +120,7 @@ function AuthFormComponent({
           className="btn btn-primary btn-full-width"
           disabled={isLoading}
         >
-          {isLoading ? t('common.loading') : submitText}
+          {isLoading ? t('actions.loading') : submitText}
         </button>
       </form>
 
@@ -189,11 +189,11 @@ export default function AuthPage() {
     <div className="page-auth">
       {isSignUp ? (
         <AuthFormComponent
-          title={t('auth.signUpTitle')}
-          submitText={t('auth.signUp')}
+          title={t('content.auth.signUpTitle')}
+          submitText={t('actions.signUp')}
           onSubmit={handleSignUp}
           secondaryAction={{
-            text: t('auth.alreadyHaveAccount'),
+            text: t('content.auth.alreadyHaveAccount'),
             onClick: () => setIsSignUp(false)
           }}
           isLoading={isLoading}
@@ -201,11 +201,11 @@ export default function AuthPage() {
         />
       ) : (
         <AuthFormComponent
-          title={t('auth.signInTitle')}
-          submitText={t('auth.signIn')}
+          title={t('content.auth.signInTitle')}
+          submitText={t('actions.signIn')}
           onSubmit={handleSignIn}
           secondaryAction={{
-            text: t('auth.dontHaveAccount'),
+            text: t('content.auth.dontHaveAccount'),
             onClick: () => setIsSignUp(true)
           }}
           isLoading={isLoading}

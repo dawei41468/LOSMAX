@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useTranslation } from 'react-i18next'; // Import useTranslation
+import i18n from '../i18n';
 import { logout, refreshToken } from '../services/auth';
 import type { ReactNode } from 'react';
 import { WebSocketService } from '../services/websocket';
@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [userRole, setUserRoleState] = useState<string | null>(localStorage.getItem('userRole')); // Added userRole state
   const [userLanguage, setUserLanguageState] = useState<string | null>(localStorage.getItem('userLanguage'));
   const [wsService, setWsService] = useState<WebSocketService | null>(null);
-  const { i18n } = useTranslation(); // Get i18n instance
+  
 
   // Apply initial language from localStorage as soon as provider mounts
   useEffect(() => {

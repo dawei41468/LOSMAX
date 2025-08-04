@@ -11,7 +11,7 @@ export function Greeting({ userName }: GreetingProps) {
   return (
     <div>
       <h2 className="text-2xl font-medium">
-        {getTimeBasedGreeting(t)}, {userName || t('dashboard.user_fallback')}!
+        {getTimeBasedGreeting(t)}, {userName || t('content.profile.anonymous')}!
       </h2>
     </div>
   );
