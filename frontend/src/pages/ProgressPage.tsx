@@ -4,7 +4,7 @@ import { AuthContext } from '../contexts/auth.context';
 import type { AuthContextType } from '../contexts/auth.types';
 import { getGoals, getTasks } from '../services/api';
 import type { GoalCategory, Goal } from '../types/goals';
-import type { Task } from '../services/api';
+import type { Task } from '../types/tasks';
 import { CategoryHeader, getCategoryColorClass, categoryColors } from '../components/ui/CategoryUI';
 import { toast } from 'sonner';
 import ProgressGoalCard from '../components/progress/ProgressGoalCard';
@@ -56,7 +56,7 @@ const ProgressPage: React.FC = () => {
 
   const convertToGoalProgress = (goal: Goal, tasks: Task[]) => {
     const goalTasks = tasks.filter(task => task.goal_id === goal.id);
-    const completedTasks = goalTasks.filter(task => task.status === 'complete').length; // Use string literal for TaskStatus
+    const completedTasks = goalTasks.filter(task => task.status === 'completed').length; // Use string literal for TaskStatus
     const totalTasks = goalTasks.length;
     const progress = totalTasks > 0 ? completedTasks / totalTasks : 0;
 

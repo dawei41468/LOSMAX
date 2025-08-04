@@ -43,7 +43,6 @@ export function ThemeProvider({
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
     localStorage.setItem(storageKey, newTheme);
-    document.documentElement.setAttribute('data-theme', newTheme);
     
     // Dispatch custom event for theme transition
     const themeChangeEvent = new CustomEvent('theme-change', {
