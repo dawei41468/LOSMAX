@@ -4,6 +4,7 @@ import type { Goal } from '../../types/goals';
 import { useTranslation } from 'react-i18next';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { formatDateShort } from '../../lib/utils'; // Utility function to format dates
+import { getCategoryBorderVariant, getCategoryColorClass } from '../ui/categoryUtils';
 import { StatusBadge } from '../ui/BadgeUI';
 
 interface ProgressGoalCardProps {
@@ -16,31 +17,11 @@ const ProgressGoalCard: React.FC<ProgressGoalCardProps> = ({ goal, isCompleted }
 
   const progressPercentage = Math.round(goal.progress * 100);
 
-  const getBorderColor = () => {
-    const categoryBorderMap: Record<string, 'family' | 'work' | 'personal' | 'health'> = {
-      Family: 'family',
-      Work: 'work',
-      Personal: 'personal',
-      Health: 'health',
-    };
-    return categoryBorderMap[goal.category] || 'default';
-  };
-
-  const getCategoryColor = () => {
-    const categoryColors: Record<string, string> = {
-      Family: 'text-[var(--category-family)]',
-      Work: 'text-[var(--category-work)]',
-      Personal: 'text-[var(--category-personal)]',
-      Health: 'text-[var(--category-health)]',
-    };
-    return categoryColors[goal.category] || 'text-foreground';
-  };
-
   return (
-    <Card variant="elevated" size="none" className={getBorderColor()}>
+    <Card variant="elevated" size="none" border={getCategoryBorderVariant(goal.category)}>
       <CardHeader spacing="tight">
         <div className="flex items-start justify-between w-full">
-          <CardTitle size="sm" className={getCategoryColor()}>
+          <CardTitle size="sm" className={getCategoryColorClass(goal.category)}>
             {goal.title}
           </CardTitle>
           <StatusBadge status={goal.status} />

@@ -1,123 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { GoalCategory } from '../../types/goals';
-import { Heart, Briefcase, User, Home } from 'lucide-react';
-
-/**
- * Props for customizing icon appearance.
- * @typedef {Object} IconProps
- * @property {number} [size] - Optional size of the icon (default: 20).
- * @property {number} [strokeWidth] - Optional stroke width of the icon (default: 2).
- */
-type IconProps = {
-  size?: number;
-  strokeWidth?: number;
-};
-
-/**
- * A mapping of category names to their respective color classes for consistent styling.
- * Each category has multiple color variants for different UI elements (text, background, icon, primary).
- * This ensures visual consistency across the application.
- */
-export const categoryColors = {
-  Health: {
-    text: 'text-[var(--category-health)]',
-    bg: 'bg-[color-mix(in_srgb,var(--category-health)_10%,transparent)]',
-    icon: 'text-[var(--category-health)]',
-    primary: 'text-[var(--category-health)]',
-    primaryBg: 'bg-[var(--category-health)]'
-  },
-  Work: {
-    text: 'text-[var(--category-work)]',
-    bg: 'bg-[color-mix(in_srgb,var(--category-work)_10%,transparent)]',
-    icon: 'text-[var(--category-work)]',
-    primary: 'text-[var(--category-work)]',
-    primaryBg: 'bg-[var(--category-work)]'
-  },
-  Personal: {
-    text: 'text-[var(--category-personal)]',
-    bg: 'bg-[color-mix(in_srgb,var(--category-personal)_10%,transparent)]',
-    icon: 'text-[var(--category-personal)]',
-    primary: 'text-[var(--category-personal)]',
-    primaryBg: 'bg-[var(--category-personal)]'
-  },
-  Family: {
-    text: 'text-[var(--category-family)]',
-    bg: 'bg-[color-mix(in_srgb,var(--category-family)_10%,transparent)]',
-    icon: 'text-[var(--category-family)]',
-    primary: 'text-[var(--category-family)]',
-    primaryBg: 'bg-[var(--category-family)]'
-  }
-} as const;
-
-/**
- * Type for selecting the color variant to apply.
- * Can be 'text', 'bg', 'icon', or 'primary' for different styling purposes.
- */
-type ColorType = keyof typeof categoryColors['Health'];
-
-/**
- * Returns a React element representing an icon for the specified category.
- * The icon can be customized with size and stroke width.
- * @param {GoalCategory} category - The category for which to get the icon.
- * @param {IconProps} [props] - Optional props to customize icon appearance.
- * @returns {React.ReactElement} The icon component for the specified category.
- */
-export const getCategoryIcon = (
-  category: GoalCategory,
-  { size = 20, strokeWidth = 2 }: IconProps = {}
-) => {
-  const colors = categoryColors[category] || categoryColors.Work;
-  const iconProps = {
-    size,
-    strokeWidth,
-    className: colors.icon
-  };
-
-  switch (category) {
-    case 'Health':
-      return <Heart {...iconProps} />;
-    case 'Work':
-      return <Briefcase {...iconProps} />;
-    case 'Personal':
-      return <User {...iconProps} />;
-    case 'Family':
-      return <Home {...iconProps} />;
-    default:
-      return <Briefcase {...iconProps} />;
-  }
-};
-
-/**
- * Retrieves the Tailwind CSS class for a specific category and color type.
- * Useful for styling elements based on category themes.
- * @param {GoalCategory} category - The category for which to get the color class.
- * @param {ColorType} [type='text'] - The type of color class to retrieve (text, bg, icon, primary).
- * @returns {string} The Tailwind CSS class for the specified category and type.
- */
-export const getCategoryColorClass = (
-  category: GoalCategory,
-  type: ColorType = 'text'
-) => {
-  const colors = categoryColors[category] || categoryColors.Work;
-  return colors[type];
-};
-
-/**
- * Retrieves the border variant name for the Card component based on the category.
- * This is used to set the border color of cards according to the category theme.
- * @param {GoalCategory} category - The category for which to get the border variant.
- * @returns {string} The border variant name for the Card component.
- */
-export const getCategoryBorderVariant = (category: GoalCategory): 'family' | 'work' | 'personal' | 'health' | 'default' => {
-  const categoryBorderMap: Record<GoalCategory, 'family' | 'work' | 'personal' | 'health'> = {
-    Family: 'family',
-    Work: 'work',
-    Personal: 'personal',
-    Health: 'health',
-  };
-  return categoryBorderMap[category] || 'default';
-};
+import { getCategoryIconComponent, getCategoryColorClass } from './categoryUtils';
+import type { IconProps } from './categoryUtils';
 
 /**
  * A component that renders a header for a category, including its icon and name.
@@ -128,9 +13,11 @@ export const getCategoryBorderVariant = (category: GoalCategory): 'family' | 'wo
  */
 export const CategoryHeader: React.FC<{category: GoalCategory}> = ({category}) => {
   const { t } = useTranslation();
+  const IconComponent = getCategoryIconComponent(category);
+  const colorClass = getCategoryColorClass(category, 'icon');
   return (
     <div className={`flex items-center gap-2 ${getCategoryColorClass(category)}`}>
-      {getCategoryIcon(category)}
+      <IconComponent size={20} strokeWidth={2} className={colorClass} />
       <span className="text-lg font-semibold">{t(`content.categories.${category.toLowerCase()}`)}</span>
     </div>
   );
@@ -144,8 +31,10 @@ export const CategoryHeader: React.FC<{category: GoalCategory}> = ({category}) =
  * @param {IconProps} [props] - Optional props to customize icon appearance.
  * @returns {React.ReactElement} The category icon component.
  */
-export const CategoryIcon: React.FC<{category: GoalCategory} & IconProps> = ({category, ...props}) => {
-  return getCategoryIcon(category, props);
+export const CategoryIcon: React.FC<{category: GoalCategory} & IconProps> = ({category, size = 20, strokeWidth = 2, ...props}) => {
+  const IconComponent = getCategoryIconComponent(category);
+  const colorClass = getCategoryColorClass(category, 'icon');
+  return <IconComponent size={size} strokeWidth={strokeWidth} className={colorClass} {...props} />;
 };
 
 /**
@@ -155,9 +44,6 @@ export const CategoryIcon: React.FC<{category: GoalCategory} & IconProps> = ({ca
  * @param {ColorType} [type='text'] - The type of color class to retrieve.
  * @returns {string} The Tailwind CSS class for the specified category and type.
  */
-export const getCategoryColor = (category: GoalCategory, type: ColorType = 'text') => {
-  return getCategoryColorClass(category, type);
-};
 
 /**
  * USAGE GUIDE:

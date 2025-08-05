@@ -8,7 +8,7 @@ const Form = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <form
     ref={ref}
-    className={cn("space-y-4", className)}
+    className={cn("space-y-2", className)}
     {...props}
   />
 ))
@@ -80,7 +80,7 @@ interface FormSelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElem
 const FormSelect = React.forwardRef<
   HTMLSelectElement,
   FormSelectProps
->(({ className, options, value, onChange, label, ...props }, ref) => (
+>(({ className, options, value, onChange, ...props }, ref) => (
   <select
     ref={ref}
     className={cn(

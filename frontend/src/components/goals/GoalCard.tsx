@@ -4,6 +4,7 @@ import type { Goal } from '../../types/goals';
 import { Edit, Check, Trash2 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../ui/card';
 import { formatDate, formatDateShort } from '../../lib/utils'; // Utility function to format dates
+import { getCategoryBorderVariant, getCategoryColorClass } from '../ui/categoryUtils';
 import { StatusBadge } from '../ui/BadgeUI';
 
 interface GoalCardProps {
@@ -33,36 +34,15 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onEdit, onDelete, onToggleSta
     return daysRemaining === 0 && goal.status === 'active' ? 'text-error' : 'text-muted';
   };
 
-  const getBorderColor = () => {
-    const categoryBorderMap: Record<string, 'family' | 'work' | 'personal' | 'health'> = {
-      Family: 'family',
-      Work: 'work',
-      Personal: 'personal',
-      Health: 'health',
-    };
-    return categoryBorderMap[goal.category] || 'default';
-  };
-
-  const getCategoryColor = () => {
-    const categoryColors: Record<string, string> = {
-      Family: '!text-[var(--category-family)]',
-      Work: '!text-[var(--category-work)]',
-      Personal: '!text-[var(--category-personal)]',
-      Health: '!text-[var(--category-health)]',
-    };
-    return categoryColors[goal.category] || 'text-foreground';
-  };
-
-
   return (
     <Card
       variant="elevated"
       interactive={goal.status === 'active'}
-      border={getBorderColor()}
+      border={getCategoryBorderVariant(goal.category)}
       size="none">
       <CardHeader>
         <div className="flex items-start justify-between w-full">
-          <CardTitle size="sm" color="none" className={getCategoryColor()}>
+          <CardTitle size="sm" color="none" className={getCategoryColorClass(goal.category)}>
             {goal.title}
           </CardTitle>
           <StatusBadge status={goal.status} />

@@ -36,7 +36,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onToggleSta
             className="btn btn-ghost btn-xs p-1"
             disabled={!task.id}
           >
-            <Edit className="w-3 h-3" />
+            <Edit className="w-4 h-4" />
           </button>
           <button
             onClick={() => onToggleStatus(task)}
@@ -44,7 +44,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onToggleSta
             className="btn btn-ghost btn-xs p-1"
             disabled={!task.id}
           >
-            <Check className={`w-3 h-3 ${task.status === 'completed' ? 'text-warning' : 'text-success'}`} />
+            <Check className={`w-4 h-4 ${task.status === 'completed' ? 'text-warning' : 'text-success'}`} />
           </button>
           <button
             onClick={() => onDelete(task.id)}
@@ -52,7 +52,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onToggleSta
             className="btn btn-ghost btn-xs p-1"
             disabled={!task.id}
           >
-            <Trash2 className="w-3 h-3 text-destructive" />
+            <Trash2 className="w-4 h-4 text-destructive" />
           </button>
         </div>
       </div>
