@@ -99,7 +99,7 @@ const ProfilePage: React.FC = () => {
       <div className="flex-1 text-start pt-14">
         <div className="max-w-3xl mx-auto space-y-6">
           {/* Profile Section */}
-          <Card className="card">
+          <Card variant="elevated" className="card">
             <div className="flex flex-col items-center space-y-4">
               <div className="w-24 h-24 rounded-full border-2 border-primary flex items-center justify-center">
                 <User className="w-16 h-16 text-primary" />

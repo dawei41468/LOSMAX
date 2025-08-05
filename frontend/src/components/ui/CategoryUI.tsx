@@ -104,6 +104,22 @@ export const getCategoryColorClass = (
 };
 
 /**
+ * Retrieves the border variant name for the Card component based on the category.
+ * This is used to set the border color of cards according to the category theme.
+ * @param {GoalCategory} category - The category for which to get the border variant.
+ * @returns {string} The border variant name for the Card component.
+ */
+export const getCategoryBorderVariant = (category: GoalCategory): 'family' | 'work' | 'personal' | 'health' | 'default' => {
+  const categoryBorderMap: Record<GoalCategory, 'family' | 'work' | 'personal' | 'health'> = {
+    Family: 'family',
+    Work: 'work',
+    Personal: 'personal',
+    Health: 'health',
+  };
+  return categoryBorderMap[category] || 'default';
+};
+
+/**
  * A component that renders a header for a category, including its icon and name.
  * Useful for displaying category titles in lists or cards.
  * @param {Object} props - Component props.

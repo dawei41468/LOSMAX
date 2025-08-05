@@ -3,7 +3,7 @@ import React from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { CategoryHeader } from '../ui/CategoryUI';
-import type { Task } from '../../services/api';
+import type { Task } from '../../types/tasks';
 import type { Goal, GoalCategory } from '../../types/goals';
 
 interface TaskStatusProps {
@@ -15,7 +15,7 @@ const TaskStatus: React.FC<TaskStatusProps> = ({ todayTasks, activeGoals }) => {
   const { t } = useTranslation();
   const { theme } = useTheme();
 
-  const completedTasksCount = todayTasks.filter(t => t.status === 'complete').length;
+  const completedTasksCount = todayTasks.filter(t => t.status === 'completed').length;
   const totalTasksCount = todayTasks.length;
   const completionPercentage = totalTasksCount > 0
     ? Math.round((completedTasksCount / totalTasksCount) * 100)

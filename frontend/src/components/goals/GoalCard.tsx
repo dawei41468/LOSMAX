@@ -35,20 +35,20 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onEdit, onDelete, onToggleSta
 
   const getBorderColor = () => {
     const categoryBorderMap: Record<string, 'family' | 'work' | 'personal' | 'health'> = {
-      family: 'family',
-      work: 'work',
-      personal: 'personal',
-      health: 'health',
+      Family: 'family',
+      Work: 'work',
+      Personal: 'personal',
+      Health: 'health',
     };
     return categoryBorderMap[goal.category] || 'default';
   };
 
   const getCategoryColor = () => {
     const categoryColors: Record<string, string> = {
-      family: '!text-[var(--category-family)]',
-      work: '!text-[var(--category-work)]',
-      personal: '!text-[var(--category-personal)]',
-      health: '!text-[var(--category-health)]',
+      Family: '!text-[var(--category-family)]',
+      Work: '!text-[var(--category-work)]',
+      Personal: '!text-[var(--category-personal)]',
+      Health: '!text-[var(--category-health)]',
     };
     return categoryColors[goal.category] || 'text-foreground';
   };

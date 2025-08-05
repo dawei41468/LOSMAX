@@ -23,7 +23,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onToggleSta
         {task.title}
       </div>
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-6">
           <span className="text-xs text-muted-foreground">
             {useShortDate ? formatDateShort(task.created_at) : formatDate(task.created_at)}
           </span>
