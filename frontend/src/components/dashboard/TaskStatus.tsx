@@ -1,6 +1,5 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import React from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { CategoryHeader } from '../ui/CategoryUI';
 import type { Task } from '../../types/tasks';
@@ -13,7 +12,6 @@ interface TaskStatusProps {
 
 const TaskStatus: React.FC<TaskStatusProps> = ({ todayTasks, activeGoals }) => {
   const { t } = useTranslation();
-  const { theme } = useTheme();
 
   const completedTasksCount = todayTasks.filter(t => t.status === 'completed').length;
   const totalTasksCount = todayTasks.length;
@@ -27,10 +25,10 @@ const TaskStatus: React.FC<TaskStatusProps> = ({ todayTasks, activeGoals }) => {
   }, {} as Record<GoalCategory, Goal[]>);
 
   return (
-    <Card 
-      variant="default" 
-      border="accent" 
-      className={`max-w-3xl ${theme === 'dark' ? 'border-blue-300 bg-blue-950 text-blue-300' : 'border-blue-500 bg-blue-50 text-gray-900'}`}
+    <Card
+      variant="taskST"
+      border="accent"
+      className="max-w-3xl"
     >
       <CardHeader>
         <CardTitle>{t('component.taskStatus.title')}</CardTitle>

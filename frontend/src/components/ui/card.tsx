@@ -5,15 +5,17 @@ import { cva, type VariantProps } from 'class-variance-authority';
 
 // Card variants configuration
 const cardVariants = cva(
-  'rounded-lg border bg-card text-card-foreground transition-all duration-200',
+  'rounded-lg border text-card-foreground transition-all duration-200',
   {
     variants: {
       variant: {
-        default: 'shadow-md',
-        elevated: 'shadow-lg hover:shadow-xl',
-        outline: 'border-2',
-        ghost: 'border-0 shadow-none',
-        subtle: 'shadow-sm',
+        default: 'shadow-md bg-card',
+        elevated: 'shadow-lg hover:shadow-xl bg-card',
+        outline: 'border-2 bg-card',
+        ghost: 'border-0 shadow-none bg-card',
+        subtle: 'shadow-sm bg-card',
+        quoteOD: 'shadow-md bg-[var(--quote-bg)] border-[var(--quote-border)] text-[var(--quote-text)]',
+        taskST: 'shadow-md bg-[var(--task-bg)] border-[var(--task-border)] text-[var(--foreground)]',
       },
       size: {
         default: 'p-6',

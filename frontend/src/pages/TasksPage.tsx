@@ -184,7 +184,7 @@ export default function TasksPage() {
     <div className="no-scrollbar md:p-4" style={{ overflowY: 'auto' }}>
       {/* Fixed top bar */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-background h-20 flex flex-col justify-center items-center" style={{ backgroundColor: 'var(--background)' }}>
-        <h1 className="text-xl font-semibold">{t('content.tasks.title')}</h1>
+        <h1 className="text-xl font-semibold">{t('content.tasks.dailyTasks')}</h1>
         <p className="text-sm text-muted">{t('content.tasks.subtitle')}</p>
       </div>
       
@@ -199,7 +199,8 @@ export default function TasksPage() {
               size="sm"
               value={currentFilter}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCurrentFilter(e.target.value as FilterType)}
-              className="min-w-[120px]"
+              className="min-w-[120px] focus:ring-0 focus:outline-none"
+              style={{ borderColor: '#374151', outline: 'none', boxShadow: 'none' }}
             >
               {(['today', 'all'] as FilterType[]).map(filter => (
                 <SelectItem key={filter} value={filter}>

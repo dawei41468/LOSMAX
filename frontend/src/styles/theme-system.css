@@ -38,6 +38,30 @@
   --ring: var(--brand-primary);
   --radius: 0.5rem;
 
+  /* Purple color palette for QuoteOfDay */
+  --purple-50: #faf5ff;
+  --purple-300: #c084fc;
+  --purple-500: #8b5cf6;
+  --purple-700: #6d28d9;
+  --purple-950: #1e003a;
+
+  --blue-50: #eff6ff;
+  --blue-500: #3b82f6;
+  --blue-700: #2563eb;
+  --blue-900: #1e3a8a;
+
+  /* QuoteOfDay colors for light theme */
+  --quote-bg: var(--purple-50);
+  --quote-border: var(--purple-500);
+  --quote-text: var(--purple-700);
+  --quote-icon: var(--purple-700);
+
+  /* Task Status colors for light theme */
+
+  --task-bg: var(--blue-50);
+  --task-border: var(--blue-500);
+  --task-text: var(--blue-700);
+
   /* Extended semantic colors */
   --success: var(--brand-success);
   --success-foreground: #ffffff;
@@ -62,6 +86,7 @@
   --category-work: #3b82f6;
   --category-family: #8b5cf6;
   --category-personal: #f59e0b;
+
   /* Status colors */
   --status-active: var(--brand-info); /* Changed to blue */
   --status-completed: #10b981;
@@ -90,12 +115,23 @@ html.dark {
   --border: #404040;
   --input: #262626;
   --ring: #3b82f6;
+
+  /* QuoteOfDay colors for dark theme */
+  --quote-bg: var(--purple-950);
+  --quote-border: var(--purple-700);
+  --quote-text: var(--purple-300);
+  --quote-icon: var(--purple-300);
+
+  /* Task Status colors for light theme */
+  --task-bg: var(--blue-900);
+  --task-border: var(--blue-700);
   
   /* Category colors for dark theme */
   --category-health: #34d399;
   --category-work: #60a5fa;
   --category-family: #a78bfa;
   --category-personal: #fbbf24;
+
   /* Status colors for dark theme */
   --status-active: #60a5fa; /* Changed to blue for dark theme */
   --status-completed: #34d399;

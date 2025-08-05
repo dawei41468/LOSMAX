@@ -179,11 +179,12 @@ export default function GoalsPage() {
               size="sm"
               value={currentFilter}
               onChange={(e) => setCurrentFilter(e.target.value as FilterStatus)}
-              className="min-w-[120px]"
+              className="min-w-[120px] focus:ring-0 focus:outline-none"
+              style={{ borderColor: '#374151', outline: 'none', boxShadow: 'none' }}
             >
-              <SelectItem value="all">{t('common.filter.all')}</SelectItem>
               <SelectItem value="active">{t('common.filter.active')}</SelectItem>
               <SelectItem value="completed">{t('common.filter.completed')}</SelectItem>
+              <SelectItem value="all">{t('common.filter.all')}</SelectItem>
             </Select>
           </div>
           <button

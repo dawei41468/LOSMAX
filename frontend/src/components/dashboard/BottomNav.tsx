@@ -22,7 +22,7 @@ export function BottomNav({ className }: BottomNavProps) {
   };
 
   return (
-    <div className={`bottom-nav border-t shadow-t-lg py-2 ${className}`} style={{ backgroundColor: 'var(--background)' }}>
+    <div className={`bottom-nav border-t shadow-t-lg py-2 ${className}`} style={{ backgroundColor: 'var(--background)', borderTopColor: '#374151' }}>
       <nav className="bottom-nav-nav w-full grid grid-cols-5 gap-0">
         <Link
           to="/dashboard"

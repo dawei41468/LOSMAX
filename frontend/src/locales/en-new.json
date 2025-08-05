@@ -194,6 +194,7 @@
     },
     "tasks": {
       "title": "Tasks",
+      "dailyTasks": "Daily Task",
       "subtitle": "Set your tasks for today before your morning deadline",
       "empty": "No tasks for today. What can you do to make progress?",
       "createNew": "+ New Task"

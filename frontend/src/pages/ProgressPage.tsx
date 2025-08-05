@@ -107,7 +107,8 @@ const ProgressPage: React.FC = () => {
             size="sm"
             value={statusFilter}
             onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setStatusFilter(e.target.value as 'all' | 'active' | 'completed')}
-            className="min-w-[120px]"
+            className="min-w-[120px] focus:ring-0 focus:outline-none"
+            style={{ borderColor: '#374151', outline: 'none', boxShadow: 'none' }}
           >
             <SelectItem value="all">{t('common.filter.all')}</SelectItem>
             <SelectItem value="active">{t('common.filter.active')}</SelectItem>
