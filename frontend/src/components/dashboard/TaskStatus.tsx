@@ -27,7 +27,7 @@ const TaskStatus: React.FC<TaskStatusProps> = ({ todayTasks, activeGoals }) => {
   return (
     <Card
       variant="taskST"
-      border="accent"
+      border="work"
       className="max-w-3xl"
     >
       <CardHeader>

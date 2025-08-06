@@ -131,7 +131,8 @@ const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, init
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCategory(e.target.value as GoalCategory)}
               required
               disabled={!!initialGoal}
-              className="w-full p-2 border rounded-md"
+              className="w-full p-2 border rounded-md focus:ring-0 focus:outline-none"
+              style={{ borderColor: '#374151', outline: 'none', boxShadow: 'none' }}
             >
               {CATEGORIES.map((cat: GoalCategory) => (
                 <option key={cat} value={cat}>
@@ -162,7 +163,7 @@ const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, init
             <Button type="button" variant="outline" onClick={onClose}>
               {t('actions.cancel')}
             </Button>
-            <Button type="submit" disabled={!title || !category || !targetDate}>
+            <Button type="submit" disabled={!title || !category || !targetDate} className="bg-primary text-primary-foreground rounded-md border border-primary hover:bg-blue-500/10 hover:text-primary transition-colors">
               {initialGoal ? t('component.goalDialog.updateButton') : t('component.goalDialog.createButton')}
             </Button>
           </DialogFooter>

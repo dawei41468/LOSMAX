@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Card } from '../components/ui/card';
+import UserCard from '../components/ui/UserCard';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { User, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { ThemeSwitcher } from '../components/ui/theme-switcher';
 import { LanguageSwitch } from '../components/ui/language-toggle';
 import { AuthContext } from '../contexts/auth.context';
@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { api } from '../services/api';
 import ConfirmDeleteDialog from '../components/ui/ConfirmDeleteDialog';
 import ChangePasswordDialog from '../components/ui/ChangePasswordDialog';
+import { Card, CardContent } from '../components/ui/card';
 
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
@@ -99,17 +100,7 @@ const ProfilePage: React.FC = () => {
       <div className="flex-1 text-start pt-14">
         <div className="max-w-3xl mx-auto space-y-6">
           {/* Profile Section */}
-          <Card variant="elevated" className="card">
-            <div className="flex flex-col items-center space-y-4">
-              <div className="w-24 h-24 rounded-full border-2 border-primary flex items-center justify-center">
-                <User className="w-16 h-16 text-primary" />
-              </div>
-              <div className="text-center">
-                <h2 className="text-xl font-semibold">{userName || t('profile.anonymous')}</h2>
-                <p className="text-muted-foreground">{userEmail || t('profile.no_email')}</p>
-              </div>
-            </div>
-          </Card>
+          <UserCard />
 
           {/* Tabs Section */}
           <div className="sticky top-16 z-40 bg-background flex border-border" style={{ backgroundColor: 'var(--background)' }}>
@@ -134,53 +125,55 @@ const ProfilePage: React.FC = () => {
           </div>
           {/* Info Tab Content */}
           {activeTab === 'info' && (
-            <div className="relative min-h-[calc(100vh-200px)]">
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="font-semibold">{t('forms.labels.nickname')}:</span>
-                  <span>{userName || t('forms.labels.notAvailable')}</span>
+            <Card variant="flat" size="none">
+              <CardContent className="relative py-6">
+                <div className="space-y-2 text-sm py-6">
+                  <div className="flex justify-between">
+                    <span className="font-semibold">{t('forms.labels.nickname')}:</span>
+                    <span>{userName || t('forms.labels.notAvailable')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold">{t('forms.labels.uid')}:</span>
+                    <span>{userId || t('forms.labels.notAvailable')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold">{t('forms.labels.role')}:</span>
+                    <span>{userRole || t('forms.labels.notAvailable')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold">{t('forms.labels.language')}:</span>
+                    <span>{userLanguage || t('forms.labels.notAvailable')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold">{t('forms.labels.morningDeadline')}:</span>
+                    <span>{morningDeadline || t('forms.labels.notAvailable')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold">{t('forms.labels.eveningDeadline')}:</span>
+                    <span>{eveningDeadline || t('forms.labels.notAvailable')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold">{t('forms.labels.notifications')}:</span>
+                    <span>{notificationsEnabled ? t('common.enabled') : t('common.disabled')}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="font-semibold">{t('forms.labels.uid')}:</span>
-                  <span>{userId || t('forms.labels.notAvailable')}</span>
+                <div className="sticky bottom-4 flex justify-center mt-5">
+                  <button
+                    onClick={async () => {
+                      try {
+                        await logout(); // Using LOSMAX's logout
+                      } catch (err) {
+                        console.error('Logout failed:', err);
+                        // TODO: Add user-facing error handling, e.g., via a toast
+                      }
+                    }}
+                    className="w-full px-6 py-2 mt-4 border border-red-500 text-red-500 rounded-md hover:bg-red-500/10 transition-colors flex items-center justify-center gap-2"
+                  >
+                    <LogOut className="h-4 w-4" /> <span>{t('actions.signOut')}</span>
+                  </button>
                 </div>
-                <div className="flex justify-between">
-                  <span className="font-semibold">{t('forms.labels.role')}:</span>
-                  <span>{userRole || t('forms.labels.notAvailable')}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-semibold">{t('forms.labels.language')}:</span>
-                  <span>{userLanguage || t('forms.labels.notAvailable')}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-semibold">{t('forms.labels.morningDeadline')}:</span>
-                  <span>{morningDeadline || t('forms.labels.notAvailable')}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-semibold">{t('forms.labels.eveningDeadline')}:</span>
-                  <span>{eveningDeadline || t('forms.labels.notAvailable')}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-semibold">{t('forms.labels.notifications')}:</span>
-                  <span>{notificationsEnabled ? t('common.enabled') : t('common.disabled')}</span>
-                </div>
-              </div>
-              <div className="sticky bottom-4 flex justify-center mt-5">
-                <button
-                  onClick={async () => {
-                    try {
-                      await logout(); // Using LOSMAX's logout
-                    } catch (err) {
-                      console.error('Logout failed:', err);
-                      // TODO: Add user-facing error handling, e.g., via a toast
-                    }
-                  }}
-                  className="w-full px-6 py-2 mt-4 border border-red-500 text-red-500 rounded-md hover:bg-red-500/10 transition-colors flex items-center justify-center gap-2"
-                >
-                  <LogOut className="h-4 w-4" /> <span>{t('actions.signOut')}</span>
-                </button>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           )}
 
               <ConfirmDeleteDialog
@@ -213,122 +206,131 @@ const ProfilePage: React.FC = () => {
               {activeTab === 'preference' && (
                 <div className="space-y-4">
 
-                  <div className="p-4 border border-gray-200 rounded-lg">
-                    <h2 className="text-lg text-center font-medium mb-3">{t('content.profile.preference.displayNameTitle')}</h2>
-                    <p className="text-sm text-center text-muted-foreground mb-4">{t('content.profile.preference.displayNameDescription')}</p>
-                    
-                    <div className="space-y-4">
-                      <div>
-                        <label htmlFor="nicknameInput" className="block text-sm font-medium text-muted-foreground mb-1 text-left">{t('forms.labels.nickname')}</label>
-                        <div className="flex flex-col sm:flex-row gap-2">
-                          <input
-                            id="nicknameInput"
-                            name="nickname"
-                            type="text"
-                            value={userName || ''}
-                            onChange={(e) => setUserNameContext(e.target.value)}
-                            className="w-full sm:flex-1 border border-input rounded-md px-3 py-3 sm:py-2 bg-background"
-                          />
-                          <button
-                            className="w-full sm:w-auto px-4 py-2 bg-primary text-primary-foreground rounded-md border border-primary hover:bg-blue-500/10 hover:text-primary transition-colors"
-                            onClick={async () => {
-                              try {
-                                await api.patch('/auth/update-name', { name: userName });
-                                toast.success(t('settings.toast.name_updated_message'));
-                              } catch (error: unknown) {
-                                console.error("Error updating nickname:", error);
-                                let errorMessage = t('settings.toast.update_name_error');
-                                if (axios.isAxiosError(error) && error.response?.data?.detail) {
-                                  errorMessage = typeof error.response.data.detail === 'string'
-                                    ? error.response.data.detail
-                                    : JSON.stringify(error.response.data.detail);
+                  <Card variant="flat" size="none">
+                    <CardContent className="relative py-6">
+                      <h2 className="text-lg text-center font-medium mb-3 py-3">{t('content.profile.preference.displayNameTitle')}</h2>
+                      <p className="text-sm text-center text-muted-foreground mb-4">{t('content.profile.preference.displayNameDescription')}</p>
+                      
+                      <div className="space-y-4">
+                        <div>
+                          <label htmlFor="nicknameInput" className="block text-sm font-medium text-muted-foreground mb-1 text-left">{t('forms.labels.nickname')}</label>
+                          <div className="flex flex-col sm:flex-row gap-2">
+                            <input
+                              id="nicknameInput"
+                              name="nickname"
+                              type="text"
+                              value={userName || ''}
+                              onChange={(e) => setUserNameContext(e.target.value)}
+                              className="w-full sm:flex-1 border border-input rounded-md px-3 py-3 sm:py-2 bg-background"
+                            />
+                            <button
+                              className="w-full sm:w-auto px-4 py-2 bg-primary text-primary-foreground rounded-md border border-primary hover:bg-blue-500/10 hover:text-primary transition-colors"
+                              onClick={async () => {
+                                try {
+                                  await api.patch('/auth/update-name', { name: userName });
+                                  toast.success(t('settings.toast.name_updated_message'));
+                                } catch (error: unknown) {
+                                  console.error("Error updating nickname:", error);
+                                  let errorMessage = t('settings.toast.update_name_error');
+                                  if (axios.isAxiosError(error) && error.response?.data?.detail) {
+                                    errorMessage = typeof error.response.data.detail === 'string'
+                                      ? error.response.data.detail
+                                      : JSON.stringify(error.response.data.detail);
+                                  }
+                                  toast.error(errorMessage);
                                 }
-                                toast.error(errorMessage);
-                              }
-                            }}
-                          >
-                            {t('actions.update')}
-                          </button>
+                              }}
+                            >
+                              {t('actions.update')}
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
+                    </CardContent>
+                  </Card>
 
-                  <div className="p-4 border border-gray-200 rounded-lg">
-                    <h2 className="text-lg text-center font-medium mb-3">{t('content.profile.preference.deadlinesTitle')}</h2>
-                    <p className="text-sm text-center text-muted-foreground mb-4">{t('content.profile.preference.deadlinesDescription')}</p>
-                    <div className="space-y-4">
-                      <div>
-                        <TimePicker
-                          label={t('forms.labels.morningDeadline')}
-                          value={morningDeadline}
-                          onChange={(time: string) => {
-                            setMorningDeadline(time);
-                            savePreference({ morning_deadline: time });
-                          }}
-                          context="morningDeadline"
-                        />
-                        <p className="text-xs text-muted-foreground mt-1">{t('content.profile.preference.morningDeadlineHint')}</p>
+                  <Card variant="flat" size="none">
+                    <CardContent className="relative py-6">
+                      <h2 className="text-lg text-center font-medium mb-3 py-3">{t('content.profile.preference.deadlinesTitle')}</h2>
+                      <p className="text-sm text-center text-muted-foreground mb-4">{t('content.profile.preference.deadlinesDescription')}</p>
+                      <div className="space-y-4">
+                        <div>
+                          <TimePicker
+                            label={t('forms.labels.morningDeadline')}
+                            value={morningDeadline}
+                            onChange={(time: string) => {
+                              setMorningDeadline(time);
+                              savePreference({ morning_deadline: time });
+                            }}
+                            context="morningDeadline"
+                          />
+                          <p className="text-xs text-muted-foreground mt-1">{t('content.profile.preference.morningDeadlineHint')}</p>
+                        </div>
+                        <div>
+                          <TimePicker
+                            label={t('forms.labels.eveningDeadline')}
+                            value={eveningDeadline}
+                            onChange={(time: string) => {
+                              setEveningDeadline(time);
+                              savePreference({ evening_deadline: time });
+                            }}
+                            context="eveningDeadline"
+                          />
+                          <p className="text-xs text-muted-foreground mt-1">{t('content.profile.preference.eveningDeadlineHint')}</p>
+                        </div>
                       </div>
-                      <div>
-                        <TimePicker
-                          label={t('forms.labels.eveningDeadline')}
-                          value={eveningDeadline}
-                          onChange={(time: string) => {
-                            setEveningDeadline(time);
-                            savePreference({ evening_deadline: time });
-                          }}
-                          context="eveningDeadline"
-                        />
-                        <p className="text-xs text-muted-foreground mt-1">{t('content.profile.preference.eveningDeadlineHint')}</p>
-                      </div>
-                    </div>
-                  </div>
+                    </CardContent>
+                  </Card>
 
-                  <div className="p-4 border border-gray-200 rounded-lg">
-                    <h2 className="text-lg text-center font-medium mb-3">{t('forms.labels.notifications')}</h2>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">{t('content.profile.preference.notificationsDescription')}</span>
-                      <div className="focus:ring-0 focus:ring-offset-0">
-                        <input
-                          type="checkbox"
-                          checked={notificationsEnabled}
-                          onChange={(e) => {
-                            const checked = e.target.checked;
-                            setNotificationsEnabled(checked);
-                            savePreference({ notifications_enabled: checked });
-                          }}
-                          className="form-checkbox h-5 w-5 text-primary dark:text-primary-foreground"
-                        />
+                  <Card variant="flat" size="none">
+                    <CardContent className="relative py-6">
+                      <h2 className="text-lg text-center font-medium mb-3 py-3">{t('forms.labels.notifications')}</h2>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">{t('content.profile.preference.notificationsDescription')}</span>
+                        <div className="focus:ring-0 focus:ring-offset-0">
+                          <input
+                            type="checkbox"
+                            checked={notificationsEnabled}
+                            onChange={(e) => {
+                              const checked = e.target.checked;
+                              setNotificationsEnabled(checked);
+                              savePreference({ notifications_enabled: checked });
+                            }}
+                            className="form-checkbox h-5 w-5 text-primary dark:text-primary-foreground"
+                          />
+                        </div>
                       </div>
-                    </div>
-                  </div>
+                    </CardContent>
+                  </Card>
 
-                  <div className="p-4 border border-gray-200 rounded-lg">
-                    <h2 className="text-lg text-center font-medium mb-3">{t('content.profile.preference.accountActionsTitle')}</h2>
-                    <p className="text-sm text-center text-muted-foreground mb-4">{t('content.profile.preference.accountActionsDescription')}</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                      <button
-                        className="px-4 py-2 border border-primary rounded-md hover:bg-blue-500/10 hover:text-primary transition-colors"
-                        onClick={() => setShowPasswordChange(true)}
-                      >
-                        {t('actions.changePassword')}
-                      </button>
-                      <button
-                        className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500/10 transition-colors"
-                        onClick={() => setShowDeleteConfirm(true)}
-                      >
-                        {t('actions.deleteAccount')}
-                      </button>
-                    </div>
-                  </div>
+                  <Card variant="flat" size="none">
+                    <CardContent className="relative py-6">
+                      <h2 className="text-lg text-center font-medium mb-3 py-3">{t('content.profile.preference.accountActionsTitle')}</h2>
+                      <p className="text-sm text-center text-muted-foreground mb-4">{t('content.profile.preference.accountActionsDescription')}</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                        <button
+                          className="px-4 py-2 border border-primary rounded-md hover:bg-blue-500/10 hover:text-primary transition-colors"
+                          onClick={() => setShowPasswordChange(true)}
+                        >
+                          {t('actions.changePassword')}
+                        </button>
+                        <button
+                          className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500/10 transition-colors"
+                          onClick={() => setShowDeleteConfirm(true)}
+                        >
+                          {t('actions.deleteAccount')}
+                        </button>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
               )}
               {/* About Tab Content */}
               {activeTab === 'about' && (
                 <div className="space-y-4">
-                  <div className="p-4 border border-gray-200 rounded-lg">
-                    <h2 className="text-lg text-center font-medium mb-3">{t('content.profile.about.title')}</h2>
+                  <Card variant="flat" size="none">
+                    <CardContent className="relative py-6">
+                    <h2 className="text-lg text-center font-medium mb-3 py-4">{t('content.profile.about.title')}</h2>
                     <p className="text-sm text-center text-muted-foreground mb-4">{t('content.profile.about.subtitle')}</p>
                     
                     <div className="space-y-4">
@@ -342,14 +344,14 @@ const ProfilePage: React.FC = () => {
                       
                       <div>
                         <h3 className="font-medium mb-2 text-center text-primary">{t('content.profile.about.features.title')}</h3>
-                        <div className="card text-start">
+                        <Card variant = "flat">
                           <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
                             <li>{t('content.profile.about.features.feature1')}</li>
                             <li>{t('content.profile.about.features.feature2')}</li>
                             <li>{t('content.profile.about.features.feature3')}</li>
                             <li>{t('content.profile.about.features.feature4')}</li>
                           </ul>
-                        </div>
+                        </Card>
                       </div>
                       
                       <div>
@@ -367,7 +369,8 @@ const ProfilePage: React.FC = () => {
                         {t('content.profile.about.versionInfo')}
                       </div>
                     </div>
-                  </div>
+                    </CardContent>
+                  </Card>
                 </div>
               )}
         </div>

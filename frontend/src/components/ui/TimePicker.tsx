@@ -246,7 +246,7 @@ export const TimePicker = forwardRef<HTMLDivElement, TimePickerProps>(
 
     return (
       <div className={`relative ${className || ''}`}> {/* Apply className prop */}
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-secondary mb-1">
           {label}
         </label>
         <div className="flex items-center gap-2">

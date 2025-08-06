@@ -19,6 +19,7 @@ const QuoteOfDay: React.FC = () => {
   return (
     <Card
       variant="quoteOD"
+      border="family"
       className="max-w-3xl mx-auto"
     >
       <CardHeader>

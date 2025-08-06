@@ -12,10 +12,11 @@ const cardVariants = cva(
         default: 'shadow-md bg-card',
         elevated: 'shadow-lg hover:shadow-xl bg-card',
         outline: 'border-2 bg-card',
+        flat: 'border bg-card',
         ghost: 'border-0 shadow-none bg-card',
         subtle: 'shadow-sm bg-card',
-        quoteOD: 'shadow-md bg-[var(--quote-bg)] border-[var(--quote-border)] text-[var(--quote-text)]',
-        taskST: 'shadow-md bg-[var(--task-bg)] border-[var(--task-border)] text-[var(--foreground)]',
+        quoteOD: 'shadow-md bg-[var(--quote-bg)] text-[var(--quote-text)]',
+        taskST: 'shadow-md bg-[var(--task-bg)] text-[var(--foreground)]',
       },
       size: {
         default: 'p-6',
@@ -29,7 +30,7 @@ const cardVariants = cva(
         false: '',
       },
       border: {
-        default: 'border-border',
+        default: 'border-standard',
         accent: 'border-primary',
         success: 'border-success',
         warning: 'border-warning',

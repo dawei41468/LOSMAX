@@ -21,19 +21,19 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
     <div className="space-y-4 max-w-3xl mx-auto">
       <h2 className="text-xl font-semibold">{t('component.overview.title')}</h2>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      <Card style={{ backgroundColor: '#EFF6FF' }} className="border border-blue-200 p-4 rounded flex flex-col justify-end">
+      <Card style={{ backgroundColor: '#EFF6FF' }} className="p-4 rounded flex flex-col justify-end">
         <p className="text-sm text-gray-500">{t('component.overview.totalGoalsDesc')}</p>
         <p className="text-2xl text-slate-600 font-bold mb-4">{totalGoals}</p>
       </Card>
-      <Card style={{ backgroundColor: '#F0FDF4' }} className="border border-green-200 p-4 rounded flex flex-col justify-end">
+      <Card style={{ backgroundColor: '#F0FDF4' }} className="p-4 rounded flex flex-col justify-end">
         <p className="text-sm text-gray-500">{t('component.overview.completedGoalsDesc')}</p>
         <p className="text-2xl text-slate-600 font-bold mb-4">{completedGoals}</p>
       </Card>
-      <Card style={{ backgroundColor: '#FEFCBF' }} className="border border-yellow-200 p-4 rounded flex flex-col justify-end">
+      <Card style={{ backgroundColor: '#FEFCBF' }} className="p-4 rounded flex flex-col justify-end">
         <p className="text-sm text-gray-500">{t('component.overview.inProgressGoalsDesc')}</p>
         <p className="text-2xl text-slate-600 font-bold mb-4">{inProgressGoals}</p>
       </Card>
-      <Card style={{ backgroundColor: '#FAF5FF' }} className="border border-purple-200 p-4 rounded flex flex-col justify-end">
+      <Card style={{ backgroundColor: '#FAF5FF' }} className="p-4 rounded flex flex-col justify-end">
         <p className="text-sm text-gray-500">{t('component.overview.avgTaskCompletionDesc')}</p>
         <p className="text-2xl text-slate-600 font-bold mb-4">{avgProgress}%</p>
       </Card>

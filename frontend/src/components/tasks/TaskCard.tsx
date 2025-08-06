@@ -18,7 +18,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onToggleSta
 
 
   return (
-    <div className="p-2 border rounded-lg hover:shadow-md transition-shadow bg-card text-card-foreground">
+    <div className="p-2 border rounded-lg border-standard hover:shadow-md transition-shadow bg-card text-card-foreground">
       <div className="text-md font-medium mb-1 text-left">
         {task.title}
       </div>

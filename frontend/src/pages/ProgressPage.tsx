@@ -117,7 +117,8 @@ const ProgressPage: React.FC = () => {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <button
-            className={`px-2 py-1 rounded-full text-sm ${activeFilter === 'all' ? 'bg-gray-200' : ''}`}
+            className={`px-2 py-1 rounded-full text-sm ${activeFilter === 'all' ? 'bg-secondary' : ''}`}
+            style={activeFilter === 'all' ? { backgroundColor: 'var(--secondary)' } : {}}
             onClick={() => setActiveFilter('all')}
           >
             {t('common.filter.all')}

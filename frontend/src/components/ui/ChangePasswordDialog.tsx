@@ -120,6 +120,7 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ isOpen, onC
             <Button
               type="submit"
               disabled={isChangingPassword || !currentPassword || !newPassword || !confirmPassword}
+              className="bg-primary text-primary-foreground rounded-md border border-primary hover:bg-blue-500/10 hover:text-primary transition-colors"
             >
               {t('component.changePasswordDialog.changeButton')}
             </Button>

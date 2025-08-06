@@ -103,7 +103,8 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ isOpen, onClose, onSubmit, init
               required
               disabled={!!initialTask || isLoadingGoals}
               placeholder={isLoadingGoals ? t('actions.loading') : t('component.taskDialog.selectGoal')}
-              className="w-full p-2 border rounded-md"
+              className="w-full p-2 border rounded-md focus:ring-0 focus:outline-none"
+              style={{ borderColor: '#374151', outline: 'none', boxShadow: 'none' }}
             >
               {goals.map(goal => (
                 <option key={goal.id} value={goal.id}>
@@ -126,7 +127,7 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ isOpen, onClose, onSubmit, init
             <Button type="button" variant="outline" onClick={onClose}>
               {t('actions.cancel')}
             </Button>
-            <Button type="submit" disabled={!title || !goalId}>
+            <Button type="submit" disabled={!title || !goalId} className="bg-primary text-primary-foreground rounded-md border border-primary hover:bg-blue-500/10 hover:text-primary transition-colors">
               {initialTask ? t('component.taskDialog.updateButton') : t('component.taskDialog.createButton')}
             </Button>
           </DialogFooter>
