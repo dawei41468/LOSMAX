@@ -157,7 +157,7 @@ const ProfilePage: React.FC = () => {
                     <span>{notificationsEnabled ? t('common.enabled') : t('common.disabled')}</span>
                   </div>
                 </div>
-                <div className="sticky bottom-4 flex justify-center mt-5">
+                <div className="flex justify-center mt-5">
                   <button
                     onClick={async () => {
                       try {

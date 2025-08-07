@@ -22,8 +22,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onToggleSta
       <div className="text-md font-medium mb-1 text-left">
         {task.title}
       </div>
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-6">
+      <div className="flex items-center justify-between gap-1">
+        <div className="flex items-center gap-3">
           <span className="text-xs text-muted-foreground">
             {useShortDate ? formatDateShort(task.created_at) : formatDate(task.created_at)}
           </span>
@@ -33,7 +33,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onToggleSta
           <button
             onClick={() => onEdit(task)}
             aria-label={t('actions.edit')}
-            className="btn btn-ghost btn-xs p-1"
+            className="btn btn-ghost btn-xs"
             disabled={!task.id}
           >
             <Edit className="w-4 h-4" />
@@ -41,7 +41,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onToggleSta
           <button
             onClick={() => onToggleStatus(task)}
             aria-label={task.status === 'completed' ? t('actions.markIncomplete') : t('actions.markComplete')}
-            className="btn btn-ghost btn-xs p-1"
+            className="btn btn-ghost btn-xs"
             disabled={!task.id}
           >
             <Check className={`w-4 h-4 ${task.status === 'completed' ? 'text-warning' : 'text-success'}`} />
@@ -49,7 +49,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onToggleSta
           <button
             onClick={() => onDelete(task.id)}
             aria-label={t('actions.delete')}
-            className="btn btn-ghost btn-xs p-1"
+            className="btn btn-ghost btn-xs"
             disabled={!task.id}
           >
             <Trash2 className="w-4 h-4 text-destructive" />
