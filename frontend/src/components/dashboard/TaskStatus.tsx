@@ -2,6 +2,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { CategoryHeader } from '../ui/CategoryUI';
+import { Progress } from '../ui/progress'; // Import the Progress component
 import type { Task } from '../../types/tasks';
 import type { Goal, GoalCategory } from '../../types/goals';
 
@@ -28,7 +29,7 @@ const TaskStatus: React.FC<TaskStatusProps> = ({ todayTasks, activeGoals }) => {
     <Card
       variant="taskST"
       border="work"
-      className="max-w-3xl"
+      className="max-w-3xl w-full mx-auto"
     >
       <CardHeader>
         <CardTitle>{t('component.taskStatus.title')}</CardTitle>
@@ -37,12 +38,7 @@ const TaskStatus: React.FC<TaskStatusProps> = ({ todayTasks, activeGoals }) => {
         <div className="mb-6">
           <h3 className="card-subtitle">{t('component.taskStatus.completion')}</h3>
           <div className="flex items-center mt-2">
-            <div className="progress-bar">
-              <div
-                className="progress-fill"
-                style={{ width: `${completionPercentage}%` }}
-              ></div>
-            </div>
+            <Progress value={completionPercentage} className="w-full" />
             <span className="ml-3 text-sm font-semibold">{completionPercentage}%</span>
           </div>
           <p className="text-muted mt-1">

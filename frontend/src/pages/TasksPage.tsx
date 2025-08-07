@@ -261,7 +261,7 @@ export default function TasksPage() {
                   <h3 className={`text-lg font-medium mb-2 text-left ${getCategoryColorClass(goals.find(g => g.id === goalId)?.category as GoalCategory || 'Work', 'primary')}`}>
                     {goals.find(g => g.id === goalId)?.title || t('content.tasks.uncategorized')}
                   </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {tasksInGoal.map((task, index) => (
                       <TaskCard
                         key={task.id || `task-${index}`}

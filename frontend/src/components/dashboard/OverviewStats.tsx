@@ -18,9 +18,9 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
   const { t } = useTranslation('translation');
 
   return (
-    <div className="space-y-4 max-w-3xl mx-auto">
-      <h2 className="text-xl font-semibold">{t('component.overview.title')}</h2>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+    <Card variant = "ghost" size = "none" className="w-full space-y-4 max-w-3xl mx-auto">
+      <h2 className="text-xl font-semibold my-2">{t('component.overview.title')}</h2>
+      <div className="grid grid-cols-2 gap-3 mx-2 mb-2">
       <Card style={{ backgroundColor: '#EFF6FF' }} className="p-4 rounded flex flex-col justify-end">
         <p className="text-sm text-gray-500">{t('component.overview.totalGoalsDesc')}</p>
         <p className="text-2xl text-slate-600 font-bold mb-4">{totalGoals}</p>
@@ -38,7 +38,7 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
         <p className="text-2xl text-slate-600 font-bold mb-4">{avgProgress}%</p>
       </Card>
       </div>
-    </div>
+    </Card>
   );
 };
 

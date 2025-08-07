@@ -8,7 +8,7 @@ import QuoteOfDay from '../components/dashboard/QuoteOfDay';
 import { Greeting } from '../components/dashboard/Greetings';
 import TaskStatus from '../components/dashboard/TaskStatus';
 import OverviewStats from '../components/dashboard/OverviewStats';
-import type { Task } from '../services/api';
+import type { Task } from '../types/tasks';
 import type { Goal } from '../types/goals';
 
 export default function DashboardPage() {
@@ -50,7 +50,7 @@ export default function DashboardPage() {
   const completedGoals = allGoals.filter(g => !!g.completed_at).length || 0;
   const inProgressGoals = totalGoals - completedGoals;
   const allTasksCount = allTasks.length || 0;
-  const completedTasksCount = allTasks.filter(t => t.status === 'complete').length || 0;
+  const completedTasksCount = allTasks.filter(t => t.status === 'completed').length || 0;
   const avgProgress = allTasksCount > 0
     ? Math.round((completedTasksCount / allTasksCount) * 100)
     : 0;
@@ -78,11 +78,11 @@ export default function DashboardPage() {
       </div>
       
       {/* Content with top padding to account for fixed header */}
-      <div className="pt-14 justify-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="pt-14 justify-center grid grid-cols-1 gap-4">
         <Greeting userName={userName} />
         <QuoteOfDay />
         <TaskStatus todayTasks={todayTasks} activeGoals={activeGoals} />
-        <div className="border border-gray-200 mt-6"></div>
+        <hr className="w-full h-px border-standard mx-auto mt-6 mb-4 border-1" />
         <OverviewStats
           totalGoals={totalGoals}
           completedGoals={completedGoals}

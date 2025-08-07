@@ -20,7 +20,7 @@ const QuoteOfDay: React.FC = () => {
     <Card
       variant="quoteOD"
       border="family"
-      className="max-w-3xl mx-auto"
+      className="w-full max-w-3xl mx-auto"
     >
       <CardHeader>
         <div className="flex items-start gap-3">

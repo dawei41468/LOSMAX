@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../contexts/ThemeContext';
 import { SelectField } from '@/components/ui/select';
 import type { Goal, GoalCategory } from '../../types/goals'; 
 import { Button } from '../ui/button';
@@ -31,7 +30,6 @@ interface GoalDialogProps {
 
 const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, initialGoal }) => {
   const { t } = useTranslation();
-  const { theme } = useTheme();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState<GoalCategory>(CATEGORIES[0] as GoalCategory);
@@ -87,8 +85,7 @@ const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, init
     <DialogOverlay>
       <DialogContent 
         onClose={onClose} 
-        className="rounded-lg shadow-xl max-w-md mx-auto" 
-        style={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff' }}
+        className="rounded-lg shadow-xl max-w-md mx-auto bg-card" 
       >
         <DialogHeader className="p-4 pb-0">
           <DialogTitle className="text-2xl font-bold mb-2 text-center sm:text-left">
@@ -97,7 +94,7 @@ const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, init
         </DialogHeader>
         <Form onSubmit={handleSubmit} className="space-y-2 p-4 pt-0">
           <FormField>
-            <FormLabel htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1 text-left">
+            <FormLabel htmlFor="title" className="block mb-1 text-left">
               {t('component.goalDialog.yourGoal')}
             </FormLabel>
             <FormInput
@@ -110,7 +107,7 @@ const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, init
             />
           </FormField>
           <FormField>
-            <FormLabel htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1 text-left">
+            <FormLabel htmlFor="description" className="block mb-1 text-left">
               {t('component.goalDialog.description')}
             </FormLabel>
             <FormTextarea
@@ -122,7 +119,7 @@ const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, init
             />
           </FormField>
           <FormField>
-            <FormLabel htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1 text-left">
+            <FormLabel htmlFor="category" className="block mb-1 text-left">
               {t('component.goalDialog.category')}
             </FormLabel>
             <SelectField
@@ -142,7 +139,7 @@ const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, init
             </SelectField>
           </FormField>
           <FormField>
-            <FormLabel htmlFor="target_date" className="block text-sm font-medium text-gray-700 mb-1 text-left">
+            <FormLabel htmlFor="target_date" className="block text-sm font-medium text-standard mb-1 text-left">
               {t('component.goalDialog.targetDate')}
             </FormLabel>
             <FormInput
