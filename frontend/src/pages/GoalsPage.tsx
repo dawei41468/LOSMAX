@@ -219,7 +219,7 @@ export default function GoalsPage() {
         {isLoading && <p className="text-center py-4">{t('actions.loading')}</p>}
         {!isLoading && goals.length === 0 && (
           <p className="text-center py-4 text-gray-500">
-            {t('feedback.info.noGoalsFound', { filter: t(`content.goals.filters.${currentFilter}`) })}
+            {t('toast.info.noGoalsFound', { filter: t(`content.goals.filters.${currentFilter}`) })}
           </p>
         )}
 
