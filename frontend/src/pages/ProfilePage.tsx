@@ -54,17 +54,16 @@ const ProfilePage: React.FC = () => {
     notifications_enabled?: boolean;
   }
 
+  const { success: toastSuccess, error: toastError } = useToast();
+
   const savePreference = async (preferenceUpdate: UserPreferencesUpdate) => {
     try {
       const response = await api.patch('/preferences', preferenceUpdate);
       setMorningDeadline(response.data.morning_deadline);
       setEveningDeadline(response.data.evening_deadline);
       setNotificationsEnabled(response.data.notifications_enabled);
-      const { success: toastSuccess } = useToast();
       toastSuccess('toast.success.settingsSaved');
     } catch (error: unknown) {
-      console.error('Error saving preference:', error);
-      const { error: toastError } = useToast();
       toastError('toast.error.settings.save');
       if (axios.isAxiosError(error) && error.response?.data?.detail) {
         // Custom error handling can be added if needed
@@ -164,8 +163,6 @@ const ProfilePage: React.FC = () => {
                       try {
                         await logout(); // Using LOSMAX's logout
                       } catch (err) {
-                        console.error('Logout failed:', err);
-                        const { error: toastError } = useToast();
                         toastError('toast.error.auth.logoutFailed');
                       }
                     }}
@@ -184,12 +181,9 @@ const ProfilePage: React.FC = () => {
                 onConfirm={async () => {
                   try {
                     await api.delete('/auth/account');
-                    const { success: toastSuccess } = useToast();
                     toastSuccess('toast.success.accountDeleted');
                     navigate('/login');
                   } catch (error: unknown) {
-                    console.error('Account deletion failed:', error);
-                    const { error: toastError } = useToast();
                     toastError('toast.error.settings.accountDeletion');
                     if (axios.isAxiosError(error) && error.response?.data?.detail) {
                       // Custom error handling can be added if needed
@@ -231,11 +225,8 @@ const ProfilePage: React.FC = () => {
                               onClick={async () => {
                                 try {
                                   await api.patch('/auth/update-name', { name: userName });
-                                  const { success: toastSuccess } = useToast();
                                   toastSuccess('toast.success.nameUpdated');
                                 } catch (error: unknown) {
-                                  console.error("Error updating nickname:", error);
-                                  const { error: toastError } = useToast();
                                   toastError('toast.error.settings.updateName');
                                   if (axios.isAxiosError(error) && error.response?.data?.detail) {
                                     let errorMessage = typeof error.response.data.detail === 'string'

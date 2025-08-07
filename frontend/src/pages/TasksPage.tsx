@@ -21,6 +21,7 @@ export default function TasksPage() {
   const { t } = useTranslation();
   const { isAuthenticated } = useContext(AuthContext) as AuthContextType;
   const navigate = useNavigate();
+  const { error: toastError } = useToast();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [goals, setGoals] = useState<Goal[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -49,7 +50,6 @@ export default function TasksPage() {
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      const { error: toastError } = useToast();
       toastError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -89,7 +89,6 @@ export default function TasksPage() {
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      const { error: toastError } = useToast();
       toastError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -108,7 +107,6 @@ export default function TasksPage() {
       setEditingTask(task);
       setIsTaskDialogOpen(true);
     } else {
-      const { error: toastError } = useToast();
       toastError('toast.error.generic');
     }
   };
@@ -118,7 +116,6 @@ export default function TasksPage() {
       setTaskToDelete(taskId);
       setShowDeleteConfirm(true);
     } else {
-      const { error: toastError } = useToast();
       toastError('toast.error.generic');
     }
   };
@@ -138,7 +135,6 @@ export default function TasksPage() {
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      const { error: toastError } = useToast();
       toastError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -149,7 +145,6 @@ export default function TasksPage() {
 
   const handleToggleStatus = async (task: Task) => {
     if (!task.id) {
-      const { error: toastError } = useToast();
       toastError('toast.error.generic');
       return;
     }
@@ -166,7 +161,6 @@ export default function TasksPage() {
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      const { error: toastError } = useToast();
       toastError(errorMessage);
     } finally {
       setIsLoading(false);

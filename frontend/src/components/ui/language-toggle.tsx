@@ -10,6 +10,7 @@ interface LanguageSwitchProps {
 export function LanguageSwitch({ className }: LanguageSwitchProps) {
   const { i18n } = useTranslation()
   const { setUserLanguageContext } = useAuth()
+  const { success: toastSuccess, error: toastError } = useToast();
 
   const toggleLanguage = async () => {
     const newLang = i18n.language === 'en' ? 'zh' : 'en'
@@ -17,11 +18,9 @@ export function LanguageSwitch({ className }: LanguageSwitchProps) {
       await i18n.changeLanguage(newLang)
       await api.patch('/preferences', { language: newLang })
       setUserLanguageContext(newLang)
-      const { success: toastSuccess } = useToast();
       toastSuccess('toast.success.languageChanged')
     } catch (error) {
       console.error('Error changing language:', error)
-      const { error: toastError } = useToast();
       toastError('toast.error.languageChangeFailed')
     }
   }

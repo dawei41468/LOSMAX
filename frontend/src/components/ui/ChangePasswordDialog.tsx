@@ -18,6 +18,7 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ isOpen, onC
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { success: toastSuccess, error: toastError } = useToast();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -26,7 +27,6 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ isOpen, onC
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      const { error: toastError } = useToast();
       toastError('toast.error.passwordMismatch');
       return;
     }
@@ -43,12 +43,10 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ isOpen, onC
       setNewPassword('');
       setConfirmPassword('');
       
-      const { success: toastSuccess } = useToast();
       toastSuccess('toast.success.passwordChangedLogout');
       navigate('/login');
     } catch (error: unknown) {
       console.error('Password change failed:', error);
-      const { error: toastError } = useToast();
       toastError('toast.error.passwordChange');
     } finally {
       setIsChangingPassword(false);

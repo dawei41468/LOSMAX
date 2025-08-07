@@ -15,6 +15,7 @@ import type { Goal } from '../types/goals';
 export default function DashboardPage() {
   const { t } = useTranslation();
   const { isAuthenticated, userName } = useContext(AuthContext) as AuthContextType;
+  const { error: toastError } = useToast();
   
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -40,7 +41,6 @@ export default function DashboardPage() {
           setAllTasks(fetchedAllTasks);
         } catch (error) {
           console.error('Error fetching tasks or goals for dashboard:', error);
-          const { error: toastError } = useToast();
           toastError('toast.error.dashboard.fetchData');
         }
       }

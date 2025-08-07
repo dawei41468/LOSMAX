@@ -32,6 +32,7 @@ interface TaskDialogProps {
 const TaskDialog: React.FC<TaskDialogProps> = ({ isOpen, onClose, onSubmit, initialTask }) => {
   const { t } = useTranslation();
   const { theme } = useTheme();
+  const { error: toastError } = useToast();
   const [title, setTitle] = useState(initialTask?.title || '');
   const [goalId, setGoalId] = useState(initialTask?.goal_id || '');
   const [goals, setGoals] = useState<Goal[]>([]);
@@ -52,7 +53,6 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ isOpen, onClose, onSubmit, init
       setGoals(fetchedGoals);
     } catch (error) {
       console.error('Failed to fetch goals:', error);
-      const { error: toastError } = useToast();
       toastError('toast.error.taskDialog.fetchGoals');
     } finally {
       setIsLoadingGoals(false);

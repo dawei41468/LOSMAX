@@ -15,6 +15,7 @@ import { Select, SelectItem } from '@/components/ui/select';
 const ProgressPage: React.FC = () => {
   const { t } = useTranslation();
   const { isAuthenticated } = useContext(AuthContext) as AuthContextType;
+  const { error: toastError } = useToast();
   
   React.useEffect(() => {
     window.scrollTo(0, 0);
@@ -44,7 +45,6 @@ const ProgressPage: React.FC = () => {
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      const { error: toastError } = useToast();
       toastError(errorMessage);
     } finally {
       setIsLoading(false);

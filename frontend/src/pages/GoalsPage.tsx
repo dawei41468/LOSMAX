@@ -19,6 +19,7 @@ type FilterStatus = GoalStatus | 'all';
 export default function GoalsPage() {
   const { t } = useTranslation();
   const { isAuthenticated } = useContext(AuthContext) as AuthContextType;
+  const { error: toastError } = useToast();
   
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -46,7 +47,6 @@ export default function GoalsPage() {
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      const { error: toastError } = useToast();
       toastError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -89,7 +89,6 @@ export default function GoalsPage() {
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      const { error: toastError } = useToast();
       toastError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -128,7 +127,6 @@ export default function GoalsPage() {
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      const { error: toastError } = useToast();
       toastError(errorMessage);
     } finally {
       setIsLoading(false);
@@ -151,7 +149,6 @@ export default function GoalsPage() {
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      const { error: toastError } = useToast();
       toastError(errorMessage);
     } finally {
       setIsLoading(false);

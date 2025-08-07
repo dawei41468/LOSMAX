@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [userRole, setUserRoleState] = useState<string | null>(localStorage.getItem('userRole')); // Added userRole state
   const [userLanguage, setUserLanguageState] = useState<string | null>(localStorage.getItem('userLanguage'));
   const [wsService, setWsService] = useState<WebSocketService | null>(null);
+  const { error: toastError } = useToast();
   
 
   // Apply initial language from localStorage as soon as provider mounts
@@ -51,7 +52,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUserLanguageState(null);
         }
       } catch (error) {
-        const { error: toastError } = useToast();
         toastError('toast.error.auth.tokenValidationFailed');
         setIsAuthenticated(false);
         setUserNameState(null);
@@ -83,7 +83,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const service = new WebSocketService(setIsAuthenticated);
       // Get user ID from auth context or local storage - now directly from state
       if (!userId) { // Check the state variable userId
-        const { error: toastError } = useToast();
         toastError('toast.error.auth.noUserIdForWebSocket');
         return;
       }

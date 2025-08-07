@@ -30,6 +30,7 @@ function AuthFormComponent({
 }: AuthFormProps) {
   const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
+  const { error: toastError } = useToast();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,9 +43,7 @@ function AuthFormComponent({
     try {
       await onSubmit(email, password, name || undefined);
     } catch (error) {
-      // Errors are handled in handleSignIn/handleSignUp, but a general toast here could be a fallback
-      // Use toast for user feedback
-      const { error: toastError } = useToast();
+      // Errors are handled in handleSignIn/handleSignUp, but a general toast here as a fallback
       toastError('toast.error.auth.generic');
     }
   };
@@ -158,6 +157,7 @@ export default function AuthPage() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { error: toastError } = useToast();
 
   const { setAuthState } = useContext(AuthContext);
   
@@ -167,7 +167,6 @@ export default function AuthPage() {
       await login(email, password, setAuthState, navigate);
     } catch (error) {
       console.error('Login failed:', error);
-      const { error: toastError } = useToast();
       toastError('toast.error.auth.loginFailed');
       toastError('toast.error.login');
     } finally {
@@ -181,7 +180,6 @@ export default function AuthPage() {
       await register(email, password, name || '', setAuthState, navigate);
     } catch (error) {
       console.error('Signup failed:', error);
-      const { error: toastError } = useToast();
       toastError('toast.error.auth.signupFailed');
       toastError('toast.error.signup');
     } finally {

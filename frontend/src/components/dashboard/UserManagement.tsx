@@ -31,6 +31,7 @@ const ITEMS_PER_PAGE = 10;
 
 export function UserManagement() {
   const { userRole, setAuthState } = useAuth();
+  const { error: toastError } = useToast();
   const { theme } = useTheme();
   const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
@@ -63,7 +64,6 @@ export function UserManagement() {
       setUsers(data.users);
     } catch (error) {
       console.error('Failed to fetch users:', error);
-      const { error: toastError } = useToast();
       toastError('toast.error.userManagement.fetchUsers');
     } finally {
       setLoading(false);
@@ -84,7 +84,6 @@ export function UserManagement() {
       setUsers(users.filter(user => user.id !== userId));
     } catch (error) {
       console.error('Failed to delete user:', error);
-      const { error: toastError } = useToast();
       toastError('toast.error.userManagement.deleteUser');
     } finally {
       setIsDeleting(false);
@@ -99,7 +98,6 @@ export function UserManagement() {
       setUserDetails(data);
     } catch (error) {
       console.error('Failed to fetch user details:', error);
-      const { error: toastError } = useToast();
       toastError('toast.error.userManagement.fetchUserDetails');
     } finally {
       setLoadingPreferences(false);
@@ -133,7 +131,6 @@ export function UserManagement() {
       setIsEditDialogOpen(false);
     } catch (error) {
       console.error('Failed to update user:', error);
-      const { error: toastError } = useToast();
       toastError('toast.error.userManagement.updateUser');
     }
   };
