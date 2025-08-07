@@ -1,8 +1,7 @@
 import { useTranslation } from "react-i18next"
 import { useAuth } from "../../hooks/useAuth"
 import { api } from "../../services/api"
-import { toast } from "sonner"
-import axios from "axios"
+import { useToast } from "../../hooks/useToast"
 
 interface LanguageSwitchProps {
   className?: string;
@@ -18,14 +17,12 @@ export function LanguageSwitch({ className }: LanguageSwitchProps) {
       await i18n.changeLanguage(newLang)
       await api.patch('/preferences', { language: newLang })
       setUserLanguageContext(newLang)
-      toast.success('Language preference updated')
+      const { success: toastSuccess } = useToast();
+      toastSuccess('toast.success.languageChanged')
     } catch (error) {
       console.error('Error changing language:', error)
-      let errorMessage = 'Failed to update language preference'
-      if (axios.isAxiosError(error) && error.response?.data?.detail) {
-        errorMessage = error.response.data.detail
-      }
-      toast.error(errorMessage)
+      const { error: toastError } = useToast();
+      toastError('toast.error.languageChangeFailed')
     }
   }
 

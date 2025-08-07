@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
-import axios from 'axios';
-import { toast } from 'sonner';
+import { useToast } from '../../hooks/useToast';
 import { api } from '../../services/api';
 import { DialogOverlay, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from './dialog';
 import { Form, FormField, FormLabel, FormInput } from './form';
@@ -27,7 +26,8 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ isOpen, onC
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      toast.error(t('settings.toast.password_mismatch'));
+      const { error: toastError } = useToast();
+      toastError('toast.error.passwordMismatch');
       return;
     }
 
@@ -43,17 +43,13 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ isOpen, onC
       setNewPassword('');
       setConfirmPassword('');
       
-      toast.success(t('settings.toast.password_changed_message_logout'));
+      const { success: toastSuccess } = useToast();
+      toastSuccess('toast.success.passwordChangedLogout');
       navigate('/login');
     } catch (error: unknown) {
       console.error('Password change failed:', error);
-      let errorMessage = t('settings.toast.password_change_error');
-      if (axios.isAxiosError(error) && error.response?.data?.detail) {
-        errorMessage = typeof error.response.data.detail === 'string'
-          ? error.response.data.detail
-          : JSON.stringify(error.response.data.detail);
-      }
-      toast.error(errorMessage);
+      const { error: toastError } = useToast();
+      toastError('toast.error.passwordChange');
     } finally {
       setIsChangingPassword(false);
     }

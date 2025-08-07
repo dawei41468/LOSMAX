@@ -48,7 +48,7 @@
     "changePassword": "修改密码",
     "deleteAccount": "删除账户"
   },
-  "feedback": {
+  "toast": {
     "success": {
       "settingsSaved": "设置已成功保存",
       "goalCreated": "目标创建成功",
@@ -60,8 +60,10 @@
       "taskCompleted": "任务标记为已完成",
       "taskDeleted": "任务删除成功",
       "passwordChanged": "密码修改成功",
+      "passwordChangedLogout": "密码修改成功。请使用您的新密码重新登录",
       "accountDeleted": "您的账户已成功删除",
-      "nameUpdated": "您的显示名称已更新"
+      "nameUpdated": "您的显示名称已成功更新",
+      "languageChanged": "语言切换成功"
     },
     "error": {
       "generic": "发生未知错误",
@@ -70,14 +72,36 @@
       "authentication": "身份验证失败，请重新登录",
       "login": "登录失败。请检查您的凭据并重试",
       "signup": "注册失败。请重试，如果问题持续存在，请联系支持",
+      "logout": "退出登录失败。请重试",
       "fetchPreferences": "获取您的偏好设置失败。请重试",
       "savePreferences": "保存您的偏好设置失败。请重试",
       "settingsSave": "保存您的设置失败。请重试",
       "updateName": "更新您的显示名称失败。请重试",
       "passwordChange": "修改密码失败。请检查您当前的密码并重试",
-      "storage": "存储访问错误。请确保您的浏览器允许站点数据",
       "passwordMismatch": "新密码不匹配",
-      "maxActiveGoals": "每个类别最多允许3个活跃目标"
+      "accountDeletion": "删除您的账户失败。请重试",
+      "storage": "存储访问错误。请确保您的浏览器允许站点数据",
+      "maxActiveGoals": "每个类别最多允许3个活跃目标",
+      "languageChange": "切换语言失败。请重试",
+      "dashboard": {
+        "fetchData": "获取仪表盘数据失败。请重试"
+      },
+      "progress": {
+        "fetchData": "加载进度数据失败。请重试"
+      },
+      "userManagement": {
+        "fetchUsers": "获取用户列表失败。请重试",
+        "deleteUser": "删除用户失败。请重试",
+        "fetchUserDetails": "获取用户详情失败。请重试",
+        "updateUser": "更新用户失败。请重试"
+      },
+      "taskDialog": {
+        "fetchGoals": "获取目标列表失败。请重试"
+      },
+      "auth": {
+        "tokenValidationFailed": "令牌验证或刷新失败。请重新登录",
+        "noUserIdForWebSocket": "没有可用于WebSocket连接的用户ID。请重新登录"
+      }
     },
     "warning": {
       "unsavedChanges": "您有未保存的更改",
@@ -92,15 +116,6 @@
     }
   },
   "settings": {
-    "toast": {
-      "account_deletion_message": "您的账户已成功删除",
-      "account_deletion_error": "删除您的账户失败。请重试",
-      "password_mismatch": "新密码不匹配",
-      "password_changed_message_logout": "密码修改成功。请使用您的新密码重新登录",
-      "password_change_error": "修改密码失败。请检查您当前的密码并重试",
-      "name_updated_message": "您的显示名称已成功更新",
-      "update_name_error": "更新您的显示名称失败。请重试"
-    },
     "account": {
       "item_name": "账户",
       "delete_confirm_message_p1": "您确定要永久删除您的账户吗？",

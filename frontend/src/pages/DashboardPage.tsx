@@ -4,6 +4,7 @@ import { AuthContext } from '../contexts/auth.context';
 import type { AuthContextType } from '../contexts/auth.types';
 import { useNavigate } from 'react-router-dom';
 import { getTasks, getGoals } from '../services/api';
+import { useToast } from '../hooks/useToast';
 import QuoteOfDay from '../components/dashboard/QuoteOfDay';
 import { Greeting } from '../components/dashboard/Greetings';
 import TaskStatus from '../components/dashboard/TaskStatus';
@@ -39,6 +40,8 @@ export default function DashboardPage() {
           setAllTasks(fetchedAllTasks);
         } catch (error) {
           console.error('Error fetching tasks or goals for dashboard:', error);
+          const { error: toastError } = useToast();
+          toastError('toast.error.dashboard.fetchData');
         }
       }
     };

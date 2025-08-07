@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useToast } from '../hooks/useToast';
 import i18n from '../i18n';
 import { logout, refreshToken } from '../services/auth';
 import type { ReactNode } from 'react';
@@ -50,7 +51,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUserLanguageState(null);
         }
       } catch (error) {
-        console.error('Token validation or refresh failed:', error);
+        const { error: toastError } = useToast();
+        toastError('toast.error.auth.tokenValidationFailed');
         setIsAuthenticated(false);
         setUserNameState(null);
         setUserIdState(null);
@@ -81,7 +83,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const service = new WebSocketService(setIsAuthenticated);
       // Get user ID from auth context or local storage - now directly from state
       if (!userId) { // Check the state variable userId
-        console.error('No user ID available for WebSocket connection');
+        const { error: toastError } = useToast();
+        toastError('toast.error.auth.noUserIdForWebSocket');
         return;
       }
       // Pass userEmail to the connect method. userEmail is already available in this component's scope.

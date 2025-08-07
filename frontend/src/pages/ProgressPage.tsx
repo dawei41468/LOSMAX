@@ -7,7 +7,7 @@ import type { GoalCategory, Goal } from '../types/goals';
 import type { Task } from '../types/tasks';
 import { CategoryHeader} from '../components/ui/CategoryUI';
 import { getCategoryColorClass, categoryColors } from '../components/ui/categoryUtils';
-import { toast } from 'sonner';
+import { useToast } from '../hooks/useToast';
 import ProgressGoalCard from '../components/progress/ProgressGoalCard';
 import { Home, HeartPulse, Briefcase, User } from 'lucide-react';
 import { Select, SelectItem } from '@/components/ui/select';
@@ -38,13 +38,14 @@ const ProgressPage: React.FC = () => {
       setTasks(fetchedTasks);
     } catch (err: unknown) {
       console.error('Failed to fetch progress data:', err);
-      let errorMessage = 'Failed to load progress data.';
+      let errorMessage = 'toast.error.progressLoadFailed';
       if (err instanceof Error) {
         errorMessage = err.message;
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      toast.error(errorMessage);
+      const { error: toastError } = useToast();
+      toastError(errorMessage);
     } finally {
       setIsLoading(false);
     }

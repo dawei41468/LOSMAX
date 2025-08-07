@@ -3,6 +3,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 import ConfirmDeleteDialog from '../ui/ConfirmDeleteDialog';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { useToast } from '../../hooks/useToast';
 import { logout } from '../../services/auth';
 import { api } from '../../services/api';
 import { Trash2, Edit, Search, RefreshCw, Mail } from 'lucide-react';
@@ -62,6 +63,8 @@ export function UserManagement() {
       setUsers(data.users);
     } catch (error) {
       console.error('Failed to fetch users:', error);
+      const { error: toastError } = useToast();
+      toastError('toast.error.userManagement.fetchUsers');
     } finally {
       setLoading(false);
     }
@@ -81,6 +84,8 @@ export function UserManagement() {
       setUsers(users.filter(user => user.id !== userId));
     } catch (error) {
       console.error('Failed to delete user:', error);
+      const { error: toastError } = useToast();
+      toastError('toast.error.userManagement.deleteUser');
     } finally {
       setIsDeleting(false);
       setIsDeleteDialogOpen(false);
@@ -94,6 +99,8 @@ export function UserManagement() {
       setUserDetails(data);
     } catch (error) {
       console.error('Failed to fetch user details:', error);
+      const { error: toastError } = useToast();
+      toastError('toast.error.userManagement.fetchUserDetails');
     } finally {
       setLoadingPreferences(false);
     }
@@ -126,6 +133,8 @@ export function UserManagement() {
       setIsEditDialogOpen(false);
     } catch (error) {
       console.error('Failed to update user:', error);
+      const { error: toastError } = useToast();
+      toastError('toast.error.userManagement.updateUser');
     }
   };
 

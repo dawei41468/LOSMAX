@@ -44,13 +44,15 @@ const ProgressGoalCard: React.FC<ProgressGoalCardProps> = ({ goal, isCompleted }
         </div>
 
         <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <Progress value={progressPercentage} className="w-full" />
-          </div>
-          
           <p className="text-xs text-muted-foreground text-left">
             {t('component.progressGoalCard.completionRate', { rate: progressPercentage })}
           </p>
+          <div className="flex items-center gap-2">
+            <Progress value={progressPercentage} className="w-full" />
+            <span className="text-sm font-semibold">{progressPercentage}%</span>
+          </div>
+          
+      
           
           {isCompleted && goal.completed_at && (
             <p className="text-xs text-muted-foreground text-left">

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useToast } from '../../hooks/useToast';
 import type { Task } from '../../types/tasks';
 import type { Goal } from '../../types/goals';
 import { getGoals } from '../../services/api';
@@ -51,6 +52,8 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ isOpen, onClose, onSubmit, init
       setGoals(fetchedGoals);
     } catch (error) {
       console.error('Failed to fetch goals:', error);
+      const { error: toastError } = useToast();
+      toastError('toast.error.taskDialog.fetchGoals');
     } finally {
       setIsLoadingGoals(false);
     }

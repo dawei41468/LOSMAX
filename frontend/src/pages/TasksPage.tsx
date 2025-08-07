@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import TaskDialog from '../components/tasks/TaskDialog';
 import TaskCard from '../components/tasks/TaskCard';
 import ConfirmDeleteDialog from '../components/ui/ConfirmDeleteDialog';
-import { toast } from 'sonner'; // Import toast from sonner
+import { useToast } from '../hooks/useToast'; // Import useToast hook
 import { Select, SelectItem } from '@/components/ui/select';
 
 type FilterType = 'today' | 'all';
@@ -49,7 +49,8 @@ export default function TasksPage() {
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      toast.error(errorMessage);
+      const { error: toastError } = useToast();
+      toastError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -88,7 +89,8 @@ export default function TasksPage() {
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      toast.error(errorMessage);
+      const { error: toastError } = useToast();
+      toastError(errorMessage);
     } finally {
       setIsLoading(false);
       setIsTaskDialogOpen(false);
@@ -106,7 +108,8 @@ export default function TasksPage() {
       setEditingTask(task);
       setIsTaskDialogOpen(true);
     } else {
-      toast.error(t('tasks.error_message', { error: "Cannot edit task without a valid ID." }));
+      const { error: toastError } = useToast();
+      toastError('toast.error.generic');
     }
   };
 
@@ -115,7 +118,8 @@ export default function TasksPage() {
       setTaskToDelete(taskId);
       setShowDeleteConfirm(true);
     } else {
-      toast.error(t('tasks.error_message', { error: "Cannot delete task without a valid ID." }));
+      const { error: toastError } = useToast();
+      toastError('toast.error.generic');
     }
   };
 
@@ -134,7 +138,8 @@ export default function TasksPage() {
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      toast.error(errorMessage);
+      const { error: toastError } = useToast();
+      toastError(errorMessage);
     } finally {
       setIsLoading(false);
       setShowDeleteConfirm(false);
@@ -144,7 +149,8 @@ export default function TasksPage() {
 
   const handleToggleStatus = async (task: Task) => {
     if (!task.id) {
-      toast.error(t('tasks.error_message', { error: "Cannot update status of task without a valid ID." }));
+      const { error: toastError } = useToast();
+      toastError('toast.error.generic');
       return;
     }
     setIsLoading(true);
@@ -160,7 +166,8 @@ export default function TasksPage() {
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      toast.error(errorMessage);
+      const { error: toastError } = useToast();
+      toastError(errorMessage);
     } finally {
       setIsLoading(false);
     }

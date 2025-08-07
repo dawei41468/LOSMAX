@@ -8,7 +8,7 @@ import { LanguageSwitch } from '../components/ui/language-toggle';
 import { AuthContext } from '../contexts/auth.context';
 import { TimePicker } from '../components/ui/TimePicker';
 import axios from 'axios';
-import { toast } from 'sonner';
+import { useToast } from '../hooks/useToast';
 import { api } from '../services/api';
 import ConfirmDeleteDialog from '../components/ui/ConfirmDeleteDialog';
 import ChangePasswordDialog from '../components/ui/ChangePasswordDialog';
@@ -38,11 +38,11 @@ const ProfilePage: React.FC = () => {
         setNotificationsEnabled(response.data.notifications_enabled);
       } catch (error: unknown) {
         console.error('Failed to fetch preferences:', error);
-        let errorMessage = t('settings.toast.fetch_preferences_error');
+        const { error: toastError } = useToast();
+        toastError('toast.error.settings.fetchPreferences');
         if (axios.isAxiosError(error) && error.response?.data?.detail) {
-          errorMessage = error.response.data.detail;
+          // Custom error handling can be added if needed
         }
-        toast.error(errorMessage);
       }
     };
     fetchPreferences();
@@ -60,14 +60,15 @@ const ProfilePage: React.FC = () => {
       setMorningDeadline(response.data.morning_deadline);
       setEveningDeadline(response.data.evening_deadline);
       setNotificationsEnabled(response.data.notifications_enabled);
-      toast.success(t('settings.toast.settings_saved_message'));
+      const { success: toastSuccess } = useToast();
+      toastSuccess('toast.success.settingsSaved');
     } catch (error: unknown) {
       console.error('Error saving preference:', error);
-      let errorMessage = t('settings.toast.settings_save_error');
+      const { error: toastError } = useToast();
+      toastError('toast.error.settings.save');
       if (axios.isAxiosError(error) && error.response?.data?.detail) {
-        errorMessage = error.response.data.detail;
+        // Custom error handling can be added if needed
       }
-      toast.error(errorMessage);
     }
   };
 
@@ -164,7 +165,8 @@ const ProfilePage: React.FC = () => {
                         await logout(); // Using LOSMAX's logout
                       } catch (err) {
                         console.error('Logout failed:', err);
-                        // TODO: Add user-facing error handling, e.g., via a toast
+                        const { error: toastError } = useToast();
+                        toastError('toast.error.auth.logoutFailed');
                       }
                     }}
                     className="w-full px-6 py-2 mt-4 border border-red-500 text-red-500 rounded-md hover:bg-red-500/10 transition-colors flex items-center justify-center gap-2"
@@ -182,15 +184,16 @@ const ProfilePage: React.FC = () => {
                 onConfirm={async () => {
                   try {
                     await api.delete('/auth/account');
-                    toast.success(t('settings.toast.account_deletion_message'));
+                    const { success: toastSuccess } = useToast();
+                    toastSuccess('toast.success.accountDeleted');
                     navigate('/login');
                   } catch (error: unknown) {
                     console.error('Account deletion failed:', error);
-                    let errorMessage = t('settings.toast.account_deletion_error');
+                    const { error: toastError } = useToast();
+                    toastError('toast.error.settings.accountDeletion');
                     if (axios.isAxiosError(error) && error.response?.data?.detail) {
-                      errorMessage = error.response.data.detail;
+                      // Custom error handling can be added if needed
                     }
-                    toast.error(errorMessage);
                   }
                 }}
                 itemName={t('settings.account.item_name')}
@@ -228,16 +231,18 @@ const ProfilePage: React.FC = () => {
                               onClick={async () => {
                                 try {
                                   await api.patch('/auth/update-name', { name: userName });
-                                  toast.success(t('settings.toast.name_updated_message'));
+                                  const { success: toastSuccess } = useToast();
+                                  toastSuccess('toast.success.nameUpdated');
                                 } catch (error: unknown) {
                                   console.error("Error updating nickname:", error);
-                                  let errorMessage = t('settings.toast.update_name_error');
+                                  const { error: toastError } = useToast();
+                                  toastError('toast.error.settings.updateName');
                                   if (axios.isAxiosError(error) && error.response?.data?.detail) {
-                                    errorMessage = typeof error.response.data.detail === 'string'
+                                    let errorMessage = typeof error.response.data.detail === 'string'
                                       ? error.response.data.detail
                                       : JSON.stringify(error.response.data.detail);
+                                    toastError(errorMessage);
                                   }
-                                  toast.error(errorMessage);
                                 }
                               }}
                             >

@@ -48,7 +48,7 @@
     "changePassword": "Change Password",
     "deleteAccount": "Delete Account"
   },
-  "feedback": {
+  "toast": {
     "success": {
       "settingsSaved": "Settings saved successfully",
       "goalCreated": "Goal created successfully",
@@ -60,8 +60,10 @@
       "taskCompleted": "Task marked as complete",
       "taskDeleted": "Task deleted successfully",
       "passwordChanged": "Password changed successfully",
+      "passwordChangedLogout": "Password changed successfully. Please login again with your new password",
       "accountDeleted": "Your account has been successfully deleted",
-      "nameUpdated": "Your display name has been updated"
+      "nameUpdated": "Your display name has been updated successfully",
+      "languageChanged": "Language changed successfully"
     },
     "error": {
       "generic": "An unexpected error occurred",
@@ -70,14 +72,36 @@
       "authentication": "Authentication failed. Please login again",
       "login": "Login failed. Please check your credentials and try again",
       "signup": "Signup failed. Please try again or contact support if the issue persists",
+      "logout": "Failed to log out. Please try again",
       "fetchPreferences": "Failed to fetch your preferences. Please try again",
       "savePreferences": "Failed to save your preferences. Please try again",
       "settingsSave": "Failed to save your settings. Please try again",
       "updateName": "Failed to update your display name. Please try again",
       "passwordChange": "Failed to change password. Please check your current password and try again",
-      "storage": "Storage access error. Please ensure your browser allows site data",
       "passwordMismatch": "New passwords do not match",
-      "maxActiveGoals": "Maximum of 3 active goals allowed per category"
+      "accountDeletion": "Failed to delete your account. Please try again",
+      "storage": "Storage access error. Please ensure your browser allows site data",
+      "maxActiveGoals": "Maximum of 3 active goals allowed per category",
+      "languageChange": "Failed to change language. Please try again",
+      "dashboard": {
+        "fetchData": "Failed to fetch dashboard data. Please try again"
+      },
+      "progress": {
+        "fetchData": "Failed to load progress data. Please try again"
+      },
+      "userManagement": {
+        "fetchUsers": "Failed to fetch users. Please try again",
+        "deleteUser": "Failed to delete user. Please try again",
+        "fetchUserDetails": "Failed to fetch user details. Please try again",
+        "updateUser": "Failed to update user. Please try again"
+      },
+      "taskDialog": {
+        "fetchGoals": "Failed to fetch goals. Please try again"
+      },
+      "auth": {
+        "tokenValidationFailed": "Token validation or refresh failed. Please log in again",
+        "noUserIdForWebSocket": "No user ID available for WebSocket connection. Please log in again"
+      }
     },
     "warning": {
       "unsavedChanges": "You have unsaved changes",
@@ -92,15 +116,6 @@
     }
   },
   "settings": {
-    "toast": {
-      "account_deletion_message": "Your account has been successfully deleted",
-      "account_deletion_error": "Failed to delete your account. Please try again",
-      "password_mismatch": "New passwords do not match",
-      "password_changed_message_logout": "Password changed successfully. Please login again with your new password",
-      "password_change_error": "Failed to change password. Please check your current password and try again",
-      "name_updated_message": "Your display name has been updated successfully",
-      "update_name_error": "Failed to update your display name. Please try again"
-    },
     "account": {
       "item_name": "account",
       "delete_confirm_message_p1": "Are you sure you want to permanently delete your account?",
@@ -253,7 +268,6 @@
       }
     }
   },
-
   "component": {
     "quoteOfDay": {
       "title": "Quote of the Day",

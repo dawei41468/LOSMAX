@@ -9,7 +9,7 @@ import type { Goal, GoalStatus, GoalCategory, CreateGoalPayload } from '../types
 import GoalDialog from '../components/goals/GoalDialog';
 import GoalCard from '../components/goals/GoalCard';
 import ConfirmDeleteDialog from '../components/ui/ConfirmDeleteDialog'; // Import the new dialog
-import { toast } from 'sonner'; // Import toast from sonner
+import { useToast } from '../hooks/useToast'; // Import useToast hook
 import { Select, SelectItem } from '@/components/ui/select';
 
 // CATEGORIES_PAGE_LEVEL removed as GoalDialog defines its own or it should come from a shared constant
@@ -40,13 +40,14 @@ export default function GoalsPage() {
       setGoals(fetchedGoals);
     } catch (err: unknown) {
       console.error('Failed to fetch goals:', err);
-      let errorMessage = t('feedback.error.generic');
+      let errorMessage = t('toast.error.generic');
       if (err instanceof Error) {
         errorMessage = err.message;
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      toast.error(errorMessage);
+      const { error: toastError } = useToast();
+      toastError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -82,13 +83,14 @@ export default function GoalsPage() {
       fetchUserGoals(currentFilter); // Refetch goals
     } catch (err: unknown) {
       console.error('Failed to save goal:', err);
-      let errorMessage = t('feedback.error.generic');
+      let errorMessage = t('toast.error.generic');
        if (err instanceof Error) {
         errorMessage = err.message;
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      toast.error(errorMessage);
+      const { error: toastError } = useToast();
+      toastError(errorMessage);
     } finally {
       setIsLoading(false);
       setIsGoalDialogOpen(false);
@@ -120,13 +122,14 @@ export default function GoalsPage() {
       fetchUserGoals(currentFilter); // Refetch goals
     } catch (err: unknown) {
       console.error('Failed to delete goal:', err);
-      let errorMessage = t('feedback.error.generic');
+      let errorMessage = t('toast.error.generic');
       if (err instanceof Error) {
         errorMessage = err.message;
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      toast.error(errorMessage);
+      const { error: toastError } = useToast();
+      toastError(errorMessage);
     } finally {
       setIsLoading(false);
       setShowDeleteConfirm(false); // Close the confirmation dialog
@@ -142,13 +145,14 @@ export default function GoalsPage() {
       fetchUserGoals(currentFilter); // Refetch goals
     } catch (err: unknown) {
       console.error('Failed to update goal status:', err);
-      let errorMessage = t('feedback.error.generic');
+      let errorMessage = t('toast.error.generic');
        if (err instanceof Error) {
         errorMessage = err.message;
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
       }
-      toast.error(errorMessage);
+      const { error: toastError } = useToast();
+      toastError(errorMessage);
     } finally {
       setIsLoading(false);
     }
