@@ -41,7 +41,7 @@ export default function TasksPage() {
       setGoals(fetchedGoals);
     } catch (err: unknown) {
       console.error('Failed to fetch tasks or goals:', err);
-      let errorMessage = t('feedback.error.fetchTasks');
+      let errorMessage = t('toast.error.task.fetchTasks');
       if (err instanceof Error) {
         errorMessage = err.message;
         if (err.message.includes('404')) {
@@ -54,7 +54,7 @@ export default function TasksPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [isAuthenticated, t]);
+  }, [isAuthenticated, t]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -80,11 +80,11 @@ export default function TasksPage() {
       fetchUserTasks(currentFilter); // Refetch tasks
     } catch (err: unknown) {
       console.error('Failed to save task:', err);
-      let errorMessage = t('feedback.error.saveTask');
+      let errorMessage = t('toast.error.task.saveTask');
       if (err instanceof Error) {
         errorMessage = err.message;
         if (err.message.includes('404')) {
-          errorMessage = t('feedback.error.taskCreationUnavailable');
+          errorMessage = t('toast.error.task.taskCreationUnavailable');
         }
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
         errorMessage = (err as { detail: string }).detail;
@@ -129,7 +129,7 @@ export default function TasksPage() {
       fetchUserTasks(currentFilter); // Refetch tasks
     } catch (err: unknown) {
       console.error('Failed to delete task:', err);
-      let errorMessage = t('feedback.error.deleteTask');
+      let errorMessage = t('toast.error.task.deleteTask');
       if (err instanceof Error) {
         errorMessage = err.message;
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
@@ -155,7 +155,7 @@ export default function TasksPage() {
       setTasks(prevTasks => prevTasks.map(t => t.id === updatedTask.id ? updatedTask : t));
     } catch (err: unknown) {
       console.error('Failed to update task status:', err);
-      let errorMessage = t('feedback.error.updateTask');
+      let errorMessage = t('toast.error.task.updateTask');
       if (err instanceof Error) {
         errorMessage = err.message;
       } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
@@ -242,9 +242,9 @@ export default function TasksPage() {
       {!isLoading && tasks.length === 0 && (
         <p className="text-center py-4 text-gray-500 text-xl">
           {currentFilter === 'today' ? (
-            <em>{t('feedback.info.noTasksToday')}</em>
+            <em>{t('toast.info.noTasksToday')}</em>
           ) : (
-            t('feedback.info.noTasksFound', { filter: t(`content.tasks.filters.${currentFilter}`) })
+            t('toast.info.noTasksFound', { filter: t(`content.tasks.filters.${currentFilter}`) })
           )}
         </p>
       )}

@@ -83,6 +83,13 @@
       "storage": "Storage access error. Please ensure your browser allows site data",
       "maxActiveGoals": "Maximum of 3 active goals allowed per category",
       "languageChange": "Failed to change language. Please try again",
+      "task": {
+        "fetchTasks": "Failed to fetch tasks. Please try again",
+        "saveTask": "Failed to save task. Please try again",
+        "taskCreationUnavailable": "Task creation service is currently unavailable",
+        "deleteTask": "Failed to delete task. Please try again",
+        "updateTask": "Failed to update task status. Please try again"
+      },
       "dashboard": {
         "fetchData": "Failed to fetch dashboard data. Please try again"
       },
@@ -100,7 +107,8 @@
       },
       "auth": {
         "tokenValidationFailed": "Token validation or refresh failed. Please log in again",
-        "noUserIdForWebSocket": "No user ID available for WebSocket connection. Please log in again"
+        "noUserIdForWebSocket": "No user ID available for WebSocket connection. Please log in again",
+        "loginFailed": "Login failed. Please check your credentials and try again"
       }
     },
     "warning": {
@@ -112,7 +120,8 @@
       "noGoalsFound": "No goals found for the \"{{filter}}\" filter. Try creating one!",
       "noTasksFound": "No tasks found for the \"{{filter}}\" filter. Try creating one!",
       "noTasksToday": "What can you do today to make progress on your goals?",
-      "noCompletedGoals": "No goals have been completed yet."
+      "noCompletedGoals": "No goals have been completed yet.",
+      "loadingDashboard": "Loading dashboard data, please wait..."
     }
   },
   "settings": {

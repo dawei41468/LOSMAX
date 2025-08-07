@@ -3,10 +3,11 @@ import { useTranslation } from 'react-i18next'
 
 // Centralized toast configurations
 export const toastConfig = {
-  duration: 4000,
+  duration: 1500,
   position: 'top-right' as const,
   richColors: true,
-  closeButton: true,
+  closeButton: true, // Close button positioned with toast at top-right
+  className: 'toast-custom-close-right',
 }
 
 // Toast types with consistent styling
@@ -16,9 +17,9 @@ export const toastTypes = {
       description,
       ...toastConfig,
       style: {
-        background: 'var(--background)',
-        color: 'var(--foreground)',
-        border: '1px solid var(--border)',
+        background: 'var(--success)',
+        color: 'var(--success-foreground)',
+        border: '1px solid var(--border-standard)',
       },
     }),
 
@@ -26,11 +27,11 @@ export const toastTypes = {
     toast.error(message, {
       description,
       ...toastConfig,
-      duration: 6000,
+      duration: 2500,
       style: {
-        background: 'var(--background)',
-        color: 'var(--foreground)',
-        border: '1px solid var(--destructive)',
+        background: 'var(--error)',
+        color: 'var(--error-foreground)',
+        border: '1px solid var(--border-standard)',
       },
     }),
 

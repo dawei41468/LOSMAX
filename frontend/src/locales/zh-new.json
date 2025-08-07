@@ -83,6 +83,13 @@
       "storage": "存储访问错误。请确保您的浏览器允许站点数据",
       "maxActiveGoals": "每个类别最多允许3个活跃目标",
       "languageChange": "切换语言失败。请重试",
+      "task": {
+        "fetchTasks": "获取任务列表失败。请重试",
+        "saveTask": "保存任务失败。请重试",
+        "taskCreationUnavailable": "任务创建服务当前不可用",
+        "deleteTask": "删除任务失败。请重试",
+        "updateTask": "更新任务状态失败。请重试"
+      },
       "dashboard": {
         "fetchData": "获取仪表盘数据失败。请重试"
       },
@@ -100,7 +107,8 @@
       },
       "auth": {
         "tokenValidationFailed": "令牌验证或刷新失败。请重新登录",
-        "noUserIdForWebSocket": "没有可用于WebSocket连接的用户ID。请重新登录"
+        "noUserIdForWebSocket": "没有可用于WebSocket连接的用户ID。请重新登录",
+        "loginFailed": "登录失败。请检查您的凭据并重试"
       }
     },
     "warning": {
@@ -112,7 +120,8 @@
       "noGoalsFound": "没有找到\"{{filter}}\"过滤器的目标。尝试创建一个！",
       "noTasksFound": "没有找到\"{{filter}}\"过滤器的任务。尝试创建一个！",
       "noTasksToday": "今天您能做些什么来在目标上取得进展？",
-      "noCompletedGoals": "还没有完成的目标。"
+      "noCompletedGoals": "还没有完成的目标。",
+      "loadingDashboard": "正在加载仪表盘数据，请稍候..."
     }
   },
   "settings": {
