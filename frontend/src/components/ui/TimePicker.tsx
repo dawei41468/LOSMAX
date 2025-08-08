@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState, forwardRef } from "react";
 import { Clock } from 'lucide-react';
+import '@/styles/timepicker.css';
 
 // Generate arrays for hours, minutes, and periods
 const hours = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
@@ -250,7 +251,7 @@ export const TimePicker = forwardRef<HTMLDivElement, TimePickerProps>(
           {label}
         </label>
         <div className="flex items-center gap-2">
-          <div className="flex-1 flex items-center border rounded-md px-3 py-2 bg-card w-full">
+          <div className="flex-1 flex items-center border rounded-md px-3 py-1 bg-card w-full">
             <input
               value={selectedHour}
               onChange={(e) => {
@@ -278,12 +279,9 @@ export const TimePicker = forwardRef<HTMLDivElement, TimePickerProps>(
               inputMode="numeric"
             />
             {!use24HourFormat && (
-              <button
-                onClick={() => setSelectedPeriod(prev => prev === 'AM' ? 'PM' : 'AM')}
-                className="ml-2 px-2 py-1 text-sm bg-muted rounded-md hover:bg-muted/80 transition-colors dark:border dark:border-input"
-              >
+              <span className="ml-2 px-2 py-1 text-sm bg-primary/10 text-primary rounded-md">
                 {selectedPeriod}
-              </button>
+              </span>
             )}
             <button
               type="button"
@@ -298,13 +296,17 @@ export const TimePicker = forwardRef<HTMLDivElement, TimePickerProps>(
         {isOpen && (
           <div
             ref={ref}
-            className="absolute z-10 mt-2 w-full max-w-full p-4 bg-background border rounded-lg shadow-lg sm:w-[125%]"
+            className="absolute z-10 mt-1 w-full max-w-full ios-picker shadow-2xl overflow-hidden"
             style={{ backgroundColor: 'var(--background)' }}
           >
-            <div className="relative py-8 px-6">
-              <div className="flex items-center justify-center relative z-0">
+            <div className="relative py-2 px-0">
+              {/* iOS-style blur overlays */}
+              <div className="absolute top-0 left-0 right-0 h-[80px] ios-blur-top"></div>
+              <div className="absolute bottom-0 left-0 right-0 h-[80px] ios-blur-bottom"></div>
+              
+              <div className="flex items-center justify-center relative z-10 space-x-2 px-2">
                 {/* Hours Column */}
-                <div className="relative w-16 h-[160px] mr-2 overflow-hidden">
+                <div className="relative w-24 h-[120px] overflow-hidden">
                     <div
                       ref={hoursRef}
                       className="absolute inset-0 overflow-y-auto scroll-smooth scrollbar-hide"
@@ -316,7 +318,7 @@ export const TimePicker = forwardRef<HTMLDivElement, TimePickerProps>(
                         scrollBehavior: "smooth"
                       }}
                     >
-                      <div className="h-[60px]"></div> {/* Top spacing */}
+                      <div className="h-[40px]" /> {/* Top spacing */}
                     
                     {hours.map((hour) => (
                       <div
@@ -324,21 +326,19 @@ export const TimePicker = forwardRef<HTMLDivElement, TimePickerProps>(
                         className="h-[40px] flex items-center justify-center scroll-snap-align-center"
                         data-value={hour}
                       >
-                        <div className={`text-xl font-medium transition-all duration-200 ${hour === selectedHour ? 'text-blue-600 scale-110 font-bold relative z-[2]' : 'text-gray-700'}`}>{hour}</div>
+                        <div className={`text-2xl font-light transition-all duration-200 ${hour === selectedHour ? 'ios-text-accent font-medium scale-110' : 'ios-text-primary opacity-50'}`}>{hour.toString().padStart(2, '0')}</div>
                       </div>
                     ))}
                     
-                    <div className="h-[60px]"></div> {/* Bottom spacing */}
+                    <div className="h-[40px]" /> {/* Bottom spacing */}
                   </div>
-                  <div className="absolute top-0 left-0 right-0 h-[80px] pointer-events-none bg-gradient-to-b from-card to-transparent z-10"></div>
-                  <div className="absolute bottom-0 left-0 right-0 h-[80px] pointer-events-none bg-gradient-to-t from-card to-transparent z-10"></div>
                 </div>
                 
                 {/* Colon */}
-                <div className="text-2xl font-medium text-gray-700 px-1">:</div>
+                <div className="text-2xl font-medium text-gray-700">:</div>
                 
                 {/* Minutes Column */}
-                <div className="relative w-16 h-[160px] mr-4 overflow-hidden">
+                <div className="relative w-16 h-[160px] overflow-hidden">
                   <div
                     ref={minutesRef}
                     className="absolute inset-0 overflow-y-auto scroll-smooth scrollbar-hide"
@@ -358,14 +358,12 @@ export const TimePicker = forwardRef<HTMLDivElement, TimePickerProps>(
                         className="h-[40px] flex items-center justify-center scroll-snap-align-center"
                         data-value={minute}
                       >
-                        <div className={`text-xl font-medium transition-all duration-200 ${minute === selectedMinute ? 'text-blue-600 scale-110 font-bold relative z-[2]' : 'text-gray-700'}`}>{minute}</div>
+                        <div className={`text-2xl font-light transition-all duration-200 ${minute === selectedMinute ? 'ios-text-accent font-medium scale-110' : 'ios-text-primary opacity-50'}`}>{minute.toString().padStart(2, '0')}</div>
                       </div>
                     ))}
                     
                     <div className="h-[60px]"></div> {/* Bottom spacing */}
                   </div>
-                  <div className="absolute top-0 left-0 right-0 h-[80px] pointer-events-none bg-gradient-to-b from-card to-transparent z-10"></div>
-                  <div className="absolute bottom-0 left-0 right-0 h-[80px] pointer-events-none bg-gradient-to-t from-card to-transparent z-10"></div>
                 </div>
                 
                 {/* AM/PM Column */}
@@ -390,34 +388,32 @@ export const TimePicker = forwardRef<HTMLDivElement, TimePickerProps>(
                           className="h-[40px] flex items-center justify-center scroll-snap-align-center"
                           data-value={period}
                         >
-                          <div className={`text-xl font-medium transition-all duration-200 ${period === selectedPeriod ? 'text-blue-600 scale-110 font-bold relative z-[2]' : 'text-gray-700'}`}>{period}</div>
+                          <div className={`text-xl font-light transition-all duration-200 ${period === selectedPeriod ? 'ios-text-accent font-medium scale-110' : 'ios-text-primary opacity-50'}`}>{period}</div>
                         </div>
                       ))}
                       
                       <div className="h-[60px]"></div> {/* Bottom spacing */}
                     </div>
-                    <div className="absolute top-0 left-0 right-0 h-[80px] pointer-events-none bg-gradient-to-b from-card to-transparent z-10"></div>
-                    <div className="absolute bottom-0 left-0 right-0 h-[80px] pointer-events-none bg-gradient-to-t from-card to-transparent z-10"></div>
                   </div>
                 )}
               </div>
               
-              {/* Selection Highlight Bar */}
+              {/* iOS-style selection highlight */}
               <div
-                className="absolute left-4 right-4 top-1/2 transform -translate-y-1/2 h-[40px] bg-muted/30 rounded-md border-2 border-input shadow-sm pointer-events-none z-0"
+                className="absolute left-3 right-3 top-1/2 transform -translate-y-1/2 h-[36px] ios-selection pointer-events-none z-5"
               />
             </div>
             
-            <div className="flex justify-center space-x-4 w-full mt-4">
+            <div className="flex justify-center space-x-2 w-full mt-3 px-4 pb-3">
               <button
                 onClick={() => handleOpenChange(false)}
-                className="px-4 py-2 bg-muted rounded-md hover:bg-muted/80 transition-colors flex-1 dark:border dark:border-input"
+                className="ios-button ios-button-cancel flex-1"
               >
                 Cancel
               </button>
               <button 
                 onClick={handleDone}
-                className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors flex-1"
+                className="ios-button ios-button-done flex-1"
               >
                 Done
               </button>

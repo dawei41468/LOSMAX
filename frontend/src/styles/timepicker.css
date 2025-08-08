@@ -1,0 +1,165 @@
+/* iOS-style TimePicker custom styles */
+:root {
+  --ios-picker-bg-light: #ffffff;
+  --ios-picker-bg-dark: #1c1c1e;
+  --ios-picker-border-light: #d1d1d6;
+  --ios-picker-border-dark: #38383a;
+  --ios-blur-light: #f2f2f7;
+  --ios-blur-dark: #2c2c2e;
+  --ios-highlight-light: #e5e5ea;
+  --ios-highlight-dark: #3a3a3c;
+  --ios-text-primary-light: #000000;
+  --ios-text-primary-dark: #ffffff;
+  --ios-text-secondary-light: #8e8e93;
+  --ios-text-secondary-dark: #8e8e93;
+  --ios-accent-light: #007aff;
+  --ios-accent-dark: #0a84ff;
+}
+
+/* iOS-style blur overlays - visible blur effect */
+.ios-blur-top {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 255, 255, 0.4) 75%,
+    transparent 100%
+  );
+  z-index: 15;
+  pointer-events: none;
+}
+
+.dark .ios-blur-top {
+  background: linear-gradient(
+    to bottom,
+    rgba(40, 40, 40, 0.9) 0%,
+    rgba(40, 40, 40, 0.7) 50%,
+    rgba(40, 40, 40, 0.4) 75%,
+    transparent 100%
+  );
+  z-index: 15;
+  pointer-events: none;
+}
+
+.ios-blur-bottom {
+  background: linear-gradient(
+    to top,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 255, 255, 0.4) 75%,
+    transparent 100%
+  );
+  z-index: 15;
+  pointer-events: none;
+}
+
+.dark .ios-blur-bottom {
+  background: linear-gradient(
+    to top,
+    rgba(40, 40, 40, 0.9) 0%,
+    rgba(40, 40, 40, 0.7) 50%,
+    rgba(40, 40, 40, 0.4) 75%,
+    transparent 100%
+  );
+  z-index: 15;
+  pointer-events: none;
+}
+
+/* iOS-style selection highlight - frosted glass effect */
+.ios-selection {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.dark .ios-selection {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* iOS-style buttons */
+.ios-button {
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.ios-button-cancel {
+  background: var(--ios-highlight-light);
+  color: var(--ios-accent-light);
+  border: 1px solid var(--ios-picker-border-light);
+}
+
+.dark .ios-button-cancel {
+  background: var(--ios-highlight-dark);
+  color: var(--ios-accent-dark);
+  border: 1px solid var(--ios-picker-border-dark);
+}
+
+.ios-button-done {
+  background: var(--ios-accent-light);
+  color: white;
+}
+
+.dark .ios-button-done {
+  background: var(--ios-accent-dark);
+  color: white;
+}
+
+.ios-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.dark .ios-button:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* iOS-style picker container */
+.ios-picker {
+  background: var(--ios-picker-bg-light);
+  border: 1px solid var(--ios-picker-border-light);
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
+.dark .ios-picker {
+  background: var(--ios-picker-bg-dark);
+  border: 1px solid var(--ios-picker-border-dark);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* iOS-style text */
+.ios-text-primary {
+  color: var(--ios-text-primary-light);
+}
+
+.dark .ios-text-primary {
+  color: var(--ios-text-primary-dark);
+}
+
+.ios-text-secondary {
+  color: var(--ios-text-secondary-light);
+}
+
+.dark .ios-text-secondary {
+  color: var(--ios-text-secondary-dark);
+}
+
+.ios-text-accent {
+  color: var(--ios-accent-light);
+}
+
+.dark .ios-text-accent {
+  color: var(--ios-accent-dark);
+}
