@@ -38,7 +38,6 @@ const ProfilePage: React.FC = () => {
         setNotificationsEnabled(response.data.notifications_enabled);
       } catch (error: unknown) {
         console.error('Failed to fetch preferences:', error);
-        const { error: toastError } = useToast();
         toastError('toast.error.settings.fetchPreferences');
         if (axios.isAxiosError(error) && error.response?.data?.detail) {
           // Custom error handling can be added if needed
@@ -46,6 +45,7 @@ const ProfilePage: React.FC = () => {
       }
     };
     fetchPreferences();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [t]);
 
   interface UserPreferencesUpdate {
@@ -103,7 +103,7 @@ const ProfilePage: React.FC = () => {
           <UserCard />
 
           {/* Tabs Section */}
-          <div className="sticky top-16 z-40 bg-background flex border-border" style={{ backgroundColor: 'var(--background)' }}>
+          <div id="tabs-section" className="sticky top-16 z-40 bg-background flex border-border" style={{ backgroundColor: 'var(--background)' }}>
             <button
               className={`flex-1 py-3 font-medium cursor-pointer ${activeTab === 'info' ? 'border-b-2 border-blue-500' : 'text-muted-foreground hover:text-foreground'}`}
               onClick={() => setActiveTab('info')}
@@ -162,7 +162,7 @@ const ProfilePage: React.FC = () => {
                     onClick={async () => {
                       try {
                         await logout(); // Using LOSMAX's logout
-                      } catch (err) {
+                      } catch {
                         toastError('toast.error.auth.logoutFailed');
                       }
                     }}
@@ -229,7 +229,7 @@ const ProfilePage: React.FC = () => {
                                 } catch (error: unknown) {
                                   toastError('toast.error.settings.updateName');
                                   if (axios.isAxiosError(error) && error.response?.data?.detail) {
-                                    let errorMessage = typeof error.response.data.detail === 'string'
+                                    const errorMessage = typeof error.response.data.detail === 'string'
                                       ? error.response.data.detail
                                       : JSON.stringify(error.response.data.detail);
                                     toastError(errorMessage);

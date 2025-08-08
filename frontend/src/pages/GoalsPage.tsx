@@ -21,8 +21,15 @@ export default function GoalsPage() {
   const { isAuthenticated } = useContext(AuthContext) as AuthContextType;
   const { error: toastError } = useToast();
   
+  const [isScrolled, setIsScrolled] = useState(false);
+
   useEffect(() => {
     window.scrollTo(0, 0);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   const navigate = useNavigate();
   const [goals, setGoals] = useState<Goal[]>([]);
@@ -173,7 +180,7 @@ export default function GoalsPage() {
       {/* Content with top padding to account for fixed header */}
       <div className="pt-24">
         {/* Fixed Action Bar beneath Top Bar */}
-        <div className="fixed top-20 left-0 right-0 z-40 bg-background flex flex-row justify-between items-center px-6 py-2" style={{ backgroundColor: 'var(--background)' }}>
+        <div className={`fixed top-20 left-0 right-0 z-40 bg-background flex flex-row justify-between items-center px-6 py-2 ${isScrolled ? 'shadow-md' : ''}`} style={{ backgroundColor: 'var(--background)' }}>
           {/* Filter Select Menu */}
           <div className="flex justify-start">
             <Select

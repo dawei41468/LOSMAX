@@ -64,9 +64,16 @@ export default function TasksPage() {
     }
   }, [isAuthenticated, navigate, currentFilter, fetchUserTasks]);
 
+  const [isScrolled, setIsScrolled] = useState(false);
+
   // Scroll to top on page load
   React.useEffect(() => {
     window.scrollTo(0, 0);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleDialogSubmit = async (data: Omit<Task, 'id' | 'user_id' | 'created_at'>) => {
@@ -192,7 +199,7 @@ export default function TasksPage() {
       {/* Content with top padding to account for fixed header */}
       <div className="pt-24">
         {/* Fixed Action Bar beneath Top Bar */}
-        <div className="fixed top-20 left-0 right-0 z-40 bg-background flex flex-row justify-between items-center px-6 py-2" style={{ backgroundColor: 'var(--background)' }}>
+        <div className={`fixed top-20 left-0 right-0 z-40 bg-background flex flex-row justify-between items-center px-6 py-2 ${isScrolled ? 'shadow-md' : ''}`} style={{ backgroundColor: 'var(--background)' }}>
           {/* Filter Select Menu */}
           <div className="flex justify-start">
             <Select

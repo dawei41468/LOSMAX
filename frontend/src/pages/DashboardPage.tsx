@@ -17,8 +17,15 @@ export default function DashboardPage() {
   const { isAuthenticated, userName } = useContext(AuthContext) as AuthContextType;
   const { error: toastError } = useToast();
   
+  const [isScrolled, setIsScrolled] = useState(false);
+
   useEffect(() => {
     window.scrollTo(0, 0);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   const navigate = useNavigate();
 
@@ -46,6 +53,7 @@ export default function DashboardPage() {
       }
     };
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   // Calculate stats for OverviewStats
@@ -75,7 +83,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6 md:p-4">
       {/* Fixed top bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-background h-20 flex flex-col justify-center items-center" style={{ backgroundColor: 'var(--background)' }}>
+      <div className={`fixed top-0 left-0 right-0 z-50 bg-background h-20 flex flex-col justify-center items-center ${isScrolled ? 'shadow-md' : ''}`} style={{ backgroundColor: 'var(--background)' }}>
         <h1 className="text-xl font-semibold">{t('content.dashboard.title')}</h1>
         <p className="text-sm text-muted">{t('content.dashboard.subtitle')}</p>
       </div>

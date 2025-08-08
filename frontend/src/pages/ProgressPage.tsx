@@ -17,8 +17,15 @@ const ProgressPage: React.FC = () => {
   const { isAuthenticated } = useContext(AuthContext) as AuthContextType;
   const { error: toastError } = useToast();
   
+  const [isScrolled, setIsScrolled] = useState(false);
+
   React.useEffect(() => {
     window.scrollTo(0, 0);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   const [goals, setGoals] = useState<Goal[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -49,6 +56,7 @@ const ProgressPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   useEffect(() => {
@@ -101,7 +109,7 @@ const ProgressPage: React.FC = () => {
       </div>
       
       {/* Fixed Action Bar beneath Top Bar */}
-      <div className="fixed top-20 left-0 right-0 z-40 bg-background flex flex-row justify-between items-center px-6 py-2" style={{ backgroundColor: 'var(--background)' }}>
+      <div className={`fixed top-20 left-0 right-0 z-40 bg-background flex flex-row justify-between items-center px-6 py-2 ${isScrolled ? 'shadow-md' : ''}`} style={{ backgroundColor: 'var(--background)' }}>
         <div className="flex justify-start">
           <Select
             variant="subtle"
