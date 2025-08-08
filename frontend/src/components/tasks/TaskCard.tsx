@@ -22,37 +22,39 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onEdit, onDelete, onToggleSta
       <div className="text-md font-medium mb-1 text-left">
         {task.title}
       </div>
-      <div className="flex items-center justify-between gap-1">
-        <div className="flex items-center gap-3">
+      <div className="grid grid-cols-[auto_80px_auto] gap-2 items-center">
+        <div>
           <span className="text-xs text-muted-foreground">
             {useShortDate ? formatDateShort(task.created_at) : formatDate(task.created_at)}
           </span>
+        </div>
+        <div>
           <StatusBadge status={task.status} />
         </div>
-        <div className="flex items-center">
+        <div className="flex items-center justify-end gap-0">
           <button
             onClick={() => onEdit(task)}
             aria-label={t('actions.edit')}
-            className="btn btn-ghost btn-xs"
+            className="btn btn-ghost btn-xs px-1 py-1 h-7 min-h-7"
             disabled={!task.id}
           >
-            <Edit className="w-4 h-4" />
+            <Edit className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => onToggleStatus(task)}
             aria-label={task.status === 'completed' ? t('actions.markIncomplete') : t('actions.markComplete')}
-            className="btn btn-ghost btn-xs"
+            className="btn btn-ghost btn-xs px-1 py-1 h-7 min-h-7"
             disabled={!task.id}
           >
-            <Check className={`w-4 h-4 ${task.status === 'completed' ? 'text-warning' : 'text-success'}`} />
+            <Check className={`w-3.5 h-3.5 ${task.status === 'completed' ? 'text-warning' : 'text-success'}`} />
           </button>
           <button
             onClick={() => onDelete(task.id)}
             aria-label={t('actions.delete')}
-            className="btn btn-ghost btn-xs"
+            className="btn btn-ghost btn-xs px-1 py-1 h-7 min-h-7"
             disabled={!task.id}
           >
-            <Trash2 className="w-4 h-4 text-destructive" />
+            <Trash2 className="w-3.5 h-3.5 text-destructive" />
           </button>
         </div>
       </div>

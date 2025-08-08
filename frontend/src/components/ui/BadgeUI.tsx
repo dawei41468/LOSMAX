@@ -15,7 +15,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className }) =
   const badgeColorClass = getBadgeColorClass(status);
 
   return (
-    <span className={`badge ${badgeColorClass} ${className || ''}`}>
+    <span className={`badge badge-xs !py-0 !px-1.5 text-xs ${badgeColorClass} ${className || ''}`}>
       {t(`common.${status}`)}
     </span>
   );

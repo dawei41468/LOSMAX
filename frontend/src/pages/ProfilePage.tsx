@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import UserCard from '../components/ui/UserCard';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LogOut } from 'lucide-react';
+import { LogOut, ChevronDown, ChevronUp } from 'lucide-react';
 import { ThemeSwitcher } from '../components/ui/theme-switcher';
 import { LanguageSwitch } from '../components/ui/language-toggle';
 import { AuthContext } from '../contexts/auth.context';
@@ -28,6 +28,26 @@ const ProfilePage: React.FC = () => {
   const [eveningDeadline, setEveningDeadline] = useState('');
   const [showPasswordChange, setShowPasswordChange] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  
+  // State for expandable preference cards
+  const [expandedCards, setExpandedCards] = useState<{
+    displayName: boolean;
+    deadlines: boolean;
+    notifications: boolean;
+    accountActions: boolean;
+  }>({
+    displayName: false,
+    deadlines: false,
+    notifications: false,
+    accountActions: false,
+  });
+
+  const toggleCard = (cardName: keyof typeof expandedCards) => {
+    setExpandedCards(prev => ({
+      ...prev,
+      [cardName]: !prev[cardName]
+    }));
+  };
   
   useEffect(() => {
     const fetchPreferences = async () => {
@@ -205,118 +225,168 @@ const ProfilePage: React.FC = () => {
 
                   <Card variant="flat" size="none">
                     <CardContent className="relative py-6">
-                      <h2 className="text-lg text-center font-medium mb-3 py-3">{t('content.profile.preference.displayNameTitle')}</h2>
-                      <p className="text-sm text-center text-muted-foreground mb-4">{t('content.profile.preference.displayNameDescription')}</p>
+                      <div 
+                        className="flex items-center justify-between cursor-pointer"
+                        onClick={() => toggleCard('displayName')}
+                      >
+                        <h2 className="text-lg font-medium">{t('content.profile.preference.displayNameTitle')}</h2>
+                        {expandedCards.displayName ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                      </div>
                       
-                      <div className="space-y-4">
-                        <div>
-                          <label htmlFor="nicknameInput" className="block text-sm font-medium text-muted-foreground mb-1 text-left">{t('forms.labels.nickname')}</label>
-                          <div className="flex flex-col sm:flex-row gap-2">
-                            <input
-                              id="nicknameInput"
-                              name="nickname"
-                              type="text"
-                              value={userName || ''}
-                              onChange={(e) => setUserNameContext(e.target.value)}
-                              className="w-full sm:flex-1 border border-input rounded-md px-3 py-3 sm:py-2 bg-background"
-                            />
+                      {expandedCards.displayName && (
+                        <div className="mt-4">
+                          <p className="text-sm text-center text-muted-foreground mb-4">{t('content.profile.preference.displayNameDescription')}</p>
+                          
+                          <div className="space-y-4">
+                            <div>
+                              <label htmlFor="nicknameInput" className="block text-sm font-medium text-muted-foreground mb-1 text-left">{t('forms.labels.nickname')}</label>
+                              <div className="flex flex-col sm:flex-row gap-2">
+                                <input
+                                  id="nicknameInput"
+                                  name="nickname"
+                                  type="text"
+                                  value={userName || ''}
+                                  onChange={(e) => setUserNameContext(e.target.value)}
+                                  className="w-full sm:flex-1 border border-input rounded-md px-3 py-3 sm:py-2 bg-background"
+                                />
+                                <button
+                                  className="w-full sm:w-auto px-4 py-2 bg-primary text-primary-foreground rounded-md border border-primary hover:bg-blue-500/10 hover:text-primary transition-colors"
+                                  onClick={async () => {
+                                    try {
+                                      await api.patch('/auth/update-name', { name: userName });
+                                      toastSuccess('toast.success.nameUpdated');
+                                    } catch (error: unknown) {
+                                      toastError('toast.error.settings.updateName');
+                                      if (axios.isAxiosError(error) && error.response?.data?.detail) {
+                                        const errorMessage = typeof error.response.data.detail === 'string'
+                                          ? error.response.data.detail
+                                          : JSON.stringify(error.response.data.detail);
+                                        toastError(errorMessage);
+                                      }
+                                    }
+                                  }}
+                                >
+                                  {t('actions.update')}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  <Card variant="flat" size="none">
+                    <CardContent className="relative py-6">
+                      <div 
+                        className="flex items-center justify-between cursor-pointer"
+                        onClick={() => toggleCard('deadlines')}
+                      >
+                        <h2 className="text-lg font-medium">{t('content.profile.preference.deadlinesTitle')}</h2>
+                        {expandedCards.deadlines ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                      </div>
+                      
+                      {expandedCards.deadlines && (
+                        <div className="mt-4">
+                          <p className="text-sm text-center text-muted-foreground mb-4">{t('content.profile.preference.deadlinesDescription')}</p>
+                          <div className="space-y-4">
+                            <div>
+                              <TimePicker
+                                label={t('forms.labels.morningDeadline')}
+                                value={morningDeadline}
+                                onChange={(time: string) => {
+                                  setMorningDeadline(time);
+                                  savePreference({ morning_deadline: time });
+                                }}
+                                context="morningDeadline"
+                              />
+                              <p className="text-xs text-muted-foreground mt-1">{t('content.profile.preference.morningDeadlineHint')}</p>
+                            </div>
+                            <div>
+                              <TimePicker
+                                label={t('forms.labels.eveningDeadline')}
+                                value={eveningDeadline}
+                                onChange={(time: string) => {
+                                  setEveningDeadline(time);
+                                  savePreference({ evening_deadline: time });
+                                }}
+                                context="eveningDeadline"
+                              />
+                              <p className="text-xs text-muted-foreground mt-1">{t('content.profile.preference.eveningDeadlineHint')}</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  <Card variant="flat" size="none">
+                    <CardContent className="relative py-6">
+                      <div 
+                        className="flex items-center justify-between cursor-pointer"
+                        onClick={() => toggleCard('notifications')}
+                      >
+                        <h2 className="text-lg font-medium">{t('forms.labels.notifications')}</h2>
+                        {expandedCards.notifications ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                      </div>
+                      
+                      {expandedCards.notifications && (
+                        <div className="mt-4">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-muted-foreground">{t('content.profile.preference.notificationsDescription')}</span>
+                            <div className="focus:ring-0 focus:ring-offset-0">
+                              <input
+                                type="checkbox"
+                                checked={notificationsEnabled}
+                                onChange={(e) => {
+                                  const checked = e.target.checked;
+                                  setNotificationsEnabled(checked);
+                                  savePreference({ notifications_enabled: checked });
+                                }}
+                                className="form-checkbox h-5 w-5 text-primary dark:text-primary-foreground"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  <Card variant="flat" size="none">
+                    <CardContent className="relative py-6">
+                      <div 
+                        className="flex items-center justify-between cursor-pointer"
+                        onClick={() => toggleCard('accountActions')}
+                      >
+                        <h2 className="text-lg font-medium">{t('content.profile.preference.accountActionsTitle')}</h2>
+                        {expandedCards.accountActions ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                      </div>
+                      
+                      {expandedCards.accountActions && (
+                        <div className="mt-4">
+                          <p className="text-sm text-center text-muted-foreground mb-4">{t('content.profile.preference.accountActionsDescription')}</p>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                             <button
-                              className="w-full sm:w-auto px-4 py-2 bg-primary text-primary-foreground rounded-md border border-primary hover:bg-blue-500/10 hover:text-primary transition-colors"
-                              onClick={async () => {
-                                try {
-                                  await api.patch('/auth/update-name', { name: userName });
-                                  toastSuccess('toast.success.nameUpdated');
-                                } catch (error: unknown) {
-                                  toastError('toast.error.settings.updateName');
-                                  if (axios.isAxiosError(error) && error.response?.data?.detail) {
-                                    const errorMessage = typeof error.response.data.detail === 'string'
-                                      ? error.response.data.detail
-                                      : JSON.stringify(error.response.data.detail);
-                                    toastError(errorMessage);
-                                  }
-                                }
+                              className="px-4 py-2 border border-primary rounded-md hover:bg-blue-500/10 hover:text-primary transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setShowPasswordChange(true);
                               }}
                             >
-                              {t('actions.update')}
+                              {t('actions.changePassword')}
+                            </button>
+                            <button
+                              className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500/10 transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setShowDeleteConfirm(true);
+                              }}
+                            >
+                              {t('actions.deleteAccount')}
                             </button>
                           </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card variant="flat" size="none">
-                    <CardContent className="relative py-6">
-                      <h2 className="text-lg text-center font-medium mb-3 py-3">{t('content.profile.preference.deadlinesTitle')}</h2>
-                      <p className="text-sm text-center text-muted-foreground mb-4">{t('content.profile.preference.deadlinesDescription')}</p>
-                      <div className="space-y-4">
-                        <div>
-                          <TimePicker
-                            label={t('forms.labels.morningDeadline')}
-                            value={morningDeadline}
-                            onChange={(time: string) => {
-                              setMorningDeadline(time);
-                              savePreference({ morning_deadline: time });
-                            }}
-                            context="morningDeadline"
-                          />
-                          <p className="text-xs text-muted-foreground mt-1">{t('content.profile.preference.morningDeadlineHint')}</p>
-                        </div>
-                        <div>
-                          <TimePicker
-                            label={t('forms.labels.eveningDeadline')}
-                            value={eveningDeadline}
-                            onChange={(time: string) => {
-                              setEveningDeadline(time);
-                              savePreference({ evening_deadline: time });
-                            }}
-                            context="eveningDeadline"
-                          />
-                          <p className="text-xs text-muted-foreground mt-1">{t('content.profile.preference.eveningDeadlineHint')}</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card variant="flat" size="none">
-                    <CardContent className="relative py-6">
-                      <h2 className="text-lg text-center font-medium mb-3 py-3">{t('forms.labels.notifications')}</h2>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">{t('content.profile.preference.notificationsDescription')}</span>
-                        <div className="focus:ring-0 focus:ring-offset-0">
-                          <input
-                            type="checkbox"
-                            checked={notificationsEnabled}
-                            onChange={(e) => {
-                              const checked = e.target.checked;
-                              setNotificationsEnabled(checked);
-                              savePreference({ notifications_enabled: checked });
-                            }}
-                            className="form-checkbox h-5 w-5 text-primary dark:text-primary-foreground"
-                          />
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card variant="flat" size="none">
-                    <CardContent className="relative py-6">
-                      <h2 className="text-lg text-center font-medium mb-3 py-3">{t('content.profile.preference.accountActionsTitle')}</h2>
-                      <p className="text-sm text-center text-muted-foreground mb-4">{t('content.profile.preference.accountActionsDescription')}</p>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                        <button
-                          className="px-4 py-2 border border-primary rounded-md hover:bg-blue-500/10 hover:text-primary transition-colors"
-                          onClick={() => setShowPasswordChange(true)}
-                        >
-                          {t('actions.changePassword')}
-                        </button>
-                        <button
-                          className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-500/10 transition-colors"
-                          onClick={() => setShowDeleteConfirm(true)}
-                        >
-                          {t('actions.deleteAccount')}
-                        </button>
-                      </div>
+                      )}
                     </CardContent>
                   </Card>
                 </div>
