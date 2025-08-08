@@ -51,6 +51,7 @@ export default function GoalsPage() {
     } finally {
       setIsLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, t]);
 
   useEffect(() => {
