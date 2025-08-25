@@ -20,6 +20,7 @@ This directory houses the server-side application using Python and FastAPI.
 *   **Configuration & Build**:
     *   [`requirements.txt`](../backend/requirements.txt): Defines project dependencies.
     *   [`config/settings.py`](../backend/config/settings.py): Application settings and configuration.
+    *   Environment selection via `APP_ENV`: loads `backend/.env.development` or `backend/.env.production` (see `config/settings.py`).
 *   **Source Code**:
     *   [`main.py`](../backend/main.py): The main entry point for the FastAPI application.
     *   [`database.py`](../backend/database.py): Database connection and setup.
@@ -46,12 +47,18 @@ This directory contains the client-side application, a React application.
     *   [`App.tsx`](../frontend/src/App.tsx): The root component of the React application.
     *   [`main.tsx`](../frontend/src/main.tsx): Renders the React application into the DOM.
     *   [`index.css`](../frontend/src/index.css): Global CSS styles.
-    *   [`design-system.css`](../frontend/src/styles/design-system.css): Design system styles.
+    *   [`theme-system.css`](../frontend/src/styles/theme-system.css): Theme tokens and CSS variables.
+    *   [`utility-system.css`](../frontend/src/styles/utility-system.css): Utility classes and helpers.
+    *   [`theme-animations.css`](../frontend/src/styles/theme-animations.css): Animation tokens and presets.
+    *   [`theme-transition.css`](../frontend/src/styles/theme-transition.css): Theme transition helpers.
+    *   [`timepicker.css`](../frontend/src/styles/timepicker.css): Styles for the TimePicker component.
+    *   [`THEME_GUIDELINES.md`](../frontend/src/styles/THEME_GUIDELINES.md): Theming guidelines.
     *   [`i18n.ts`](../frontend/src/i18n.ts): Internationalization configuration.
     *   [`components/`](../frontend/src/components/): Reusable UI components, including `ProtectedRoute.tsx`, `RoleBasedRedirect.tsx`, and subdirectories like `dashboard/`, `goals/`, `progress/`, `tasks/`, `ui/`.
+    *   UI documentation: [`CARD_DOCUMENTATION.md`](../frontend/src/components/ui/CARD_DOCUMENTATION.md), [`SELECT_DOCUMENTATION.md`](../frontend/src/components/ui/SELECT_DOCUMENTATION.md)
     *   [`contexts/`](../frontend/src/contexts/): React contexts for state management (e.g., `AuthContext.tsx`, `ThemeContext.tsx`).
     *   [`hooks/`](../frontend/src/hooks/): Custom React hooks (e.g., `useAuth.ts`).
-    *   [`locales/`](../frontend/src/locales/): Translation files (e.g., `en.json`, `zh.json`).
+    *   [`locales/`](../frontend/src/locales/): Translation files (e.g., `en-new.json`, `zh-new.json`). See also [`scripts/i18n-migrate.js`](../frontend/scripts/i18n-migrate.js) and [`MIGRATION_CHECKLIST.md`](../frontend/MIGRATION_CHECKLIST.md).
     *   [`pages/`](../frontend/src/pages/): Top-level page components (e.g., `AdminPage.tsx`, `AuthPage.tsx`, `DashboardPage.tsx`, `GoalsPage.tsx`, `ProfilePage.tsx`, `ProgressPage.tsx`, `TasksPage.tsx`).
     *   [`routes/`](../frontend/src/routes/): Defines client-side routing (e.g., `MainLayoutRoutes.tsx`).
     *   [`services/`](../frontend/src/services/): Services for API interactions (e.g., `api.ts`, `auth.ts`, `websocket.ts`).
@@ -59,7 +66,7 @@ This directory contains the client-side application, a React application.
 
 ### 3. Other Important Directories/Files
 
-*   [`docs/`](../docs/): Contains markdown documentation files like `architecture.md`, `ProjectStructureOverview.md`, `tasks.md`.
+*   [`docs/`](../docs/): Contains markdown documentation files like `ai_goal_breakdown.md`, `integration_plan.md`, `smarter_goal_workflow.md`, `ProjectStructureOverview.md`.
 *   Root-level scripts: `deploy-backend.sh`, `deploy-frontend.sh`, `dep-ng-conf.sh`, `ecosystem.config.js`, `losmax-nginx.conf` indicate deployment and server management configurations.
 *   `.gitignore`, `LICENSE`: Standard project files.
 

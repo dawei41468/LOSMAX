@@ -16,12 +16,14 @@ In the local development setup, the frontend and backend services run independen
 ### Frontend
 - **Framework:** React / Vite
 - **URL** `http://localhost:5173`
-- **API Connection:** The Vite development server proxies API requests to the backend. The `VITE_API_BASE_URL` in the `.env.development` file should be set to the backend's address (e.g., `http://localhost:8000`).
+- **API Connection:** The app reads the API base URL from `frontend/.env.development` (`VITE_API_BASE_URL`, e.g., `http://localhost:8000`). No dev proxy is configured in `frontend/vite.config.ts`.
 
 ### Backend
 - **Framework:** FastAPI / Python
 - **URL** `http://localhost:8000`
 - **Execution:** The backend is typically run directly using `uvicorn` for live reloading (e.g., `uvicorn main:app --reload`).
+- **Environment:** Controlled by `APP_ENV` (development/production). Loads `backend/.env.development` or `backend/.env.production` (see `backend/config/settings.py`).
+- **Required vars:** `MONGODB_URL`, `SECRET_KEY`, `REFRESH_SECRET_KEY` (optional: `ACCESS_TOKEN_EXPIRE_MINUTES`, `REFRESH_TOKEN_EXPIRE_DAYS`, `REFRESH_TOKEN_ROTATION`, `ALGORITHM`).
 
 ---
 
@@ -33,6 +35,7 @@ In the production environment, the application is deployed on a single server, w
 - **Service:** Nginx
 - **URL** `https://cna-los.life`
 - **Details:** Nginx serves the static, optimized build of the React application located at `/usr/share/nginx/html/losmax`. The `location /` block in the Nginx configuration (`losmax-nginx.conf`) handles all non-API requests by serving the frontend's `index.html` file.
+- **Build:** From `frontend/`, run `npm install && npm run build` and deploy the contents of `frontend/dist/` to `/usr/share/nginx/html/losmax`.
 
 ### Backend
 - **Service:** PM2 / Gunicorn / Uvicorn
@@ -49,9 +52,11 @@ In the production environment, the application is deployed on a single server, w
 
 ### Frontend
 1. Navigate to the frontend directory: `cd frontend`
-2. Run the development server: `npm run dev`
+2. Install dependencies: `npm install`
+3. Run the development server: `npm run dev`
 
 ### Backend
 1. Navigate to the backend directory: `cd backend`
-2. Activate the virtual environment: `source venv/bin/activate` (for Linux/Mac) or on Windows, activate the virtual environment first.
-3. Run the server: `uvicorn main:app --reload`
+2. Create and activate a virtual environment: `python -m venv venv && source venv/bin/activate` (Linux/Mac). On Windows, create and activate a venv accordingly.
+3. Install dependencies: `pip install -r requirements.txt`
+4. Run the server: `uvicorn main:app --reload`
