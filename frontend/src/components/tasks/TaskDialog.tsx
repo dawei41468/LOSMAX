@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useToast } from '../../hooks/useToast';
@@ -38,15 +38,7 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ isOpen, onClose, onSubmit, init
   const [goals, setGoals] = useState<Goal[]>([]);
   const [isLoadingGoals, setIsLoadingGoals] = useState(false);
 
-  useEffect(() => {
-    if (isOpen) {
-      setTitle(initialTask?.title || '');
-      setGoalId(initialTask?.goal_id || '');
-      fetchGoals();
-    }
-  }, [isOpen, initialTask]);
-
-  const fetchGoals = async () => {
+  const fetchGoals = useCallback(async () => {
     setIsLoadingGoals(true);
     try {
       const fetchedGoals = await getGoals('active');
@@ -57,7 +49,15 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ isOpen, onClose, onSubmit, init
     } finally {
       setIsLoadingGoals(false);
     }
-  };
+  }, [toastError]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setTitle(initialTask?.title || '');
+      setGoalId(initialTask?.goal_id || '');
+      fetchGoals();
+    }
+  }, [isOpen, initialTask, fetchGoals]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

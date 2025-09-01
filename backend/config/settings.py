@@ -1,5 +1,5 @@
 import os
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from pathlib import Path
 
 # Determine the environment and set the appropriate .env file path
@@ -13,18 +13,18 @@ else:
     env_file = env_file_path / ".env.development"
 
 class Settings(BaseSettings):
-    MONGODB_URL: str
-    SECRET_KEY: str
-    REFRESH_SECRET_KEY: str
+    MONGODB_URL: str = ""  # Will be loaded from env
+    SECRET_KEY: str = ""  # Will be loaded from env
+    REFRESH_SECRET_KEY: str = ""  # Will be loaded from env
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     REFRESH_TOKEN_ROTATION: bool = True
     ALGORITHM: str = "HS256"
-    
-    class Config:
-        # Set the env_file path directly in the Config
-        env_file = env_file
-        env_file_encoding = "utf-8"
-        extra = "ignore"
+
+    model_config = SettingsConfigDict(
+        env_file=env_file,
+        env_file_encoding="utf-8",
+        extra="ignore"
+    )
 
 settings = Settings()
