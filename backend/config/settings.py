@@ -25,5 +25,6 @@ class Settings(BaseSettings):
         # Set the env_file path directly in the Config
         env_file = env_file
         env_file_encoding = "utf-8"
+        extra = "ignore"
 
 settings = Settings()
