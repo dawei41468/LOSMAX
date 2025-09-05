@@ -1,83 +1,76 @@
 #!/bin/bash
+set -euo pipefail
 
-# This script deploys the frontend application to the Tencent Lighthouse server.
+# =========================
+# LOS frontend deployment
+# =========================
 
-# Server details
-SERVER_USER="root"
-SERVER_IP="111.230.109.143"
-REMOTE_BASE_DIR="/root/LOSMAX" # Base directory on the server where the project will reside
+# --- Server details ---
+SERVER_USER="ubuntu"
+SERVER_IP="124.156.174.180"
+SSH_KEY="${HOME}/.ssh/id_ed25519_tencentHK"
+
+# --- Remote paths ---
+REMOTE_BASE_DIR="/home/ubuntu/LOS"
 REMOTE_FRONTEND_DIR="${REMOTE_BASE_DIR}/frontend"
-REMOTE_WEB_ROOT="/usr/share/nginx/html" # Base Nginx web root
-REMOTE_LOSMAX_FRONTEND_DIR="${REMOTE_WEB_ROOT}/losmax" # Dedicated directory for LOSMAX frontend
+REMOTE_WEB_ROOT="/var/www/los-frontend"
 
-echo "Creating tar archive of frontend (excluding node_modules)..."
-# Create a tar archive of the frontend directory, excluding node_modules
-tar --exclude='frontend/node_modules' -czf frontend.tar.gz frontend
+# --- Local paths ---
+LOCAL_FRONTEND_DIR="frontend"
+BUNDLE="frontend.tar.gz"
 
-if [ $? -ne 0 ]; then
-  echo "Failed to create frontend tar archive. Exiting."
-  exit 1
+echo "==> Creating tar archive of frontend (excluding node_modules)"
+tar --exclude="${LOCAL_FRONTEND_DIR}/node_modules" -czf "${BUNDLE}" "${LOCAL_FRONTEND_DIR}"
+
+echo "==> Copying ${BUNDLE} to ${SERVER_USER}@${SERVER_IP}:${REMOTE_BASE_DIR}/"
+scp -i "${SSH_KEY}" "${BUNDLE}" "${SERVER_USER}@${SERVER_IP}:${REMOTE_BASE_DIR}/"
+
+echo "==> Cleaning up local tar"
+rm -f "${BUNDLE}"
+
+echo "==> Deploying on remote host"
+ssh -i "${SSH_KEY}" "${SERVER_USER}@${SERVER_IP}" <<'EOF'
+set -euo pipefail
+
+REMOTE_BASE_DIR="/home/ubuntu/LOS"
+REMOTE_FRONTEND_DIR="${REMOTE_BASE_DIR}/frontend"
+REMOTE_WEB_ROOT="/var/www/los-frontend"
+BUNDLE="${REMOTE_BASE_DIR}/frontend.tar.gz"
+
+echo "==> Resetting remote frontend workspace"
+rm -rf "${REMOTE_FRONTEND_DIR}"
+mkdir -p "${REMOTE_FRONTEND_DIR}"
+
+echo "==> Extracting bundle"
+tar -xzf "${BUNDLE}" -C "${REMOTE_FRONTEND_DIR}" --strip-components=1 || true
+rm -f "${BUNDLE}"
+
+cd "${REMOTE_FRONTEND_DIR}"
+
+echo "==> Installing frontend dependencies (prefer npm ci)"
+if [ -f package-lock.json ]; then
+  npm ci --no-audit --no-fund --progress=false
+else
+  npm install --no-audit --no-fund --progress=false
 fi
 
-echo "Copying frontend.tar.gz to ${SERVER_USER}@${SERVER_IP}:${REMOTE_BASE_DIR}/..."
-# Copy the tar archive to your Tencent Lighthouse server
-scp -i ~/.ssh/id_rsa frontend.tar.gz ${SERVER_USER}@${SERVER_IP}:${REMOTE_BASE_DIR}/
+# If your build needs env vars (e.g., Vite):
+# echo "VITE_API_BASE=/api" > .env.production
 
-if [ $? -ne 0 ]; then
-  echo "Failed to copy frontend.tar.gz. Exiting."
-  exit 1
-fi
+echo "==> Building frontend for production"
+npm run build -- --mode production
 
-echo "Cleaning up local tar archive..."
-rm frontend.tar.gz
+echo "==> Publishing build to Nginx web root"
+sudo mkdir -p "${REMOTE_WEB_ROOT}"
+sudo rm -rf "${REMOTE_WEB_ROOT:?}/"*
+sudo cp -r dist/* "${REMOTE_WEB_ROOT}/"
 
-echo "Connecting to ${SERVER_USER}@${SERVER_IP} and deploying frontend..."
+# Ownership: files readable by nginx (www-data)
+sudo chown -R ubuntu:www-data "${REMOTE_WEB_ROOT}"
+sudo find "${REMOTE_WEB_ROOT}" -type d -exec chmod 755 {} \;
+sudo find "${REMOTE_WEB_ROOT}" -type f -exec chmod 644 {} \;
 
-ssh -i ~/.ssh/id_rsa ${SERVER_USER}@${SERVER_IP} << EOF
-  echo "Navigating to base project directory..."
-  cd ${REMOTE_BASE_DIR}
-
-  echo "Removing existing frontend directory on server..."
-  rm -rf frontend
-
-  echo "Creating new frontend directory..."
-  mkdir -p frontend
-
-  echo "Extracting frontend.tar.gz..."
-  tar -xzf frontend.tar.gz -C frontend --strip-components=1
-
-  echo "Removing frontend.tar.gz on server..."
-  rm frontend.tar.gz
-
-  echo "Navigating to frontend directory..."
-  cd frontend
-
-  echo "Updating npm on server..."
-  npm install -g npm@latest
-
-  echo "Installing frontend dependencies..."
-  npm install
-
-  echo "Building frontend for production..."
-  npm run build -- --mode production
-
-  if [ \$? -ne 0 ]; then
-    echo "Frontend build failed on server."
-  else
-    echo "Copying built frontend assets to Nginx web root for LOSMAX..."
-    mkdir -p ${REMOTE_LOSMAX_FRONTEND_DIR}
-    cp -r dist/* ${REMOTE_LOSMAX_FRONTEND_DIR}/
-  fi
-
-  echo "Cleaning up frontend.tar.gz on server..."
-  rm -f ../frontend.tar.gz
-
-  echo "Frontend deployment complete."
+echo "==> Frontend deployed."
 EOF
 
-if [ $? -ne 0 ]; then
-  echo "Deployment script failed on remote server. Exiting."
-  exit 1
-fi
-
-echo "Frontend deployment script finished."
+echo "✅ Frontend deployment script finished."

@@ -1,12 +1,13 @@
 module.exports = {
-  apps : [{
-    name: "losmax-backend",
-    script: "venv/bin/gunicorn",
-    args: "-k uvicorn.workers.UvicornWorker --workers 4 --bind 0.0.0.0:8000 --timeout 120 main:app",
-    cwd: "/root/LOSMAX/backend",
-    interpreter: "/root/LOSMAX/backend/venv/bin/python",
+  apps: [{
+    name: "los-backend",
+    cwd: "/home/ubuntu/LOS/backend",
+    script: "/home/ubuntu/LOS/backend/venv/bin/gunicorn",
+    args: "-k uvicorn.workers.UvicornWorker --workers 4 --bind 127.0.0.1:4000 --timeout 120 main:app",
+    interpreter: "none",
     env: {
-      "APP_ENV": "production"
+      APP_ENV: "production",
+      PYTHONPATH: "/home/ubuntu/LOS/backend",
     }
   }]
 }

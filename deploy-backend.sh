@@ -1,61 +1,80 @@
 #!/bin/bash
+set -euo pipefail
 
-# This script deploys the backend application to the Tencent Lighthouse server.
-# For the first deployment, this script will copy the entire backend directory to the server.
+# =========================
+# LOS backend deployment
+# Target: Tencent Lighthouse (Hong Kong)
+# =========================
 
-# Server details
-SERVER_USER="root"
-SERVER_IP="111.230.109.143"
-REMOTE_BASE_DIR="/root/LOSMAX" # Base directory on the server where the project will reside
+# --- Server details (edit if IP/key change) ---
+SERVER_USER="ubuntu"
+SERVER_IP="124.156.174.180"
+SSH_KEY="${HOME}/.ssh/id_ed25519_tencentHK"
+
+# --- Remote paths ---
+REMOTE_BASE_DIR="/home/ubuntu/LOS"
 REMOTE_APP_DIR="${REMOTE_BASE_DIR}/backend"
+REMOTE_ECOSYSTEM="${REMOTE_BASE_DIR}/ecosystem.config.js"
 
-echo "Copying backend code to ${SERVER_USER}@${SERVER_IP}:${REMOTE_BASE_DIR} (excluding venv)..."
-# Ensure the base directory exists on the server
-ssh -i ~/.ssh/id_rsa ${SERVER_USER}@${SERVER_IP} "mkdir -p ${REMOTE_BASE_DIR}"
+# --- Local paths ---
+LOCAL_BACKEND_DIR="backend"
+LOCAL_ECOSYSTEM_FILE="ecosystem.config.js"
 
-# Remove existing backend directory on server to ensure a clean copy
-ssh -i ~/.ssh/id_rsa ${SERVER_USER}@${SERVER_IP} "rm -rf ${REMOTE_APP_DIR}"
+echo "==> Ensuring remote base dir exists: ${REMOTE_BASE_DIR}"
+ssh -i "${SSH_KEY}" "${SERVER_USER}@${SERVER_IP}" "mkdir -p '${REMOTE_BASE_DIR}'"
 
-# Create the target backend directory on the server
-ssh -i ~/.ssh/id_rsa ${SERVER_USER}@${SERVER_IP} "mkdir -p ${REMOTE_APP_DIR}"
+echo "==> Recreating remote backend dir: ${REMOTE_APP_DIR}"
+ssh -i "${SSH_KEY}" "${SERVER_USER}@${SERVER_IP}" "rm -rf '${REMOTE_APP_DIR}' && mkdir -p '${REMOTE_APP_DIR}'"
 
-# Create a tar archive of the backend directory, excluding venv, and extract it on the server
-(cd backend && tar --exclude=venv -czf - .) | ssh -i ~/.ssh/id_rsa ${SERVER_USER}@${SERVER_IP} "tar -xzf - -C ${REMOTE_APP_DIR}"
+echo "==> Copying backend code (excluding venv) via tar stream"
+( cd "${LOCAL_BACKEND_DIR}" && tar --exclude=venv -czf - . ) \
+| ssh -i "${SSH_KEY}" "${SERVER_USER}@${SERVER_IP}" "tar -xzf - -C '${REMOTE_APP_DIR}'"
 
+echo "==> Uploading PM2 ecosystem file (always overwrite)"
+scp -i "${SSH_KEY}" "${LOCAL_ECOSYSTEM_FILE}" "${SERVER_USER}@${SERVER_IP}:${REMOTE_ECOSYSTEM}"
+
+echo "==> Provisioning & starting on remote host"
+ssh -i "${SSH_KEY}" "${SERVER_USER}@${SERVER_IP}" << 'EOF'
+set -euo pipefail
+
+cd /home/ubuntu/LOS
+
+echo "==> Ensuring venv tooling is installed"
+sudo apt-get update -y
+sudo apt-get install -y python3-venv python3-pip >/dev/null
+
+echo "==> (Re)creating Python venv"
+python3 -m venv backend/venv
+
+echo "==> Upgrading pip"
+./backend/venv/bin/pip install --upgrade pip >/dev/null
+
+echo "==> Installing backend requirements"
+./backend/venv/bin/pip install --index-url https://pypi.org/simple/ -r backend/requirements.txt
+
+# Make sure gunicorn/uvicorn are present
+./backend/venv/bin/python - <<PY
+import sys
+missing=[]
+for p in ("gunicorn","uvicorn"):
+    try: __import__(p)
+    except Exception: missing.append(p)
+if missing:
+    print("Installing:", ", ".join(missing))
+    sys.exit(1)
+PY
 if [ $? -ne 0 ]; then
-  echo "Failed to copy backend code. Exiting."
-  exit 1
+  ./backend/venv/bin/pip install gunicorn uvicorn
 fi
 
-echo "Copying ecosystem.config.js to server..."
-scp -i ~/.ssh/id_rsa ecosystem.config.js ${SERVER_USER}@${SERVER_IP}:${REMOTE_BASE_DIR}/ecosystem.config.js
+echo "==> Clean restart PM2 app"
+pm2 stop los-backend || true
+pm2 delete los-backend || true
+pm2 start ecosystem.config.js
 
-echo "Connecting to ${SERVER_USER}@${SERVER_IP} and deploying backend..."
+echo "==> Save PM2 list for reboot"
+pm2 save
 
-ssh -i ~/.ssh/id_rsa ${SERVER_USER}@${SERVER_IP} << EOF
-  echo "Navigating to project directory..."
-  cd ${REMOTE_BASE_DIR}
-
-  echo "Creating virtual environment in backend..."
-  python3 -m venv backend/venv
-
-  echo "Upgrading pip within the virtual environment..."
-  ./backend/venv/bin/pip install --upgrade pip
-
-  echo "Installing backend dependencies into virtual environment from official PyPI..."
-  ./backend/venv/bin/pip install --index-url https://pypi.org/simple/ -r backend/requirements.txt
-
-  echo "Stopping existing backend process (if running)..."
-  pm2 stop losmax-backend || true
-  pm2 delete losmax-backend || true
-
-  echo "Starting backend application with pm2 using ecosystem file..."
-  pm2 start ecosystem.config.js
-
-  echo "Saving pm2 process list..."
-  pm2 save
-
-  echo "Backend deployment complete."
 EOF
 
-echo "Deployment script finished."
+echo "✅ Deployment complete."

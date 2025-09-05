@@ -1,0 +1,46 @@
+server {
+    listen 443 ssl http2;
+    server_name los.studiodtw.net;
+
+    ssl_certificate     /etc/ssl/certs/cloudflare-origin.crt;
+    ssl_certificate_key /etc/ssl/private/cloudflare-origin.key;
+
+    # Frontend
+    location / {
+        root /var/www/los-frontend;
+        index index.html;
+        try_files $uri /index.html;
+    }
+
+    # Exact health: backend route is /api/health (keep /api)
+    location = /api/health {
+        proxy_pass http://127.0.0.1:4000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Other API routes: strip /api/ prefix (frontend calls /api/..., backend has /auth, /goals, ...)
+    location /api/ {
+        proxy_pass http://127.0.0.1:4000/;  # trailing slash strips /api/
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    add_header X-Frame-Options SAMEORIGIN;
+    add_header X-Content-Type-Options nosniff;
+    add_header Referrer-Policy strict-origin-when-cross-origin;
+
+    access_log /var/log/nginx/los_ssl_access.log;
+    error_log  /var/log/nginx/los_ssl_error.log;
+}
+
+# Redirect HTTP → HTTPS
+server {
+    listen 80;
+    server_name los.studiodtw.net;
+    return 301 https://$host$request_uri;
+}
