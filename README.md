@@ -4,12 +4,25 @@
 LOSMAX is a modern, full-stack web application designed to help users track their goals and daily tasks. It provides a user-friendly interface for creating, updating, and managing personal and professional objectives. The application features a real-time component using WebSockets to ensure data is always synchronized across sessions.
 
 The tech stack consists of:
-- **Frontend:** A responsive single-page application (SPA) built with React, TypeScript, and Vite.
+- **Frontend:** A responsive single-page application (SPA) built with React, TypeScript, Vite, and Tailwind CSS for styling.
 - **Backend:** A robust API server built with Python, FastAPI, and MongoDB for data persistence.
+- **Additional Features:** Internationalization (i18n), theming system, admin panel, and smarter goals functionality.
+
+## 2. Key Features
+
+- **Goal Management:** Create, edit, and track personal and professional goals with progress monitoring.
+- **Task Management:** Organize daily tasks with status tracking and categorization.
+- **Smarter Goals:** Advanced goal-setting features based on SMART criteria (see docs/smarter_goals_design.md).
+- **Real-time Updates:** WebSocket integration for live synchronization across devices.
+- **User Management:** Role-based access control with admin capabilities.
+- **Internationalization:** Support for multiple languages (English and Chinese).
+- **Theming:** Dark/light mode with customizable themes.
+- **Admin Panel:** User management, system monitoring, and configuration.
+- **Responsive Design:** Mobile-friendly interface with bottom navigation.
 
 ---
 
-## 2. Development Environment
+## 3. Development Environment
 
 In the local development setup, the frontend and backend services run independently and communicate directly.
 
@@ -27,7 +40,7 @@ In the local development setup, the frontend and backend services run independen
 
 ---
 
-## 3. Production Environment
+## 4. Production Environment
 
 In the production environment, the application is deployed on a single server, with Nginx acting as a reverse proxy and PM2 managing the backend process.
 
@@ -48,7 +61,16 @@ In the production environment, the application is deployed on a single server, w
 - **HTTP API:** All incoming requests to `https://los.studiodtw.net/api/` are proxied by Nginx to the backend service running at `http://127.0.0.1:4000/`. The `/api/` prefix is stripped from the request path before it is sent to the backend.
 - **WebSocket API:** All WebSocket connections to `wss://los.studiodtw.net/ws/` are proxied by Nginx to the backend's WebSocket endpoint at `http://127.0.0.1:4000/ws/`.
 
-## 4. How to Run Locally
+## 5. Documentation
+
+- [Project Structure Overview](docs/ProjectStructureOverview.md)
+- [Smarter Goals Design](docs/smarter_goals_design.md)
+- [Smarter Goals Migration Plan](docs/smarter_goals_migration_plan.md)
+- [I18N Migration Guide](I18N_MIGRATION_GUIDE.md)
+- [Frontend Design System](frontend/DESIGN_SYSTEM.md)
+- [Migration Checklist](frontend/MIGRATION_CHECKLIST.md)
+
+## 6. How to Run Locally
 
 ### Frontend
 1. Navigate to the frontend directory: `cd frontend`
@@ -60,3 +82,8 @@ In the production environment, the application is deployed on a single server, w
 2. Create and activate a virtual environment: `python -m venv venv && source venv/bin/activate` (Linux/Mac). On Windows, create and activate a venv accordingly.
 3. Install dependencies: `pip install -r requirements.txt`
 4. Run the server: `uvicorn main:app --reload`
+
+### Additional Setup
+- Ensure MongoDB is running locally or configure the connection string in `backend/.env.development`.
+- For frontend, ensure Node.js is installed.
+- For internationalization, locales are in `frontend/src/locales/`.

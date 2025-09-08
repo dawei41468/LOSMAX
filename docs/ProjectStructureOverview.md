@@ -9,7 +9,7 @@ The project is organized into several top-level directories:
 *   [`backend/`](../backend/): Contains the server-side application logic.
 *   [`frontend/`](../frontend/): Contains the client-side application logic.
 *   [`docs/`](../docs/): Contains project documentation.
-*   Root-level configuration files: `package.json`, `package-lock.json`, `.gitignore`, `LICENSE`, and various deployment scripts like `deploy-backend.sh`, `deploy-frontend.sh`, `dep-ng-conf.sh`, `ecosystem.config.js`, `losmax-nginx.conf`.
+*   Root-level configuration files: `package.json`, `package-lock.json`, `.gitignore`, `LICENSE`, and various deployment scripts like `deploy-backend.sh`, `deploy-frontend.sh`, `deploy-nginx-los.sh`, `ecosystem.config.js`, `losmax-nginx.conf`.
 
 ## Detailed Breakdown
 
@@ -66,8 +66,8 @@ This directory contains the client-side application, a React application.
 
 ### 3. Other Important Directories/Files
 
-*   [`docs/`](../docs/): Contains markdown documentation files like `ai_goal_breakdown.md`, `integration_plan.md`, `smarter_goal_workflow.md`, `ProjectStructureOverview.md`.
-*   Root-level scripts: `deploy-backend.sh`, `deploy-frontend.sh`, `dep-ng-conf.sh`, `ecosystem.config.js`, `losmax-nginx.conf` indicate deployment and server management configurations.
+*   [`docs/`](../docs/): Contains markdown documentation files like `smarter_goals_design.md`, `smarter_goals_migration_plan.md`, `ProjectStructureOverview.md`.
+*   Root-level scripts: `deploy-backend.sh`, `deploy-frontend.sh`, `deploy-nginx-los.sh`, `ecosystem.config.js`, `losmax-nginx.conf` indicate deployment and server management configurations.
 *   `.gitignore`, `LICENSE`: Standard project files.
 
 ### High-Level Architecture Diagram
