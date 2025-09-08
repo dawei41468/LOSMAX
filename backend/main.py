@@ -11,6 +11,29 @@ from datetime import datetime
 from routes import auth, goals, websocket, preferences, task, admin # Added preferences and task router
 from middleware.cors import setup_cors
 
+def mask_sensitive_settings(settings_obj):
+    """Mask sensitive information in settings for logging purposes."""
+    sensitive_fields = ['SECRET_KEY', 'REFRESH_SECRET_KEY', 'MONGODB_URL']
+    masked_settings = {}
+
+    for key, value in settings_obj.__dict__.items():
+        if key in sensitive_fields and isinstance(value, str):
+            if key == 'MONGODB_URL' and '@' in value:
+                # Mask MongoDB URL credentials: mongodb://user:pass@host -> mongodb://***:***@host
+                protocol, rest = value.split('://', 1)
+                if '@' in rest:
+                    credentials, host = rest.split('@', 1)
+                    masked_settings[key] = f"{protocol}://***:***@{host}"
+                else:
+                    masked_settings[key] = value
+            else:
+                # Mask other sensitive strings
+                masked_settings[key] = "***MASKED***"
+        else:
+            masked_settings[key] = value
+
+    return masked_settings
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await connect_to_mongo()
@@ -20,7 +43,7 @@ app = FastAPI(lifespan=lifespan)
 setup_cors(app)
 app.include_router(websocket.router)
 
-print(f"Loaded settings: {settings}")
+print(f"Loaded settings: {mask_sensitive_settings(settings)}")
 
 @app.get("/")
 async def root():
