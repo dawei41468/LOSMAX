@@ -52,7 +52,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUserLanguageState(null);
         }
       } catch (error) {
+        console.error('Token refresh failed:', error);
         toastError('toast.error.auth.tokenValidationFailed');
+        // Clear tokens on refresh failure
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userRole');
+        localStorage.removeItem('userLanguage');
         setIsAuthenticated(false);
         setUserNameState(null);
         setUserIdState(null);
