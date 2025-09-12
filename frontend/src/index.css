@@ -53,6 +53,7 @@ html {
 }
 
 body {
+  margin: 0; /* Remove default browser body margin to eliminate extra left/right spacing */
   font-family: var(--font-family-sans);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -248,6 +249,67 @@ body {
 }
 
 /* Auth Page Styles - Minimal spacing adjustments */
+/* Page container for Auth screens: center content with smaller padding */
+.page-auth {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Reduce horizontal padding further */
+  padding-left: var(--spacing-xs);
+  padding-right: var(--spacing-xs);
+  /* Shift content upward slightly to reduce top whitespace (approx ~30% of current) */
+  transform: translateY(-8vh);
+  /* Reduce bottom whitespace by ~20% using a slight negative bottom margin */
+  margin-bottom: -4vh;
+}
+
+/* Reduce the upward shift on shorter viewports to avoid clipping */
+@media (max-height: 700px) {
+  .page-auth {
+    transform: translateY(-4vh);
+    margin-bottom: -2vh;
+  }
+}
+
+@media (max-height: 540px) {
+  .page-auth {
+    transform: none;
+    margin-bottom: 0;
+  }
+}
+
+/* Remove horizontal padding on small/medium screens to eliminate left-edge spacing */
+@media (max-width: 768px) {
+  .page-auth {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/* Ensure the auth card itself has no unintended horizontal margins */
+.auth-card {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* On very small screens, remove horizontal padding entirely */
+@media (max-width: 420px) {
+  .page-auth {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  /* Make the auth container full-bleed on very small screens */
+  .auth-card {
+    max-width: none;
+    width: 100vw;
+  }
+  /* Remove card border radius so it visually touches the screen edges */
+  .page-auth .rounded-lg {
+    border-radius: 0.5rem;
+  }
+}
+
 .auth-card {
   width: 100%;
   max-width: 400px;
@@ -255,6 +317,22 @@ body {
 
 .auth-header {
   margin-bottom: 0; /* No margin below LOS header */
+}
+
+/* Reduce vertical padding for the LOSHeader container on auth pages */
+.auth-header > div {
+  padding-top: 0.5rem; /* increase header vertical padding */
+  padding-bottom: 0.5rem;
+}
+
+/* Reduce the gap between the LOS icon and the subtitle text on auth pages */
+.auth-header .text-foreground {
+  margin-top: 0.75rem !important; /* increase gap between logo and subtitle */
+}
+
+/* Reduce the top margin for the card under the header on auth pages */
+.page-auth .bg-surface {
+  margin-top: 1rem !important; /* increase space between header and login card */
 }
 
 .auth-divider {
