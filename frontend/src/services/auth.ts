@@ -22,11 +22,9 @@ export async function login(
     throw new Error('Login failed');
   }
 
-  // 'name' is a parameter to the register function.
-  // The response from the server will also contain 'name'.
-  // Let's ensure we destructure it correctly, possibly aliasing if needed,
-  // though the previous diff already aliased it to userNameFromResponse.
-  // The backend's Token model now returns 'name', so we expect it here.
+  // Capture the language chosen pre-login (if any) before we potentially override it with server value
+  const preLoginLanguage = localStorage.getItem('userLanguage');
+
   const { access_token, refresh_token, user_id, name: nameReturnedByApi, language, role } = await response.json(); // Added role
   localStorage.setItem('access_token', access_token);
   localStorage.setItem('refresh_token', refresh_token);
@@ -35,7 +33,26 @@ export async function login(
   if (nameReturnedByApi) { // Use the name returned by the API
     localStorage.setItem('userName', nameReturnedByApi);
   }
-  if (language) {
+  // Decide which language to persist: prefer pre-login chosen language if it exists
+  if (preLoginLanguage && preLoginLanguage !== language) {
+    try {
+      await fetch(`${import.meta.env.VITE_API_BASE_URL}/preferences`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${access_token}`
+        },
+        body: JSON.stringify({ language: preLoginLanguage }),
+        credentials: 'include'
+      });
+      localStorage.setItem('userLanguage', preLoginLanguage);
+    } catch (_) {
+      // If this fails, fall back to server language if provided
+      if (language) {
+        localStorage.setItem('userLanguage', language);
+      }
+    }
+  } else if (language) {
     localStorage.setItem('userLanguage', language);
   }
   if (role) { // Store userRole if present in response
@@ -64,6 +81,9 @@ export async function register(
     throw new Error('Registration failed');
   }
  
+  // Capture pre-login language preference before reading server response
+  const preLoginLanguage = localStorage.getItem('userLanguage');
+
   const { access_token, refresh_token, user_id, name: userNameFromResponse, language, role } = await response.json(); // Added role
   localStorage.setItem('access_token', access_token);
   localStorage.setItem('refresh_token', refresh_token);
@@ -72,7 +92,24 @@ export async function register(
   if (userNameFromResponse) {
     localStorage.setItem('userName', userNameFromResponse);
   }
-  if (language) {
+  if (preLoginLanguage && preLoginLanguage !== language) {
+    try {
+      await fetch(`${import.meta.env.VITE_API_BASE_URL}/preferences`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${access_token}`
+        },
+        body: JSON.stringify({ language: preLoginLanguage }),
+        credentials: 'include'
+      });
+      localStorage.setItem('userLanguage', preLoginLanguage);
+    } catch (_) {
+      if (language) {
+        localStorage.setItem('userLanguage', language);
+      }
+    }
+  } else if (language) {
     localStorage.setItem('userLanguage', language);
   }
   if (role) { // Store userRole if present in response

@@ -191,7 +191,7 @@ export default function TasksPage() {
   return (
     <div className="no-scrollbar md:p-4" style={{ overflowY: 'auto' }}>
       {/* Fixed top bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-background h-20 flex flex-col justify-center items-center" style={{ backgroundColor: 'var(--background)' }}>
+      <div className="fixed top-0 left-0 right-0 z-50 bg-surface h-20 flex flex-col justify-center items-center">
         <h1 className="text-xl font-semibold">{t('content.tasks.dailyTasks')}</h1>
         <p className="text-sm text-muted">{t('content.tasks.subtitle')}</p>
       </div>
@@ -199,7 +199,7 @@ export default function TasksPage() {
       {/* Content with top padding to account for fixed header */}
       <div className="pt-24">
         {/* Fixed Action Bar beneath Top Bar */}
-        <div className={`fixed top-20 left-0 right-0 z-40 bg-background flex flex-row justify-between items-center px-6 py-2 ${isScrolled ? 'shadow-md' : ''}`} style={{ backgroundColor: 'var(--background)' }}>
+        <div className={`fixed top-20 left-0 right-0 z-40 bg-surface flex flex-row justify-between items-center px-6 py-2 ${isScrolled ? 'shadow-md' : ''}`}>
           {/* Filter Select Menu */}
           <div className="flex justify-start">
             <Select

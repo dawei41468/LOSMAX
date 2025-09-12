@@ -103,13 +103,13 @@ const ProgressPage: React.FC = () => {
   return (
     <div className="no-scrollbar md:p-4" style={{ overflowY: 'auto' }}>
       {/* Fixed top bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-background h-20 flex flex-col justify-center items-center" style={{ backgroundColor: 'var(--background)' }}>
+      <div className="fixed top-0 left-0 right-0 z-50 bg-background h-20 flex flex-col justify-center items-center" style={{ backgroundColor: 'var(--surface)' }}>
         <h1 className="text-xl font-semibold">{t('content.progress.title')}</h1>
         <p className="text-sm text-muted">{t('content.progress.subtitle')}</p>
       </div>
       
       {/* Fixed Action Bar beneath Top Bar */}
-      <div className={`fixed top-20 left-0 right-0 z-40 bg-background flex flex-row justify-between items-center px-6 py-2 ${isScrolled ? 'shadow-md' : ''}`} style={{ backgroundColor: 'var(--background)' }}>
+      <div className={`fixed top-20 left-0 right-0 z-40 bg-background flex flex-row justify-between items-center px-6 py-2 ${isScrolled ? 'shadow-md' : ''}`} style={{ backgroundColor: 'var(--surface)' }}>
         <div className="flex justify-start">
           <Select
             variant="subtle"
@@ -188,7 +188,7 @@ const ProgressPage: React.FC = () => {
             })}
           </div>
         ) : (
-          <p className="text-gray-500">{t('feedback.info.noGoalsFound')}</p>
+          <p className="text-center py-4 text-gray-500 text-xl">{t('feedback.info.noGoalsFound')}</p>
         )}
       </div>
     </div>

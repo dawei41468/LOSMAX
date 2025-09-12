@@ -17,6 +17,8 @@
   
   /* Semantic colors for light theme */
   --background: #ffffff;
+  /* New surface token: mimics background in light mode */
+  --surface: var(--background);
   --foreground: #0a0a0a;
   --card: #ffffff;
   --card-foreground: #0a0a0a;
@@ -103,6 +105,8 @@
 /* ===== DARK THEME OVERRIDES ===== */
 html.dark {
   --background: #0a0a0a;
+  /* New surface token for dark mode: lighter than background, darker than card */
+  --surface: #141414;
   --foreground: #fafafa;
   --card: #1f2937;
   --card-foreground: #fafafa;
@@ -183,6 +187,11 @@ html.dark {
 }
 .text-labels {
   color: var(--labels);
+}
+
+/* Utility class for surface background */
+.bg-surface {
+  background-color: var(--surface);
 }
 
 

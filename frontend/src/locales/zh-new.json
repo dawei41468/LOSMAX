@@ -194,7 +194,7 @@
     "auth": {
       "title": "生活管理系统",
       "subtitle": "组织您的生活，实现您的目标",
-      "signInTitle": "登录",
+      "signInTitle": "欢迎回来",
       "signUpTitle": "创建账户",
       "forgotPassword": "忘记密码？",
       "alreadyHaveAccount": "已有账户？",

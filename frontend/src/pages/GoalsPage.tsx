@@ -172,7 +172,7 @@ export default function GoalsPage() {
   return (
     <div className="no-scrollbar md:p-4" style={{ overflowY: 'auto' }}>
       {/* Fixed top bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-background h-20 flex flex-col justify-center items-center" style={{ backgroundColor: 'var(--background)' }}>
+      <div className="fixed top-0 left-0 right-0 z-50 bg-surface h-20 flex flex-col justify-center items-center">
         <h1 className="text-xl font-semibold">{t('content.goals.title')}</h1>
         <p className="text-sm text-muted">{t('content.goals.subtitle')}</p>
       </div>
@@ -180,7 +180,7 @@ export default function GoalsPage() {
       {/* Content with top padding to account for fixed header */}
       <div className="pt-24">
         {/* Fixed Action Bar beneath Top Bar */}
-        <div className={`fixed top-20 left-0 right-0 z-40 bg-background flex flex-row justify-between items-center px-6 py-2 ${isScrolled ? 'shadow-md' : ''}`} style={{ backgroundColor: 'var(--background)' }}>
+        <div className={`fixed top-20 left-0 right-0 z-40 bg-surface flex flex-row justify-between items-center px-6 py-2 ${isScrolled ? 'shadow-md' : ''}`}>
           {/* Filter Select Menu */}
           <div className="flex justify-start">
             <Select
@@ -226,7 +226,7 @@ export default function GoalsPage() {
 
         {isLoading && <p className="text-center py-4">{t('actions.loading')}</p>}
         {!isLoading && goals.length === 0 && (
-          <p className="text-center py-4 text-gray-500">
+          <p className="text-center py-4 text-gray-500 text-xl">
             {t('toast.info.noGoalsFound', { filter: t(`content.goals.filters.${currentFilter}`) })}
           </p>
         )}

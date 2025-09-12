@@ -28,13 +28,13 @@ In the local development setup, the frontend and backend services run independen
 
 ### Frontend
 - **Framework:** React / Vite
-- **URL** `http://localhost:5173`
-- **API Connection:** The app reads the API base URL from `frontend/.env.development` (`VITE_API_BASE_URL`, e.g., `http://localhost:4000`). No dev proxy is configured in `frontend/vite.config.ts`.
+- **URL** `http://localhost:4100`
+- **API Connection:** The app reads the API base URL from `frontend/.env.development` (`VITE_API_BASE_URL`, typically `http://localhost:4000`). No dev proxy is configured in `frontend/vite.config.ts`.
 
 ### Backend
 - **Framework:** FastAPI / Python
 - **URL** `http://localhost:4000`
-- **Execution:** The backend is typically run directly using `uvicorn` for live reloading (e.g., `uvicorn main:app --reload`).
+- **Execution:** The backend is typically run directly using `uvicorn` for live reloading (e.g., `uvicorn main:app --reload --host 0.0.0.0 --port 4000`).
 - **Environment:** Controlled by `APP_ENV` (development/production). Loads `backend/.env.development` or `backend/.env.production` (see `backend/config/settings.py`).
 - **Required vars:** `MONGODB_URL`, `SECRET_KEY`, `REFRESH_SECRET_KEY` (optional: `ACCESS_TOKEN_EXPIRE_MINUTES`, `REFRESH_TOKEN_EXPIRE_DAYS`, `REFRESH_TOKEN_ROTATION`, `ALGORITHM`).
 
@@ -75,15 +75,23 @@ In the production environment, the application is deployed on a single server, w
 ### Frontend
 1. Navigate to the frontend directory: `cd frontend`
 2. Install dependencies: `npm install`
-3. Run the development server: `npm run dev`
+3. Run the development server (runs at `http://localhost:4100`): `npm run dev`
 
 ### Backend
 1. Navigate to the backend directory: `cd backend`
 2. Create and activate a virtual environment: `python -m venv venv && source venv/bin/activate` (Linux/Mac). On Windows, create and activate a venv accordingly.
 3. Install dependencies: `pip install -r requirements.txt`
-4. Run the server: `uvicorn main:app --reload`
+4. Run the server on port 4000: `uvicorn main:app --reload --host 0.0.0.0 --port 4000`
 
 ### Additional Setup
 - Ensure MongoDB is running locally or configure the connection string in `backend/.env.development`.
 - For frontend, ensure Node.js is installed.
 - For internationalization, locales are in `frontend/src/locales/`.
+
+### Environment Files
+- **Frontend (Vite)**
+  - Development: `frontend/.env.development` (e.g., `VITE_API_BASE_URL=http://localhost:4000`)
+  - Production: `frontend/.env.production` (e.g., `VITE_API_BASE_URL=https://los.studiodtw.net/api`)
+- **Backend (FastAPI)**
+  - Development: `backend/.env.development` (used when `APP_ENV` is not `production`)
+  - Production: `backend/.env.production` (used when `APP_ENV=production`)

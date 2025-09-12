@@ -25,7 +25,7 @@ const LOSHeader: React.FC<LOSHeaderProps> = ({
   
   // Text styling
   const textClasses = {
-    auth: "text-sm font-medium mt-2", // Even smaller text for auth
+    auth: "text-xl font-semibold mt-4", // Slightly larger text and more spacing for auth header
     sidebar: "text-sm font-semibold ml-2",
     'mobile-sidebar': "text-xs font-medium ml-2" // Side-by-side with logo, smaller text
   };
@@ -38,11 +38,19 @@ const LOSHeader: React.FC<LOSHeaderProps> = ({
         44 // mobile-sidebar (increased from 32px)
       )} />
       
-      {/* Subtitle - split into 3 lines */}
+      {/* Subtitle: in auth, render single line with spaces; elsewhere 3-line layout */}
       <div className={`text-foreground ${textClasses[variant]} text-center`}>
-        <div>{t('common.life')}</div>
-        <div>{t('common.organization')}</div>
-        <div>{t('common.system')}</div>
+        {variant === 'auth' ? (
+          <div>
+            {t('common.life')} {t('common.organization')} {t('common.system')}
+          </div>
+        ) : (
+          <>
+            <div>{t('common.life')}</div>
+            <div>{t('common.organization')}</div>
+            <div>{t('common.system')}</div>
+          </>
+        )}
       </div>
     </div>
   );

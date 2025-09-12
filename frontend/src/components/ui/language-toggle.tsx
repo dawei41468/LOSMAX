@@ -9,19 +9,31 @@ interface LanguageSwitchProps {
 
 export function LanguageSwitch({ className }: LanguageSwitchProps) {
   const { i18n } = useTranslation()
-  const { setUserLanguageContext } = useAuth()
+  const { setUserLanguageContext, isAuthenticated } = useAuth()
   const { success: toastSuccess, error: toastError } = useToast();
 
   const toggleLanguage = async () => {
     const newLang = i18n.language === 'en' ? 'zh' : 'en'
     try {
       await i18n.changeLanguage(newLang)
-      await api.patch('/preferences', { language: newLang })
+      // Always persist locally first (works for both unauthenticated and authenticated states)
       setUserLanguageContext(newLang)
-      toastSuccess('toast.success.languageChanged')
+
+      // Only persist to backend when authenticated
+      if (isAuthenticated) {
+        await api.patch('/preferences', { language: newLang })
+      }
+
+      // Show success toast only when authenticated (no toast on auth pages)
+      if (isAuthenticated) {
+        toastSuccess('toast.success.languageChanged')
+      }
     } catch (error) {
       console.error('Error changing language:', error)
-      toastError('toast.error.languageChangeFailed')
+      // Show error toast only when authenticated
+      if (isAuthenticated) {
+        toastError('toast.error.languageChangeFailed')
+      }
     }
   }
 

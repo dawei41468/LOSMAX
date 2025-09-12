@@ -94,7 +94,7 @@ const ProfilePage: React.FC = () => {
   return (
     <div className="flex flex-col h-full">
       {/* Fixed top bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-background h-20" style={{ backgroundColor: 'var(--background)' }}>
+      <div className="fixed top-0 left-0 right-0 z-50 bg-surface h-20">
         <div className="flex flex-col justify-center h-full">
           {/* First line - title center, controls right */}
           <div className="flex items-center justify-between px-4">
@@ -123,7 +123,7 @@ const ProfilePage: React.FC = () => {
           <UserCard />
 
           {/* Tabs Section */}
-          <div id="tabs-section" className="sticky top-16 z-40 bg-background flex border-border" style={{ backgroundColor: 'var(--background)' }}>
+          <div id="tabs-section" className="sticky top-16 z-40 bg-surface flex border-border">
             <button
               className={`flex-1 py-3 font-medium cursor-pointer ${activeTab === 'info' ? 'border-b-2 border-blue-500' : 'text-muted-foreground hover:text-foreground'}`}
               onClick={() => setActiveTab('info')}

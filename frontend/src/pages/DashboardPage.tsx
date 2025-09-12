@@ -83,7 +83,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6 md:p-4">
       {/* Fixed top bar */}
-      <div className={`fixed top-0 left-0 right-0 z-50 bg-background h-20 flex flex-col justify-center items-center ${isScrolled ? 'shadow-md' : ''}`} style={{ backgroundColor: 'var(--background)' }}>
+      <div className={`fixed top-0 left-0 right-0 z-50 bg-surface h-20 flex flex-col justify-center items-center ${isScrolled ? 'shadow-md' : ''}`}>
         <h1 className="text-xl font-semibold">{t('content.dashboard.title')}</h1>
         <p className="text-sm text-muted">{t('content.dashboard.subtitle')}</p>
       </div>
