@@ -95,3 +95,48 @@ In the production environment, the application is deployed on a single server, w
 - **Backend (FastAPI)**
   - Development: `backend/.env.development` (used when `APP_ENV` is not `production`)
   - Production: `backend/.env.production` (used when `APP_ENV=production`)
+
+---
+
+## 7. React Query Migration (Server State)
+
+The frontend has been refactored to use React Query for all backend server state.
+
+- **Hooks-first usage** (components/pages should not call `services/api.ts` directly):
+  - Goals: `useGoals`, `useCreateGoal`, `useUpdateGoal`, `useDeleteGoal`, `useToggleGoalStatus`
+  - Tasks: `useTasks`, `useCreateTask`, `useUpdateTask`, `useDeleteTask`, `useToggleTaskStatus` (optimistic)
+  - Admin: `useAdminUsers`, `useDeleteAdminUser`, `useUpdateAdminUserRole`, `useAdminUserDetails`
+  - Preferences: `usePreferences`, `useUpdatePreferences`, `useChangePassword`, `useUpdateName`, `useDeleteAccount`
+- **Centralized config/keys**:
+  - `src/lib/queryClient.ts`: environment-tuned defaults (dev/test/prod)
+  - `src/lib/queryKeys.ts`: stable query keys
+- **Auth redirect**: centralized `AUTH_ROUTE` (`src/routes/constants.ts`), 401 redirect with `returnTo` via axios interceptor.
+- **Optimistic updates**: used for toggling task status with rollback on error.
+
+### Testing Setup
+
+- **Runner**: Vitest (jsdom)
+- **MSW**: `src/test/server.ts` for API mocking
+- **Hook tests**:
+  - `src/test/hooks/useTasks.optimistic.test.tsx`
+  - `src/test/hooks/usePreferences.test.tsx`
+  - `src/test/hooks/useAdmin.test.tsx`
+
+Run tests:
+
+```bash
+cd frontend
+npm run test
+```
+
+---
+
+## 8. Dev Commands
+
+```bash
+# Frontend
+cd frontend
+npm run dev     # start app
+npm run build   # build
+npm run lint    # lint
+npm run test    # tests (Vitest)
