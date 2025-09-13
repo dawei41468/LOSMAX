@@ -7,6 +7,7 @@ interface ExtendedAxiosRequestConfig extends InternalAxiosRequestConfig {
 import { refreshToken } from './auth';
 import type { Goal, GoalStatus, CreateGoalPayload, UpdateGoalPayload } from '../types/goals'; // Added Goal types
 import type { Task, CreateTaskPayload, UpdateTaskPayload } from '../types/tasks'; // Added Task types
+import { AUTH_ROUTE } from '../routes/constants';
 
 
 export const api = axios.create({
@@ -60,11 +61,22 @@ api.interceptors.response.use(
         await refreshToken();
         return api(extendedRequest);
       } catch (refreshError) {
-        // Refresh failed - clear tokens and redirect to login
+        // Refresh failed - clear tokens and redirect to auth with returnTo, avoid redirect loop
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         localStorage.removeItem('token_expiry');
-        window.location.href = '/login';
+
+        try {
+          const currentPath = window.location.pathname + window.location.search + window.location.hash;
+          // If we are already on the auth route, do not attempt to redirect again
+          if (window.location.pathname !== AUTH_ROUTE) {
+            const returnTo = encodeURIComponent(currentPath);
+            window.location.href = `${AUTH_ROUTE}?returnTo=${returnTo}`;
+          }
+        } catch {
+          // Fallback: best-effort redirect to auth route
+          window.location.href = AUTH_ROUTE;
+        }
         return Promise.reject(refreshError);
       }
     }

@@ -46,7 +46,7 @@ export async function login(
         credentials: 'include'
       });
       localStorage.setItem('userLanguage', preLoginLanguage);
-    } catch (_) {
+    } catch {
       // If this fails, fall back to server language if provided
       if (language) {
         localStorage.setItem('userLanguage', language);
@@ -59,7 +59,16 @@ export async function login(
     localStorage.setItem('userRole', role);
   }
   setAuthState(true);
-  navigate(role === 'Admin' ? '/admin' : '/dashboard');
+  // Navigate to returnTo if provided and safe (same-origin path), else default by role
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const returnToRaw = params.get('returnTo');
+    const returnTo = returnToRaw ? decodeURIComponent(returnToRaw) : null;
+    const isSafePath = !!returnTo && returnTo.startsWith('/');
+    navigate(isSafePath ? returnTo! : (role === 'Admin' ? '/admin' : '/dashboard'));
+  } catch {
+    navigate(role === 'Admin' ? '/admin' : '/dashboard');
+  }
 }
 
 export async function register(
@@ -104,7 +113,7 @@ export async function register(
         credentials: 'include'
       });
       localStorage.setItem('userLanguage', preLoginLanguage);
-    } catch (_) {
+    } catch {
       if (language) {
         localStorage.setItem('userLanguage', language);
       }
@@ -116,7 +125,16 @@ export async function register(
     localStorage.setItem('userRole', role);
   }
   setAuthState(true);
-  navigate(role === 'Admin' ? '/admin' : '/dashboard');
+  // Navigate to returnTo if provided and safe (same-origin path), else default by role
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const returnToRaw = params.get('returnTo');
+    const returnTo = returnToRaw ? decodeURIComponent(returnToRaw) : null;
+    const isSafePath = !!returnTo && returnTo.startsWith('/');
+    navigate(isSafePath ? returnTo! : (role === 'Admin' ? '/admin' : '/dashboard'));
+  } catch {
+    navigate(role === 'Admin' ? '/admin' : '/dashboard');
+  }
 }
 
 export async function logout(setAuthState: (authenticated: boolean) => void): Promise<void> {

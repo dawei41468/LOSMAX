@@ -7,12 +7,13 @@ import { ThemeSwitcher } from '../components/ui/theme-switcher';
 import { LanguageSwitch } from '../components/ui/language-toggle';
 import { AuthContext } from '../contexts/auth.context';
 import { TimePicker } from '../components/ui/TimePicker';
-import axios from 'axios';
 import { useToast } from '../hooks/useToast';
-import { api } from '../services/api';
 import ConfirmDeleteDialog from '../components/ui/ConfirmDeleteDialog';
 import ChangePasswordDialog from '../components/ui/ChangePasswordDialog';
 import { Card, CardContent } from '../components/ui/card';
+import { usePreferences, useUpdatePreferences, useUpdateName, useDeleteAccount } from '../hooks/usePreferences';
+import { AUTH_ROUTE } from '../routes/constants';
+import axios from 'axios';
 
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
@@ -49,24 +50,20 @@ const ProfilePage: React.FC = () => {
     }));
   };
   
+  // Preferences via React Query
+  const preferencesQuery = usePreferences();
+  const updatePreferences = useUpdatePreferences();
+  const updateName = useUpdateName();
+  const deleteAccount = useDeleteAccount();
+
+  // Sync local controlled inputs when preferences load
   useEffect(() => {
-    const fetchPreferences = async () => {
-      try {
-        const response = await api.get('/preferences');
-        setMorningDeadline(response.data.morning_deadline);
-        setEveningDeadline(response.data.evening_deadline);
-        setNotificationsEnabled(response.data.notifications_enabled);
-      } catch (error: unknown) {
-        console.error('Failed to fetch preferences:', error);
-        toastError('toast.error.settings.fetchPreferences');
-        if (axios.isAxiosError(error) && error.response?.data?.detail) {
-          // Custom error handling can be added if needed
-        }
-      }
-    };
-    fetchPreferences();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [t]);
+    if (preferencesQuery.data) {
+      setMorningDeadline(preferencesQuery.data.morning_deadline);
+      setEveningDeadline(preferencesQuery.data.evening_deadline);
+      setNotificationsEnabled(preferencesQuery.data.notifications_enabled);
+    }
+  }, [preferencesQuery.data]);
 
   interface UserPreferencesUpdate {
     morning_deadline?: string;
@@ -78,10 +75,10 @@ const ProfilePage: React.FC = () => {
 
   const savePreference = async (preferenceUpdate: UserPreferencesUpdate) => {
     try {
-      const response = await api.patch('/preferences', preferenceUpdate);
-      setMorningDeadline(response.data.morning_deadline);
-      setEveningDeadline(response.data.evening_deadline);
-      setNotificationsEnabled(response.data.notifications_enabled);
+      const updated = await updatePreferences.mutateAsync(preferenceUpdate);
+      setMorningDeadline(updated.morning_deadline);
+      setEveningDeadline(updated.evening_deadline);
+      setNotificationsEnabled(updated.notifications_enabled);
       toastSuccess('toast.success.settingsSaved');
     } catch (error: unknown) {
       toastError('toast.error.settings.save');
@@ -200,9 +197,9 @@ const ProfilePage: React.FC = () => {
                 onClose={() => setShowDeleteConfirm(false)}
                 onConfirm={async () => {
                   try {
-                    await api.delete('/auth/account');
+                    await deleteAccount.mutateAsync();
                     toastSuccess('toast.success.accountDeleted');
-                    navigate('/login');
+                    navigate(AUTH_ROUTE);
                   } catch (error: unknown) {
                     toastError('toast.error.settings.accountDeletion');
                     if (axios.isAxiosError(error) && error.response?.data?.detail) {
@@ -253,7 +250,7 @@ const ProfilePage: React.FC = () => {
                                   className="w-full sm:w-auto px-4 py-2 bg-primary text-primary-foreground rounded-md border border-primary hover:bg-blue-500/10 hover:text-primary transition-colors"
                                   onClick={async () => {
                                     try {
-                                      await api.patch('/auth/update-name', { name: userName });
+                                      await updateName.mutateAsync(userName || '');
                                       toastSuccess('toast.success.nameUpdated');
                                     } catch (error: unknown) {
                                       toastError('toast.error.settings.updateName');

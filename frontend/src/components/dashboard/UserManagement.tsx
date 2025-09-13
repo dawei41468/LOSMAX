@@ -1,14 +1,14 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useTheme } from '../../contexts/ThemeContext';
 import ConfirmDeleteDialog from '../ui/ConfirmDeleteDialog';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
 import { logout } from '../../services/auth';
-import { api } from '../../services/api';
 import { Trash2, Edit, Search, RefreshCw, Mail } from 'lucide-react';
-import Cookies from 'js-cookie';
 import { Select, SelectItem } from '@/components/ui/select';
+import { useAdminUsers, useAdminUserDetails, useDeleteAdminUser, useUpdateAdminUserRole } from '../../hooks/useAdmin';
+import { AUTH_ROUTE } from '../../routes/constants';
 
 interface Preferences {
   morning_deadline: string;
@@ -30,12 +30,11 @@ type User = {
 const ITEMS_PER_PAGE = 10;
 
 export function UserManagement() {
-  const { userRole, setAuthState } = useAuth();
+  const { setAuthState } = useAuth();
   const { error: toastError } = useToast();
   const { theme } = useTheme();
   const navigate = useNavigate();
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // UI spinner while first query loads
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [currentPage, setCurrentPage] = useState(1);
@@ -45,43 +44,24 @@ export function UserManagement() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [selectedRole, setSelectedRole] = useState('user');
-  const [loadingPreferences, setLoadingPreferences] = useState(false);
-  const [userDetails, setUserDetails] = useState<Partial<User>>({});
+  const [userDetailsId, setUserDetailsId] = useState<string | undefined>(undefined);
 
-  const fetchUsers = useCallback(async () => {
-    if (userRole?.toLowerCase() !== 'admin') return;
-    
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        page: currentPage.toString(),
-        limit: ITEMS_PER_PAGE.toString(),
-        ...(searchQuery && { search: searchQuery }),
-        ...(roleFilter !== 'all' && { role: roleFilter }),
-      });
-
-      const { data } = await api.get(`/admin/users?${params}`);
-      setUsers(data.users);
-    } catch (error) {
-      console.error('Failed to fetch users:', error);
-      toastError('toast.error.userManagement.fetchUsers');
-    } finally {
-      setLoading(false);
-    }
-  }, [userRole, currentPage, searchQuery, roleFilter]);
+  // Queries & Mutations
+  const usersQuery = useAdminUsers({ page: currentPage, limit: ITEMS_PER_PAGE, search: searchQuery || undefined, role: roleFilter });
+  const users: User[] = usersQuery.data?.users ?? [];
+  const deleteUserMutation = useDeleteAdminUser();
+  const updateUserRoleMutation = useUpdateAdminUserRole();
+  const userDetailsQuery = useAdminUserDetails(userDetailsId);
 
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    // Tie UI loading to the initial query load
+    setLoading(usersQuery.isLoading && users.length === 0);
+  }, [usersQuery.isLoading, users.length]);
 
   const handleDelete = async (userId: string) => {
     try {
       setIsDeleting(true);
-      const csrfToken = Cookies.get('csrfToken');
-      await api.delete(`/admin/users/${userId}`, {
-        headers: { 'X-CSRF-Token': csrfToken },
-      });
-      setUsers(users.filter(user => user.id !== userId));
+      await deleteUserMutation.mutateAsync(userId);
     } catch (error) {
       console.error('Failed to delete user:', error);
       toastError('toast.error.userManagement.deleteUser');
@@ -91,29 +71,11 @@ export function UserManagement() {
     }
   };
 
-  const fetchUserDetails = async (userId: string) => {
-    setLoadingPreferences(true);
-    try {
-      const { data } = await api.get(`/admin/users/${userId}/details`);
-      setUserDetails(data);
-    } catch (error) {
-      console.error('Failed to fetch user details:', error);
-      toastError('toast.error.userManagement.fetchUserDetails');
-    } finally {
-      setLoadingPreferences(false);
-    }
-  };
-
   const handleEditClick = (user: User) => {
     setEditingUser(user);
     setSelectedRole(user.role);
     // Pre-populate with what we already have
-    setUserDetails({
-      name: user.name,
-      language: user.language,
-      preferences: user.preferences,
-    });
-    fetchUserDetails(user.id);
+    setUserDetailsId(user.id);
     setIsEditDialogOpen(true);
   };
 
@@ -121,13 +83,7 @@ export function UserManagement() {
     if (!editingUser) return;
     
     try {
-      const csrfToken = Cookies.get('csrfToken');
-      await api.patch(`/admin/users/${editingUser.id}`, {
-        role: selectedRole
-      }, {
-        headers: { 'X-CSRF-Token': csrfToken }
-      });
-      fetchUsers();
+      await updateUserRoleMutation.mutateAsync({ userId: editingUser.id, role: selectedRole });
       setIsEditDialogOpen(false);
     } catch (error) {
       console.error('Failed to update user:', error);
@@ -141,7 +97,7 @@ export function UserManagement() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
          <div className="bg-card p-6 rounded-lg w-full max-w-md" style={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff' }}>
             <h3 className="text-lg font-medium mb-4">Edit User</h3>
-            {loadingPreferences ? (
+            {userDetailsQuery.isLoading ? (
               <div className="flex justify-center items-center h-32">
                 <RefreshCw className="h-8 w-8 animate-spin" />
                 <span className="ml-2">Loading details...</span>
@@ -161,7 +117,7 @@ export function UserManagement() {
                   <label className="block text-sm font-medium text-gray-700">Name</label>
                   <input
                     type="text"
-                    value={userDetails.name || ''}
+                    value={userDetailsQuery.data?.name || ''}
                     readOnly
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100"
                   />
@@ -192,7 +148,7 @@ export function UserManagement() {
                   <label className="block text-sm font-medium text-gray-700">Language</label>
                   <input
                     type="text"
-                    value={userDetails.language || ''}
+                    value={userDetailsQuery.data?.language || ''}
                     readOnly
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100"
                   />
@@ -201,7 +157,7 @@ export function UserManagement() {
                   <label className="block text-sm font-medium text-gray-700">Morning Deadline</label>
                   <input
                     type="text"
-                    value={userDetails.preferences?.morning_deadline || 'Not set'}
+                    value={userDetailsQuery.data?.preferences?.morning_deadline || 'Not set'}
                     readOnly
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100"
                   />
@@ -210,7 +166,7 @@ export function UserManagement() {
                   <label className="block text-sm font-medium text-gray-700">Evening Deadline</label>
                   <input
                     type="text"
-                    value={userDetails.preferences?.evening_deadline || 'Not set'}
+                    value={userDetailsQuery.data?.preferences?.evening_deadline || 'Not set'}
                     readOnly
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100"
                   />
@@ -219,7 +175,7 @@ export function UserManagement() {
                   <label className="block text-sm font-medium text-gray-700">Notifications</label>
                   <input
                     type="text"
-                    value={userDetails.preferences?.notifications_enabled ? 'Enabled' : 'Disabled'}
+                    value={userDetailsQuery.data?.preferences?.notifications_enabled ? 'Enabled' : 'Disabled'}
                     readOnly
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100"
                   />
@@ -250,7 +206,7 @@ export function UserManagement() {
             className="px-4 py-2 border rounded"
             onClick={async () => {
               await logout(setAuthState);
-              navigate('/login');
+              navigate(AUTH_ROUTE);
             }}
           >
             Logout
@@ -337,7 +293,7 @@ export function UserManagement() {
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
-          
+        
               </div>
             ))}
           </div>

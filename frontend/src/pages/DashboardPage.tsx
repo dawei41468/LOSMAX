@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { AuthContext } from '../contexts/auth.context';
 import type { AuthContextType } from '../contexts/auth.types';
 import { useNavigate } from 'react-router-dom';
-import { getTasks, getGoals } from '../services/api';
-import { useToast } from '../hooks/useToast';
+import { useTasks } from '../hooks/useTasks';
+import { useGoals } from '../hooks/useGoals';
 import QuoteOfDay from '../components/dashboard/QuoteOfDay';
 import { Greeting } from '../components/dashboard/Greetings';
 import TaskStatus from '../components/dashboard/TaskStatus';
@@ -15,7 +15,6 @@ import type { Goal } from '../types/goals';
 export default function DashboardPage() {
   const { t } = useTranslation();
   const { isAuthenticated, userName } = useContext(AuthContext) as AuthContextType;
-  const { error: toastError } = useToast();
   
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -29,32 +28,16 @@ export default function DashboardPage() {
   }, []);
   const navigate = useNavigate();
 
-  const [todayTasks, setTodayTasks] = useState<Task[]>([]);
-  const [activeGoals, setActiveGoals] = useState<Goal[]>([]);
-  const [allGoals, setAllGoals] = useState<Goal[]>([]);
-  const [allTasks, setAllTasks] = useState<Task[]>([]);
+  // React Query: fetch data needed for dashboard
+  const todayTasksQuery = useTasks({ filter: 'today' });
+  const activeGoalsQuery = useGoals({ status: 'active' });
+  const allGoalsQuery = useGoals({});
+  const allTasksQuery = useTasks({});
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (isAuthenticated) {
-        try {
-          const fetchedTodayTasks = await getTasks(undefined, 'today');
-          const fetchedActiveGoals = await getGoals('active');
-          const fetchedAllGoals = await getGoals(); // Fetch all goals for progress stats
-          const fetchedAllTasks = await getTasks(); // Fetch all tasks for progress stats
-          setTodayTasks(fetchedTodayTasks);
-          setActiveGoals(fetchedActiveGoals);
-          setAllGoals(fetchedAllGoals);
-          setAllTasks(fetchedAllTasks);
-        } catch (error) {
-          console.error('Error fetching tasks or goals for dashboard:', error);
-          toastError('toast.error.dashboard.fetchData');
-        }
-      }
-    };
-    fetchData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated]);
+  const todayTasks: Task[] = todayTasksQuery.data ?? [];
+  const activeGoals: Goal[] = activeGoalsQuery.data ?? [];
+  const allGoals: Goal[] = allGoalsQuery.data ?? [];
+  const allTasks: Task[] = allTasksQuery.data ?? [];
 
   // Calculate stats for OverviewStats
   const totalGoals = allGoals.length || 0;
@@ -80,6 +63,9 @@ export default function DashboardPage() {
     return <div className="p-6">{t('feedback.info.loadingDashboard')}</div>;
   }
 
+  // Combined loading state
+  const isLoading = todayTasksQuery.isLoading || activeGoalsQuery.isLoading || allGoalsQuery.isLoading || allTasksQuery.isLoading;
+
   return (
     <div className="space-y-6 md:p-4">
       {/* Fixed top bar */}
@@ -92,7 +78,11 @@ export default function DashboardPage() {
       <div className="pt-14 justify-center grid grid-cols-1 gap-4">
         <Greeting userName={userName} />
         <QuoteOfDay />
-        <TaskStatus todayTasks={todayTasks} activeGoals={activeGoals} />
+        {isLoading ? (
+          <div className="p-4 text-center">{t('actions.loading')}</div>
+        ) : (
+          <TaskStatus todayTasks={todayTasks} activeGoals={activeGoals} />
+        )}
         <hr className="w-full h-px border-standard mx-auto mt-6 mb-4 border-1" />
         <OverviewStats
           totalGoals={totalGoals}

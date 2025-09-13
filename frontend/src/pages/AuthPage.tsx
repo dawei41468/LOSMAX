@@ -45,7 +45,7 @@ function AuthFormComponent({
     
     try {
       await onSubmit(email, password, name || undefined);
-    } catch (error) {
+    } catch {
       // Errors are handled in handleSignIn/handleSignUp, but a general toast here as a fallback
       toastError('toast.error.auth.generic');
     }

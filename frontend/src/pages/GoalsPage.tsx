@@ -1,8 +1,8 @@
-import { useState, useEffect, useContext, useCallback } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AuthContext } from '../contexts/auth.context';
 import type { AuthContextType } from '../contexts/auth.types';
-import { createGoal, getGoals, updateGoal, deleteGoal } from '../services/api';
+import { useGoals, useCreateGoal, useUpdateGoal, useDeleteGoal, useToggleGoalStatus } from '../hooks/useGoals';
 import { CategoryHeader } from '../components/ui/CategoryUI';
 import { useNavigate } from 'react-router-dom';
 import type { Goal, GoalStatus, GoalCategory, CreateGoalPayload } from '../types/goals';
@@ -32,43 +32,30 @@ export default function GoalsPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   const navigate = useNavigate();
-  const [goals, setGoals] = useState<Goal[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // UI-only loading (dialogs, deletes)
   const [currentFilter, setCurrentFilter] = useState<FilterStatus>('active');
   const [isGoalDialogOpen, setIsGoalDialogOpen] = useState(false);
   const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false); // State for delete confirmation dialog
   const [goalToDelete, setGoalToDelete] = useState<string | null>(null); // State to store the ID of the goal to delete
 
-  const fetchUserGoals = useCallback(async (filter: FilterStatus) => {
-    if (!isAuthenticated) return;
-    setIsLoading(true);
-    try {
-      const fetchedGoals = await getGoals(filter === 'all' ? undefined : filter);
-      setGoals(fetchedGoals);
-    } catch (err: unknown) {
-      console.error('Failed to fetch goals:', err);
-      let errorMessage = t('toast.error.generic');
-      if (err instanceof Error) {
-        errorMessage = err.message;
-      } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
-        errorMessage = (err as { detail: string }).detail;
-      }
-      toastError(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, t]);
+  // React Query: goals query based on current filter
+  const goalsQuery = useGoals({ status: currentFilter === 'all' ? undefined : (currentFilter as GoalStatus) });
+  const goals: Goal[] = goalsQuery.data ?? [];
+  const goalsLoading = goalsQuery.isLoading;
 
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/auth');
-    } else {
-      fetchUserGoals(currentFilter);
     }
-  }, [isAuthenticated, navigate, currentFilter, fetchUserGoals]);
+  }, [isAuthenticated, navigate]);
 
+
+  // Mutations
+  const createGoalMutation = useCreateGoal();
+  const updateGoalMutation = useUpdateGoal();
+  const deleteGoalMutation = useDeleteGoal();
+  const toggleGoalStatusMutation = useToggleGoalStatus();
 
   const handleDialogSubmit = async (data: Omit<Goal, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'days_remaining' | 'completed_at'>) => {
     setIsLoading(true);
@@ -79,16 +66,15 @@ export default function GoalsPage() {
           ...data,
           target_date: typeof data.target_date === 'string' ? data.target_date : new Date(data.target_date).toISOString().split('T')[0],
         };
-        await updateGoal(editingGoal.id, payload);
+        await updateGoalMutation.mutateAsync({ id: editingGoal.id, data: payload });
       } else {
         const payload: CreateGoalPayload = {
           ...data,
           target_date: typeof data.target_date === 'string' ? data.target_date : new Date(data.target_date).toISOString().split('T')[0],
           category: data.category as GoalCategory, // Ensure category is GoalCategory
         };
-        await createGoal(payload);
+        await createGoalMutation.mutateAsync(payload);
       }
-      fetchUserGoals(currentFilter); // Refetch goals
     } catch (err: unknown) {
       console.error('Failed to save goal:', err);
       let errorMessage = t('toast.error.generic');
@@ -125,8 +111,7 @@ export default function GoalsPage() {
 
     setIsLoading(true);
     try {
-      await deleteGoal(goalToDelete);
-      fetchUserGoals(currentFilter); // Refetch goals
+      await deleteGoalMutation.mutateAsync(goalToDelete);
     } catch (err: unknown) {
       console.error('Failed to delete goal:', err);
       let errorMessage = t('toast.error.generic');
@@ -145,10 +130,8 @@ export default function GoalsPage() {
 
   const handleToggleStatus = async (goal: Goal) => {
     setIsLoading(true);
-    const newStatus = goal.status === 'active' ? 'completed' : 'active';
     try {
-      await updateGoal(goal.id, { status: newStatus });
-      fetchUserGoals(currentFilter); // Refetch goals
+      await toggleGoalStatusMutation.mutateAsync({ id: goal.id, currentStatus: goal.status as GoalStatus });
     } catch (err: unknown) {
       console.error('Failed to update goal status:', err);
       let errorMessage = t('toast.error.generic');
@@ -224,14 +207,14 @@ export default function GoalsPage() {
           isDeleting={isLoading}
         />
 
-        {isLoading && <p className="text-center py-4">{t('actions.loading')}</p>}
-        {!isLoading && goals.length === 0 && (
+        {(goalsLoading || isLoading) && <p className="text-center py-4">{t('actions.loading')}</p>}
+        {!goalsLoading && !isLoading && goals.length === 0 && (
           <p className="text-center py-4 text-gray-500 text-xl">
             {t('toast.info.noGoalsFound', { filter: t(`content.goals.filters.${currentFilter}`) })}
           </p>
         )}
 
-        {Object.keys(groupedGoals).length > 0 && !isLoading && (
+        {Object.keys(groupedGoals).length > 0 && !goalsLoading && !isLoading && (
           (['Family', 'Work', 'Health', 'Personal'] as GoalCategory[])
             .filter(category => groupedGoals[category] && groupedGoals[category].length > 0)
             .map(category => (

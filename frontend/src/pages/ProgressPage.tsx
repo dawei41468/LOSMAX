@@ -1,21 +1,20 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AuthContext } from '../contexts/auth.context';
 import type { AuthContextType } from '../contexts/auth.types';
-import { getGoals, getTasks } from '../services/api';
 import type { GoalCategory, Goal } from '../types/goals';
 import type { Task } from '../types/tasks';
 import { CategoryHeader} from '../components/ui/CategoryUI';
 import { getCategoryColorClass, categoryColors } from '../components/ui/categoryUtils';
-import { useToast } from '../hooks/useToast';
 import ProgressGoalCard from '../components/progress/ProgressGoalCard';
 import { Home, HeartPulse, Briefcase, User } from 'lucide-react';
 import { Select, SelectItem } from '@/components/ui/select';
+import { useGoals } from '../hooks/useGoals';
+import { useTasks } from '../hooks/useTasks';
 
 const ProgressPage: React.FC = () => {
   const { t } = useTranslation();
   const { isAuthenticated } = useContext(AuthContext) as AuthContextType;
-  const { error: toastError } = useToast();
   
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -27,41 +26,19 @@ const ProgressPage: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  const [goals, setGoals] = useState<Goal[]>([]);
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // Server state via React Query
+  const goalsQuery = useGoals({}); // all goals
+  const tasksQuery = useTasks({}); // all tasks
+  const goals: Goal[] = goalsQuery.data ?? [];
+  const tasks: Task[] = tasksQuery.data ?? [];
+  const isLoading = goalsQuery.isLoading || tasksQuery.isLoading;
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'completed'>('all');
 
-  const fetchProgressData = useCallback(async () => {
-    if (!isAuthenticated) {
-      setIsLoading(false);
-      return;
-    }
-    setIsLoading(true);
-    try {
-      const fetchedGoals = await getGoals(); // Fetch all goals for progress tracking
-      const fetchedTasks = await getTasks(); // Fetch all tasks
-      setGoals(fetchedGoals);
-      setTasks(fetchedTasks);
-    } catch (err: unknown) {
-      console.error('Failed to fetch progress data:', err);
-      let errorMessage = 'toast.error.progressLoadFailed';
-      if (err instanceof Error) {
-        errorMessage = err.message;
-      } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
-        errorMessage = (err as { detail: string }).detail;
-      }
-      toastError(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated]);
-
   useEffect(() => {
-    fetchProgressData();
-  }, [fetchProgressData]);
+    if (!isAuthenticated) return;
+    // Data is fetched by React Query hooks
+  }, [isAuthenticated]);
 
 
   const convertToGoalProgress = (goal: Goal, tasks: Task[]) => {

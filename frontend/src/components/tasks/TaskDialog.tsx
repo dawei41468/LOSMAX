@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useToast } from '../../hooks/useToast';
 import type { Task } from '../../types/tasks';
 import type { Goal } from '../../types/goals';
-import { getGoals } from '../../services/api';
+import { useGoals } from '../../hooks/useGoals';
 import { Button } from '../ui/button';
 import {
   DialogOverlay,
@@ -35,29 +35,24 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ isOpen, onClose, onSubmit, init
   const { error: toastError } = useToast();
   const [title, setTitle] = useState(initialTask?.title || '');
   const [goalId, setGoalId] = useState(initialTask?.goal_id || '');
-  const [goals, setGoals] = useState<Goal[]>([]);
-  const [isLoadingGoals, setIsLoadingGoals] = useState(false);
+  // Fetch goals via React Query (no imperative loop). We may fetch always; cost is low and avoids unstable deps.
+  const goalsQuery = useGoals({ status: 'active' });
+  const goals: Goal[] = goalsQuery.data ?? [];
+  const isLoadingGoals = goalsQuery.isLoading;
 
-  const fetchGoals = useCallback(async () => {
-    setIsLoadingGoals(true);
-    try {
-      const fetchedGoals = await getGoals('active');
-      setGoals(fetchedGoals);
-    } catch (error) {
-      console.error('Failed to fetch goals:', error);
+  // Report fetch error via toast if it occurs
+  useEffect(() => {
+    if (goalsQuery.isError) {
       toastError('toast.error.taskDialog.fetchGoals');
-    } finally {
-      setIsLoadingGoals(false);
     }
-  }, [toastError]);
+  }, [goalsQuery.isError, toastError]);
 
   useEffect(() => {
     if (isOpen) {
       setTitle(initialTask?.title || '');
       setGoalId(initialTask?.goal_id || '');
-      fetchGoals();
     }
-  }, [isOpen, initialTask, fetchGoals]);
+  }, [isOpen, initialTask]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

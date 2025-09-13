@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AuthContext } from '../contexts/auth.context';
 import type { AuthContextType } from '../contexts/auth.types';
-import { createTask, getTasks, updateTask, deleteTask, getGoals } from '../services/api';
+import { useTasks, useCreateTask, useUpdateTask, useDeleteTask, useToggleTaskStatus } from '../hooks/useTasks';
+import { useGoals } from '../hooks/useGoals';
 import { CategoryHeader } from '../components/ui/CategoryUI';
 import { getCategoryColorClass } from '../components/ui/categoryUtils';
 import type { GoalCategory } from '../types/goals';
@@ -22,47 +23,26 @@ export default function TasksPage() {
   const { isAuthenticated } = useContext(AuthContext) as AuthContextType;
   const navigate = useNavigate();
   const { error: toastError } = useToast();
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [goals, setGoals] = useState<Goal[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // UI-only loading for dialog/delete/toggle
   const [currentFilter, setCurrentFilter] = useState<FilterType>('today');
   const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
 
-  const fetchUserTasks = useCallback(async (filter: FilterType) => {
-    if (!isAuthenticated) return;
-    setIsLoading(true);
-    try {
-      const fetchedTasks = await getTasks(undefined, filter);
-      const fetchedGoals = await getGoals('active');
-      setTasks(fetchedTasks);
-      setGoals(fetchedGoals);
-    } catch (err: unknown) {
-      console.error('Failed to fetch tasks or goals:', err);
-      let errorMessage = t('toast.error.task.fetchTasks');
-      if (err instanceof Error) {
-        errorMessage = err.message;
-        if (err.message.includes('404')) {
-          setTasks([]); // Set tasks to empty array to show "no tasks found" message
-        }
-      } else if (typeof err === 'object' && err !== null && 'detail' in err && typeof (err as { detail: string }).detail === 'string') {
-        errorMessage = (err as { detail: string }).detail;
-      }
-      toastError(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isAuthenticated, t]); // eslint-disable-line react-hooks/exhaustive-deps
+  // React Query data
+  const tasksQuery = useTasks({ filter: currentFilter });
+  const tasks: Task[] = tasksQuery.data ?? [];
+  const tasksLoading = tasksQuery.isLoading;
+  const goalsQuery = useGoals({ status: 'active' });
+  const goals: Goal[] = goalsQuery.data ?? [];
+  const goalsLoading = goalsQuery.isLoading;
 
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/auth');
-    } else {
-      fetchUserTasks(currentFilter);
     }
-  }, [isAuthenticated, navigate, currentFilter, fetchUserTasks]);
+  }, [isAuthenticated, navigate]);
 
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -76,15 +56,20 @@ export default function TasksPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Mutations
+  const createTaskMutation = useCreateTask();
+  const updateTaskMutation = useUpdateTask();
+  const deleteTaskMutation = useDeleteTask();
+  const toggleTaskStatusMutation = useToggleTaskStatus();
+
   const handleDialogSubmit = async (data: Omit<Task, 'id' | 'user_id' | 'created_at'>) => {
     setIsLoading(true);
     try {
       if (editingTask) {
-        await updateTask(editingTask.id, { title: data.title });
+        await updateTaskMutation.mutateAsync({ id: editingTask.id, data: { title: data.title } });
       } else {
-        await createTask({ title: data.title, goal_id: data.goal_id });
+        await createTaskMutation.mutateAsync({ title: data.title, goal_id: data.goal_id });
       }
-      fetchUserTasks(currentFilter); // Refetch tasks
     } catch (err: unknown) {
       console.error('Failed to save task:', err);
       let errorMessage = t('toast.error.task.saveTask');
@@ -132,8 +117,7 @@ export default function TasksPage() {
 
     setIsLoading(true);
     try {
-      await deleteTask(taskToDelete);
-      fetchUserTasks(currentFilter); // Refetch tasks
+      await deleteTaskMutation.mutateAsync(taskToDelete);
     } catch (err: unknown) {
       console.error('Failed to delete task:', err);
       let errorMessage = t('toast.error.task.deleteTask');
@@ -156,10 +140,8 @@ export default function TasksPage() {
       return;
     }
     setIsLoading(true);
-    const newStatus = task.status === 'completed' ? 'incomplete' : 'completed';
     try {
-      const updatedTask = await updateTask(task.id, { status: newStatus });
-      setTasks(prevTasks => prevTasks.map(t => t.id === updatedTask.id ? updatedTask : t));
+      await toggleTaskStatusMutation.mutateAsync({ id: task.id, currentStatus: task.status });
     } catch (err: unknown) {
       console.error('Failed to update task status:', err);
       let errorMessage = t('toast.error.task.updateTask');
@@ -245,8 +227,8 @@ export default function TasksPage() {
         isDeleting={isLoading}
       />
 
-      {isLoading && <p className="text-center py-4">{t('actions.loading')}</p>}
-      {!isLoading && tasks.length === 0 && (
+      {(tasksLoading || goalsLoading || isLoading) && <p className="text-center py-4">{t('actions.loading')}</p>}
+      {!tasksLoading && !goalsLoading && !isLoading && tasks.length === 0 && (
         <p className="text-center py-4 text-gray-500 text-xl">
           {currentFilter === 'today' ? (
             <em>{t('toast.info.noTasksToday')}</em>
@@ -256,7 +238,7 @@ export default function TasksPage() {
         </p>
       )}
 
-      {Object.keys(groupedTasksByCategory).length > 0 && !isLoading && (
+      {Object.keys(groupedTasksByCategory).length > 0 && !tasksLoading && !goalsLoading && !isLoading && (
         (['Family', 'Work', 'Health', 'Personal'] as GoalCategory[])
           .filter(category => groupedTasksByCategory[category] && Object.keys(groupedTasksByCategory[category]).length > 0)
           .map(category => (

@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useToast } from '../../hooks/useToast';
-import { api } from '../../services/api';
 import { DialogOverlay, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from './dialog';
 import { Form, FormField, FormLabel, FormInput } from './form';
 import { Button } from './button';
+import { useChangePassword } from '../../hooks/usePreferences';
+import { AUTH_ROUTE } from '../../routes/constants';
 
 interface ChangePasswordDialogProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ isOpen, onC
   const navigate = useNavigate();
   const { theme } = useTheme();
   const { success: toastSuccess, error: toastError } = useToast();
+  const changePassword = useChangePassword();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -33,18 +35,15 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ isOpen, onC
 
     setIsChangingPassword(true);
     try {
-      await api.patch('/auth/change-password', {
-        current_password: currentPassword,
-        new_password: newPassword
-      });
-      
+      await changePassword.mutateAsync({ current_password: currentPassword, new_password: newPassword });
+
       onClose();
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-      
+
       toastSuccess('toast.success.passwordChangedLogout');
-      navigate('/login');
+      navigate(AUTH_ROUTE);
     } catch (error: unknown) {
       console.error('Password change failed:', error);
       toastError('toast.error.passwordChange');

@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next"
 import { useAuth } from "../../hooks/useAuth"
-import { api } from "../../services/api"
 import { useToast } from "../../hooks/useToast"
+import { useUpdatePreferences } from "../../hooks/usePreferences"
 
 interface LanguageSwitchProps {
   className?: string;
@@ -11,6 +11,7 @@ export function LanguageSwitch({ className }: LanguageSwitchProps) {
   const { i18n } = useTranslation()
   const { setUserLanguageContext, isAuthenticated } = useAuth()
   const { success: toastSuccess, error: toastError } = useToast();
+  const updatePreferences = useUpdatePreferences();
 
   const toggleLanguage = async () => {
     const newLang = i18n.language === 'en' ? 'zh' : 'en'
@@ -21,7 +22,7 @@ export function LanguageSwitch({ className }: LanguageSwitchProps) {
 
       // Only persist to backend when authenticated
       if (isAuthenticated) {
-        await api.patch('/preferences', { language: newLang })
+        await updatePreferences.mutateAsync({ language: newLang })
       }
 
       // Show success toast only when authenticated (no toast on auth pages)
