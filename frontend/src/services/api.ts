@@ -15,13 +15,7 @@ export const api = axios.create({
   withCredentials: true
 });
 
-function getAuthHeaders() {
-  const token = localStorage.getItem('access_token');
-  return {
-    'Content-Type': 'application/json',
-    'Authorization': token ? `Bearer ${token}` : ''
-  };
-}
+// Note: Authorization header is injected by the request interceptor below.
 
 // Request interceptor to attach auth token
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
@@ -84,112 +78,14 @@ api.interceptors.response.use(
   }
 );
 
-/**
- * Basic API client function for registration
- * Returns raw API response without auth state handling
- * For auth-specific logic, use auth.ts register()
- */
-export async function register(email: string, password: string, name: string) {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/register`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ email, password, name })
-  });
-
-  if (!response.ok) {
-    throw new Error('Registration failed');
-  }
-
-  return await response.json();
-}
-
-/**
- * Basic API client function for logout
- * Returns raw API response without auth state handling
- * For auth-specific logic, use auth.ts logout()
- */
-export async function logout() {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/logout`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-
-  if (!response.ok) {
-    throw new Error('Logout failed');
-  }
-
-  return await response.json();
-}
-/**
- * Admin API method to list users with pagination
- * @param page - Page number (default: 1)
- * @param limit - Items per page (default: 10)
- * @returns Promise with paginated user data
- */
-export async function listUsers(page = 1, limit = 10) {
-  const response = await api.get('/admin/users', {
-    params: { page, limit },
-    headers: getAuthHeaders()
-  });
-  return response.data;
-}
-
-/**
- * Admin API method to delete a user
- * @param userId - ID of user to delete
- * @returns Promise with deletion result
- */
-export async function deleteUser(userId: string) {
-  const response = await api.delete(`/admin/users/${userId}`, {
-    headers: getAuthHeaders()
-  });
-  return response.data;
-}
-
-
-/**
- * Basic API client function for login
- * Returns raw API response without auth state handling
- * For auth-specific logic, use auth.ts login()
- */
-export async function login(email: string, password: string) {
-  const formData = new URLSearchParams();
-  formData.append('username', email);
-  formData.append('password', password);
-
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: formData.toString()
-  });
-
-  if (!response.ok) {
-    throw new Error('Login failed');
-  }
-
-  return await response.json();
-}
 
 export async function getGoals(status?: GoalStatus): Promise<Goal[]> {
   let url = `/goals/`;
   if (status) {
     url += `?status=${status}`;
   }
-  console.log('Fetching goals from URL:', url);
-  try {
-    const response = await api.get(url);
-    console.log('Received goals data:', response.data);
-    return response.data as Goal[];
-  } catch (error) {
-    console.error('Error fetching goals:', error);
-    throw error;
-  }
+  const response = await api.get(url);
+  return response.data as Goal[];
 }
 
 export async function createGoal(goalData: CreateGoalPayload): Promise<Goal> {
@@ -219,20 +115,13 @@ export async function getTasks(status?: 'completed' | 'incomplete', filter?: 'to
   if (params.toString()) {
     url += `?${params.toString()}`;
   }
-  console.log('Fetching tasks from URL:', url);
-  try {
-    const response = await api.get(url);
-    console.log('Received tasks data:', response.data);
-    const rawData = response.data;
-    const tasks = rawData.map((task: { _id?: string; id?: string; [key: string]: unknown }) => ({
-      ...task,
-      id: task._id || task.id
-    })) as Task[];
-    return tasks;
-  } catch (error) {
-    console.error('Error fetching tasks:', error);
-    throw error;
-  }
+  const response = await api.get(url);
+  const rawData = response.data;
+  const tasks = rawData.map((task: { _id?: string; id?: string; [key: string]: unknown }) => ({
+    ...task,
+    id: task._id || task.id
+  })) as Task[];
+  return tasks;
 }
 
 export async function createTask(taskData: CreateTaskPayload): Promise<Task> {
