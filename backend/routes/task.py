@@ -15,15 +15,15 @@ from services.task_service import (
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-def get_valid_status(status: Optional[str] = None) -> Optional[TaskStatus]:
-    if status is None:
+def get_valid_status(status_param: Optional[str] = None) -> Optional[TaskStatus]:
+    if status_param is None:
         return None
     try:
-        return TaskStatus(status)
+        return TaskStatus(status_param)
     except ValueError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid status value: {status}. Allowed values are {', '.join([s.value for s in TaskStatus])}"
+            detail=f"Invalid status value: {status_param}. Allowed values are {', '.join([s.value for s in TaskStatus])}"
         )
 
 @router.post("/", response_model=Task, status_code=status.HTTP_201_CREATED)
@@ -51,8 +51,9 @@ async def list_user_tasks(
     if status:
         tasks = [task for task in tasks if task.status == status]
     if filter == "today":
-        from datetime import datetime, date
-        today = date.today()
+        from datetime import datetime, date, timezone
+        # Use UTC date for consistency with task creation
+        today = datetime.now(timezone.utc).date()
         tasks = [task for task in tasks if task.created_at.date() == today]
     return tasks
 
