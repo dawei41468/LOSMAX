@@ -1,10 +1,16 @@
 import * as React from 'react'
-import { cn, selectVariants, type VariantProps } from '@/lib/utils'
+import {
+  selectVariants,
+  type VariantProps,
+} from '@/components/ui/select-variants'
+import { cn } from '@/lib/utils'
 
 export interface SelectProps
   extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'size'>,
     VariantProps<typeof selectVariants> {
   error?: boolean
+  variant?: 'default' | 'subtle' | 'ghost'
+  size?: 'default' | 'sm' | 'lg'
 }
 
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
