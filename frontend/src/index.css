@@ -28,6 +28,12 @@ body,
   --spacing-2xl: 3rem;
   --spacing-3xl: 4rem;
 
+  /* App spacing variables (mobile-first, ultra-compact) */
+  --app-header-h: 4rem; /* 56px */
+  --app-bottomnav-h: 3.5rem; /* 56px */
+  --app-header-px: 1.25rem;  /* was 1rem */
+  --app-content-px: 1.25rem;  /* was 1rem */
+
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -41,6 +47,10 @@ body,
   --radius-xl: 0.75rem;
   --radius-2xl: 1rem;
   --radius-full: 9999px;
+
+  /* Component Radii */
+  --button-radius: var(--radius-full); /* default button radius; tweak here to adjust globally */
+  --field-radius: var(--button-radius); /* selects/inputs default to button radius for consistency */
 }
 
 /* Base Styles */
@@ -61,6 +71,34 @@ body {
 }
 
 /* Global Utility Classes */
+
+/* AppShell spacing utilities (use CSS vars to tune globally) */
+.px-app-header { padding-left: var(--app-header-px); padding-right: var(--app-header-px); }
+.px-app-content { padding-left: var(--app-content-px); padding-right: var(--app-content-px); }
+/* Backwards-compatible alias (content) */
+.px-app { padding-left: var(--app-content-px); padding-right: var(--app-content-px); }
+.pt-header { padding-top: var(--app-header-h); }
+.pb-nav { padding-bottom: var(--app-bottomnav-h); }
+.app-main { width: 100%; flex: 1 1 auto; }
+
+/* Responsive overrides: progressively increase comfortable spacing on larger screens */
+@media (min-width: 640px) {
+  :root {
+    --app-header-h: 4rem; /* 64px */
+    --app-bottomnav-h: 3.5rem; /* 56px */
+    --app-header-px: 1.5rem;    /* was 1.25rem */
+    --app-content-px: 1.5rem;  /* was 1.25rem */
+  }
+}
+
+@media (min-width: 768px) {
+  :root {
+    --app-header-h: 4.25rem; /* 68px */
+    --app-bottomnav-h: 3.75rem; /* 60px */
+    --app-header-px: 2.25rem;   /* was 2rem */
+    --app-content-px: 2.25rem; /* was 2rem */
+  }
+}
 
 /* Layout */
 .container {

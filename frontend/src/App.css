@@ -1,8 +1,8 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  max-width: none; /* allow full-bleed layout */
+  margin: 0;       /* no centering */
+  padding: 0;      /* remove global page padding */
+  text-align: initial;
 }
 
 .logo {

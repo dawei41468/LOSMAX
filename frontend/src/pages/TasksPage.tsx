@@ -14,7 +14,9 @@ import TaskDialog from '../components/tasks/TaskDialog';
 import TaskCard from '../components/tasks/TaskCard';
 import ConfirmDeleteDialog from '../components/ui/ConfirmDeleteDialog';
 import { useToast } from '../hooks/useToast'; // Import useToast hook
-import { Select, SelectItem } from '@/components/ui/select';
+import SelectMenu from '@/components/ui/select-menu';
+import { Button } from '@/components/ui/button';
+import AppShell from '@/layouts/AppShell';
 
 type FilterType = 'today' | 'all';
 
@@ -44,16 +46,9 @@ export default function TasksPage() {
     }
   }, [isAuthenticated, navigate]);
 
-  const [isScrolled, setIsScrolled] = useState(false);
-
   // Scroll to top on page load
   React.useEffect(() => {
     window.scrollTo(0, 0);
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Mutations
@@ -171,41 +166,33 @@ export default function TasksPage() {
   }, {} as Record<GoalCategory | 'Uncategorized', Record<string, Task[]>>);
 
   return (
-    <div className="no-scrollbar md:p-4" style={{ overflowY: 'auto' }}>
-      {/* Fixed top bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-surface h-20 flex flex-col justify-center items-center">
-        <h1 className="text-xl font-semibold">{t('content.tasks.dailyTasks')}</h1>
-        <p className="text-sm text-muted">{t('content.tasks.subtitle')}</p>
-      </div>
-      
-      {/* Content with top padding to account for fixed header */}
-      <div className="pt-24">
-        {/* Fixed Action Bar beneath Top Bar */}
-        <div className={`fixed top-20 left-0 right-0 z-40 bg-surface flex flex-row justify-between items-center px-6 py-2 ${isScrolled ? 'shadow-md' : ''}`}>
-          {/* Filter Select Menu */}
+    <AppShell
+      title={t('content.tasks.dailyTasks')}
+      subtitle={t('content.tasks.subtitle')}
+      showBottomNav={true}
+    >
+      {/* Fixed filter/action row below AppShell header */}
+      <div className="fixed left-0 right-0 top-[var(--app-header-h)] z-40 bg-surface py-2 px-app-content">
+        <div className="flex items-center justify-between">
           <div className="flex justify-start">
-            <Select
-              variant="subtle"
+            <SelectMenu
+              variant="default"
               size="sm"
               value={currentFilter}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCurrentFilter(e.target.value as FilterType)}
-              className="min-w-[120px] focus:ring-0 focus:outline-none"
-              style={{ borderColor: '#374151', outline: 'none', boxShadow: 'none' }}
-            >
-              {(['today', 'all'] as FilterType[]).map(filter => (
-                <SelectItem key={filter} value={filter}>
-                  {t(`common.filter.${filter}`)}
-                </SelectItem>
-              ))}
-            </Select>
+              onChange={(v) => setCurrentFilter(v as FilterType)}
+              items={(['today', 'all'] as FilterType[]).map((filter) => ({ value: filter, label: t(`common.filter.${filter}`) }))}
+              placeholder={t('common.filter.all')}
+              className="min-w-[120px]"
+            />
           </div>
-          <button
-            onClick={openCreateDialog}
-            className="w-auto px-4 py-2 text-sm font-medium border border-blue-500 text-blue-500 rounded-md hover:bg-blue-500/10 transition-colors focus:outline-none"
-          >
+          <Button onClick={openCreateDialog} size="sm">
             {t('content.tasks.createNew')}
-          </button>
+          </Button>
         </div>
+      </div>
+
+      {/* Spacer to offset fixed filter bar height */}
+      <div className="h-12" />
 
       {isTaskDialogOpen && (
         <TaskDialog
@@ -267,7 +254,6 @@ export default function TasksPage() {
             </div>
           ))
       )}
-      </div>
-    </div>
+    </AppShell>
   );
 }

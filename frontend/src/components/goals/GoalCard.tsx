@@ -4,7 +4,7 @@ import type { Goal } from '../../types/goals';
 import { Edit, Check, Trash2 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../ui/card';
 import { formatDate, formatDateShort } from '../../lib/utils'; // Utility function to format dates
-import { getCategoryBorderVariant, getCategoryColorClass } from '../ui/categoryUtils';
+import { getCategoryColorClass } from '../ui/categoryUtils';
 import { StatusBadge } from '../ui/BadgeUI';
 
 interface GoalCardProps {
@@ -38,42 +38,52 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onEdit, onDelete, onToggleSta
     <Card
       variant="elevated"
       interactive={goal.status === 'active'}
-      border={getCategoryBorderVariant(goal.category)}
-      size="none">
-      <CardHeader>
-        <div className="flex items-start justify-between w-full">
-          <CardTitle size="sm" color="none" className={getCategoryColorClass(goal.category)}>
-            {goal.title}
-          </CardTitle>
-          <StatusBadge status={goal.status} />
+      border="none"
+      className="relative overflow-hidden"
+    >
+      {/* Category accent strip */}
+      <div className={`absolute top-0 left-0 right-0 h-1 ${getCategoryColorClass(goal.category, 'primaryBg')}`}></div>
+
+      <CardHeader size="sm" spacing="tight">
+        <div className="flex items-start justify-between w-full mb-2">
+          <div className="flex-1 min-w-0">
+            <CardTitle size="sm" color="none" className={`${getCategoryColorClass(goal.category, 'primary')} font-semibold mb-1 leading-tight`}>
+              {goal.title}
+            </CardTitle>
+            {goal.description && (
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                {t('component.goalCard.details')}: {goal.description}
+              </p>
+            )}
+          </div>
+          <div className="flex-shrink-0 ml-3">
+            <StatusBadge status={goal.status} />
+          </div>
         </div>
       </CardHeader>
 
-      {goal.description && (
-        <CardContent spacing="tight">
-          <p className="text-sm text-muted-foreground text-left">
-            {t('component.goalCard.details')}: {goal.description}
-          </p>
-        </CardContent>
-      )}
-
-      <CardContent spacing="tight">
-        <p className="text-sm text-left">
-          {t('component.goalCard.targetDate')}: {useShortDate ? formatDateShort(goal.target_date) : formatDate(goal.target_date)}
-        </p>
-        <p className="text-sm text-left">
-          {t('component.goalCard.daysLeft')}:{' '}
-          <span className={`font-medium ${getDaysRemainingClass()}`}>
-            {daysRemaining}
-            {daysRemaining === 0 && goal.status === 'active'
-              ? ` ${t('component.goalCard.dueTodayOverdue')}`
-              : ''}
-          </span>
-        </p>
+      <CardContent size="sm" spacing="none">
+        <div className="bg-muted/30 rounded-md p-3">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t('component.goalCard.targetDate')}</div>
+              <div className="text-sm font-medium">{useShortDate ? formatDateShort(goal.target_date) : formatDate(goal.target_date)}</div>
+            </div>
+            <div className="space-y-1">
+              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t('component.goalCard.daysLeft')}</div>
+              <div className="flex items-center gap-2">
+                <span className={`text-sm font-semibold ${getDaysRemainingClass()}`}>{daysRemaining}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </CardContent>
 
-      <CardFooter align="right" spacing="loose">
-        <div className="flex gap-4">
+      <CardFooter size="sm" align="between" spacing="tight">
+        <div className={`text-xs px-2 py-1 rounded-full ${getCategoryColorClass(goal.category, 'bg')} ${getCategoryColorClass(goal.category, 'primary')} font-medium`}> 
+          {t(`content.categories.${goal.category.toLowerCase()}`)}
+        </div>
+        <div className="flex gap-3">
           <button
             onClick={() => onEdit(goal)}
             aria-label={t('actions.edit')}

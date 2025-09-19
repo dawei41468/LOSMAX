@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../contexts/ThemeContext';
 import { useToast } from '../../hooks/useToast';
 import type { Task } from '../../types/tasks';
 import type { Goal } from '../../types/goals';
@@ -20,7 +19,7 @@ import {
   FormLabel,
   FormInput,
 } from '@/components/ui/form';
-import { SelectField } from '@/components/ui/select';
+import SelectMenu from '@/components/ui/select-menu';
 
 interface TaskDialogProps {
   isOpen: boolean;
@@ -31,7 +30,6 @@ interface TaskDialogProps {
 
 const TaskDialog: React.FC<TaskDialogProps> = ({ isOpen, onClose, onSubmit, initialTask }) => {
   const { t } = useTranslation();
-  const { theme } = useTheme();
   const { error: toastError } = useToast();
   const [title, setTitle] = useState(initialTask?.title || '');
   const [goalId, setGoalId] = useState(initialTask?.goal_id || '');
@@ -67,8 +65,7 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ isOpen, onClose, onSubmit, init
     <DialogOverlay>
       <DialogContent 
         onClose={onClose} 
-        className="rounded-lg shadow-xl max-w-md mx-auto" 
-        style={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff' }}
+        className="shadow-xl max-w-md mx-auto bg-card"
       >
         <DialogHeader className="p-4 pb-0">
           <DialogTitle className="text-2xl font-bold mb-2 text-center sm:text-left">
@@ -77,7 +74,7 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ isOpen, onClose, onSubmit, init
         </DialogHeader>
         <Form onSubmit={handleSubmit} className="space-y-2 p-4 pt-0">
           <FormField>
-            <FormLabel htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1 text-left">
+            <FormLabel htmlFor="title" className="block mb-1 text-left">
               {t('component.taskDialog.yourTask')}
             </FormLabel>
             <FormInput
@@ -87,36 +84,31 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ isOpen, onClose, onSubmit, init
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
               required
               placeholder={t('component.taskDialog.taskPlaceholder')}
-              className="w-full p-2 border rounded-md"
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-[var(--radius)] bg-card text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
           </FormField>
           <FormField>
-            <FormLabel htmlFor="goalId" className="block text-sm font-medium text-gray-700 mb-1 text-left">
+            <FormLabel htmlFor="goalId" className="block mb-1 text-left">
               {t('component.taskDialog.associatedGoal')} <span className="text-red-500">*</span>
             </FormLabel>
-            <SelectField
-              id="goalId"
-              value={goalId}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setGoalId(e.target.value)}
-              required
-              disabled={!!initialTask || isLoadingGoals}
-              placeholder={isLoadingGoals ? t('actions.loading') : t('component.taskDialog.selectGoal')}
-              className="w-full p-2 border rounded-md focus:ring-0 focus:outline-none"
-              style={{ borderColor: '#374151', outline: 'none', boxShadow: 'none' }}
-            >
-              {goals.map(goal => (
-                <option key={goal.id} value={goal.id}>
-                  {goal.title}
-                </option>
-              ))}
-            </SelectField>
+            <div className={initialTask || isLoadingGoals ? 'opacity-60 pointer-events-none' : ''}>
+              <SelectMenu
+                variant="default"
+                size="default"
+                value={goalId}
+                onChange={(v) => setGoalId(v)}
+                items={goals.map((goal) => ({ value: goal.id, label: goal.title }))}
+                placeholder={isLoadingGoals ? t('actions.loading') : t('component.taskDialog.selectGoal')}
+                className="w-full"
+              />
+            </div>
             {initialTask && (
-              <DialogDescription className="text-xs text-gray-500 mt-1">
+              <DialogDescription className="text-xs text-muted-foreground mt-1">
                 {t('component.taskDialog.goalCannotChange')}
               </DialogDescription>
             )}
             {goalId && goals.find(g => g.id === goalId)?.description && (
-              <DialogDescription className="text-xs text-gray-500 mt-1 italic">
+              <DialogDescription className="text-xs text-muted-foreground mt-1 italic">
                 {goals.find(g => g.id === goalId)?.description}
               </DialogDescription>
             )}
@@ -125,7 +117,7 @@ const TaskDialog: React.FC<TaskDialogProps> = ({ isOpen, onClose, onSubmit, init
             <Button type="button" variant="outline" onClick={onClose}>
               {t('actions.cancel')}
             </Button>
-            <Button type="submit" disabled={!title || !goalId} className="bg-primary text-primary-foreground rounded-md border border-primary hover:bg-blue-500/10 hover:text-primary transition-colors">
+            <Button type="submit" disabled={!title || !goalId}>
               {initialTask ? t('component.taskDialog.updateButton') : t('component.taskDialog.createButton')}
             </Button>
           </DialogFooter>

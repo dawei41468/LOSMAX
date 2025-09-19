@@ -10,7 +10,9 @@ import GoalDialog from '../components/goals/GoalDialog';
 import GoalCard from '../components/goals/GoalCard';
 import ConfirmDeleteDialog from '../components/ui/ConfirmDeleteDialog'; // Import the new dialog
 import { useToast } from '../hooks/useToast'; // Import useToast hook
-import { Select, SelectItem } from '@/components/ui/select';
+import SelectMenu from '@/components/ui/select-menu';
+import { Button } from '@/components/ui/button';
+import AppShell from '@/layouts/AppShell';
 
 // CATEGORIES_PAGE_LEVEL removed as GoalDialog defines its own or it should come from a shared constant
 
@@ -21,15 +23,8 @@ export default function GoalsPage() {
   const { isAuthenticated } = useContext(AuthContext) as AuthContextType;
   const { error: toastError } = useToast();
   
-  const [isScrolled, setIsScrolled] = useState(false);
-
   useEffect(() => {
     window.scrollTo(0, 0);
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false); // UI-only loading (dialogs, deletes)
@@ -153,39 +148,37 @@ export default function GoalsPage() {
 
 
   return (
-    <div className="no-scrollbar md:p-4" style={{ overflowY: 'auto' }}>
-      {/* Fixed top bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-surface h-20 flex flex-col justify-center items-center">
-        <h1 className="text-xl font-semibold">{t('content.goals.title')}</h1>
-        <p className="text-sm text-muted">{t('content.goals.subtitle')}</p>
-      </div>
-      
-      {/* Content with top padding to account for fixed header */}
-      <div className="pt-24">
-        {/* Fixed Action Bar beneath Top Bar */}
-        <div className={`fixed top-20 left-0 right-0 z-40 bg-surface flex flex-row justify-between items-center px-6 py-2 ${isScrolled ? 'shadow-md' : ''}`}>
-          {/* Filter Select Menu */}
+    <AppShell
+      title={t('content.goals.title')}
+      subtitle={t('content.goals.subtitle')}
+      showBottomNav={false}
+    >
+      <div className="space-y-4">
+        {/* Actions row (fixed below AppShell header) */}
+        <div className="fixed left-0 right-0 top-[var(--app-header-h)] z-40 bg-surface py-2 px-app-content">
+          <div className="flex items-center justify-between">
           <div className="flex justify-start">
-            <Select
-              variant="subtle"
+            <SelectMenu
+              variant="default"
               size="sm"
               value={currentFilter}
-              onChange={(e) => setCurrentFilter(e.target.value as FilterStatus)}
-              className="min-w-[120px] focus:ring-0 focus:outline-none"
-              style={{ borderColor: '#374151', outline: 'none', boxShadow: 'none' }}
-            >
-              <SelectItem value="active">{t('common.filter.active')}</SelectItem>
-              <SelectItem value="completed">{t('common.filter.completed')}</SelectItem>
-              <SelectItem value="all">{t('common.filter.all')}</SelectItem>
-            </Select>
+              onChange={(v) => setCurrentFilter(v as FilterStatus)}
+              items={[
+                { value: 'active', label: t('common.filter.active') },
+                { value: 'completed', label: t('common.filter.completed') },
+                { value: 'all', label: t('common.filter.all') },
+              ]}
+              placeholder={t('common.filter.all')}
+              className="min-w-[120px]"
+            />
           </div>
-          <button
-            onClick={openCreateDialog}
-            className="w-auto px-4 py-2 text-sm font-medium border border-blue-500 text-blue-500 rounded-md hover:bg-blue-500/10 transition-colors focus:outline-none"
-          >
+          <Button onClick={openCreateDialog} size="sm">
             {t('content.goals.createNew')}
-          </button>
+          </Button>
+          </div>
         </div>
+        {/* Spacer to offset fixed filter bar height */}
+        <div className="h-12" />
 
         {isGoalDialogOpen && (
           <GoalDialog
@@ -220,9 +213,7 @@ export default function GoalsPage() {
             .map(category => (
               <div key={category} className="mb-6">
                 <h2 className="text-xl font-semibold mb-3 flex items-center">
-                  <CategoryHeader
-                    category={category}
-                  />
+                  <CategoryHeader category={category} />
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {groupedGoals[category].map(goal => (
@@ -239,6 +230,6 @@ export default function GoalsPage() {
             ))
         )}
       </div>
-    </div>
-);
+    </AppShell>
+  );
 }

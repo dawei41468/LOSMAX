@@ -44,7 +44,7 @@ export function LanguageSwitch({ className }: LanguageSwitchProps) {
       onClick={toggleLanguage}
       className={`text-sm font-medium text-foreground ${className}`}
     >
-      {i18n.language === 'en' ? '中文' : 'EN'}
+      {i18n.language === 'en' ? '中' : 'EN'}
     </button>
   )
 }

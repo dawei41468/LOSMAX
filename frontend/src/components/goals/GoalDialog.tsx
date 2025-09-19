@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SelectField } from '@/components/ui/select';
+import SelectMenu from '@/components/ui/select-menu';
 import type { Goal, GoalCategory } from '../../types/goals'; 
 import { Button } from '../ui/button';
 import {
@@ -85,7 +85,7 @@ const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, init
     <DialogOverlay>
       <DialogContent 
         onClose={onClose} 
-        className="rounded-lg shadow-xl max-w-md mx-auto bg-card" 
+        className="shadow-xl max-w-md mx-auto bg-card"
       >
         <DialogHeader className="p-4 pb-0">
           <DialogTitle className="text-2xl font-bold mb-2 text-center sm:text-left">
@@ -103,7 +103,7 @@ const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, init
               value={title}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
               required
-              className="w-full p-2 border rounded-md"
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-[var(--radius)] bg-card text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
           </FormField>
           <FormField>
@@ -115,28 +115,27 @@ const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, init
               value={description}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
               rows={3}
-              className="w-full p-2 border rounded-md"
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-[var(--radius)] bg-card text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
           </FormField>
           <FormField>
             <FormLabel htmlFor="category" className="block mb-1 text-left">
               {t('component.goalDialog.category')}
             </FormLabel>
-            <SelectField
-              id="category"
-              value={category}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCategory(e.target.value as GoalCategory)}
-              required
-              disabled={!!initialGoal}
-              className="w-full p-2 border rounded-md focus:ring-0 focus:outline-none"
-              style={{ borderColor: '#374151', outline: 'none', boxShadow: 'none' }}
-            >
-              {CATEGORIES.map((cat: GoalCategory) => (
-                <option key={cat} value={cat}>
-                  {t(`content.categories.${cat.toLowerCase()}`)}
-                </option>
-              ))}
-            </SelectField>
+            <div className={initialGoal ? 'opacity-60 pointer-events-none' : ''}>
+              <SelectMenu
+                variant="default"
+                size="default"
+                value={category}
+                onChange={(v) => setCategory(v as GoalCategory)}
+                items={CATEGORIES.map((cat: GoalCategory) => ({
+                  value: cat,
+                  label: t(`content.categories.${cat.toLowerCase()}`),
+                }))}
+                placeholder={t('component.goalDialog.category')}
+                className="w-full"
+              />
+            </div>
           </FormField>
           <FormField>
             <FormLabel htmlFor="target_date" className="block text-sm font-medium text-standard mb-1 text-left">
@@ -152,7 +151,7 @@ const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, init
               }}
               required
               min={new Date().toISOString().split('T')[0]}
-              className="w-full p-2 border rounded-md"
+              className="w-full px-3 py-2 border border-[var(--border)] rounded-[var(--radius)] bg-card text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
             {dateError && <p className="text-xs text-red-500 mt-1">{dateError}</p>}
           </FormField>
@@ -160,7 +159,7 @@ const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, init
             <Button type="button" variant="outline" onClick={onClose}>
               {t('actions.cancel')}
             </Button>
-            <Button type="submit" disabled={!title || !category || !targetDate} className="bg-primary text-primary-foreground rounded-md border border-primary hover:bg-blue-500/10 hover:text-primary transition-colors">
+            <Button type="submit" disabled={!title || !category || !targetDate}>
               {initialGoal ? t('component.goalDialog.updateButton') : t('component.goalDialog.createButton')}
             </Button>
           </DialogFooter>

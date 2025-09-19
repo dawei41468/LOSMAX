@@ -19,10 +19,10 @@ const cardVariants = cva(
         taskST: 'shadow-md bg-[var(--task-bg)] text-[var(--foreground)]',
       },
       size: {
-        default: 'p-6',
-        sm: 'p-4',
-        lg: 'p-8',
-        xl: 'p-10',
+        default: 'p-4',
+        sm: 'p-2',
+        lg: 'p-6',
+        xl: 'p-8',
         none: 'p-0',
       },
       interactive: {
@@ -31,10 +31,10 @@ const cardVariants = cva(
       },
       border: {
         default: 'border-standard',
-        accent: 'border-primary',
-        success: 'border-success',
-        warning: 'border-warning',
-        error: 'border-destructive',
+        accent: 'border-[var(--primary)]',
+        success: 'border-[var(--success)]',
+        warning: 'border-[var(--warning)]',
+        error: 'border-[var(--destructive)]',
         family: 'border-[var(--category-family)]',
         work: 'border-[var(--category-work)]',
         personal: 'border-[var(--category-personal)]',
@@ -78,10 +78,10 @@ const cardHeaderVariants = cva(
   {
     variants: {
       size: {
-        default: 'p-6',
-        sm: 'p-4',
-        lg: 'p-8',
-        xl: 'p-10',
+        default: 'p-4',
+        sm: 'p-2',
+        lg: 'p-6',
+        xl: 'p-8',
         none: 'p-0',
       },
       align: {
@@ -218,10 +218,10 @@ const cardContentVariants = cva(
   {
     variants: {
       size: {
-        default: 'p-6 pt-0',
-        sm: 'p-4 pt-0',
-        lg: 'p-8 pt-0',
-        xl: 'p-10 pt-0',
+        default: 'p-4 pt-0',
+        sm: 'p-2 pt-0',
+        lg: 'p-6 pt-0',
+        xl: 'p-8 pt-0',
         none: 'p-0',
       },
       spacing: {
@@ -262,10 +262,10 @@ const cardFooterVariants = cva(
   {
     variants: {
       size: {
-        default: 'p-6 pt-0',
-        sm: 'p-4 pt-0',
-        lg: 'p-8 pt-0',
-        xl: 'p-10 pt-0',
+        default: 'p-4 pt-0',
+        sm: 'p-2 pt-0',
+        lg: 'p-6 pt-0',
+        xl: 'p-8 pt-0',
         none: 'p-0',
       },
       align: {

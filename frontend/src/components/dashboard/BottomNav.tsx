@@ -22,7 +22,7 @@ export function BottomNav({ className }: BottomNavProps) {
   };
 
   return (
-    <div className={`bottom-nav py-3 bg-surface shadow-[0_-1px_2px_0_rgba(0,0,0,0.05)] ${className}`}>
+    <div className={`bottom-nav bg-surface shadow-[0_-1px_2px_0_rgba(0,0,0,0.05)] h-[var(--app-bottomnav-h)] flex items-center ${className}`}>
       <nav className="bottom-nav-nav w-full grid grid-cols-5 gap-0">
         <Link
           to="/dashboard"

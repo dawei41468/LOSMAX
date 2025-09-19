@@ -16,6 +16,8 @@ import { Toaster } from 'sonner'
 import { ProtectedRoute, AdminRoute } from './components/ProtectedRoute'
 import { RoleBasedRedirect } from './components/RoleBasedRedirect'
 import { ThemeTransition } from './components/ui/theme-transition';
+import AppShell from './layouts/AppShell'
+import UIKitDemo from './components/ui/_ui-kit-demo'
 
 function App() {
   return (
@@ -33,6 +35,14 @@ function App() {
                     <ProfilePage />
                   </BottomNavLayout>
                 } />
+                {/* Dev-only: UI Kit preview route. Wrapped in AppShell to validate tokens/layout. */}
+                {import.meta.env.MODE !== 'production' && (
+                  <Route path="/ui-kit" element={
+                    <AppShell title="UI Kit" subtitle="Design tokens & primitives">
+                      <UIKitDemo />
+                    </AppShell>
+                  } />
+                )}
                 <Route element={<MainLayoutRoutes />}>
                   <Route path="/" element={<RoleBasedRedirect />} />
                   <Route path="/dashboard" element={<DashboardPage />} />

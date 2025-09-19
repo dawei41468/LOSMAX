@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AuthContext } from '../contexts/auth.context';
 import type { AuthContextType } from '../contexts/auth.types';
@@ -11,20 +11,15 @@ import TaskStatus from '../components/dashboard/TaskStatus';
 import OverviewStats from '../components/dashboard/OverviewStats';
 import type { Task } from '../types/tasks';
 import type { Goal } from '../types/goals';
+import AppShell from '@/layouts/AppShell';
 
 export default function DashboardPage() {
   const { t } = useTranslation();
   const { isAuthenticated, userName } = useContext(AuthContext) as AuthContextType;
-  
-  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    // No custom header scroll effects; AppShell manages top bar
   }, []);
   const navigate = useNavigate();
 
@@ -67,30 +62,33 @@ export default function DashboardPage() {
   const isLoading = todayTasksQuery.isLoading || activeGoalsQuery.isLoading || allGoalsQuery.isLoading || allTasksQuery.isLoading;
 
   return (
-    <div className="space-y-6 md:p-4">
-      {/* Fixed top bar */}
-      <div className={`fixed top-0 left-0 right-0 z-50 bg-surface h-20 flex flex-col justify-center items-center ${isScrolled ? 'shadow-md' : ''}`}>
-        <h1 className="text-xl font-semibold">{t('content.dashboard.title')}</h1>
-        <p className="text-sm text-muted">{t('content.dashboard.subtitle')}</p>
+    <AppShell
+      title={t('content.dashboard.title')}
+      subtitle={t('content.dashboard.subtitle')}
+      showBottomNav={true}
+    >
+      <div className="pt-[calc(var(--app-header-h)-2.25rem)]">
+        <div className="space-y-4">
+          <div className="flex justify-center text-center">
+            <Greeting userName={userName} />
+          </div>
+          <QuoteOfDay />
+          {isLoading ? (
+            <div className="p-4 text-center">{t('actions.loading')}</div>
+          ) : (
+            <TaskStatus todayTasks={todayTasks} activeGoals={activeGoals} />
+          )}
+          <hr className="w-full h-px border-standard mx-auto mt-6 mb-4" />
+          <div className="flex justify-center text-center">
+            <OverviewStats
+              totalGoals={totalGoals}
+              completedGoals={completedGoals}
+              inProgressGoals={inProgressGoals}
+              avgProgress={avgProgress}
+            />
+          </div>
+        </div>
       </div>
-      
-      {/* Content with top padding to account for fixed header */}
-      <div className="pt-14 justify-center grid grid-cols-1 gap-4">
-        <Greeting userName={userName} />
-        <QuoteOfDay />
-        {isLoading ? (
-          <div className="p-4 text-center">{t('actions.loading')}</div>
-        ) : (
-          <TaskStatus todayTasks={todayTasks} activeGoals={activeGoals} />
-        )}
-        <hr className="w-full h-px border-standard mx-auto mt-6 mb-4 border-1" />
-        <OverviewStats
-          totalGoals={totalGoals}
-          completedGoals={completedGoals}
-          inProgressGoals={inProgressGoals}
-          avgProgress={avgProgress}
-        />
-      </div>
-    </div>
+    </AppShell>
   );
 }
