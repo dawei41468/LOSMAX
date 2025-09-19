@@ -4,7 +4,7 @@ import { useToast } from '../../hooks/useToast';
 import type { Task } from '../../types/tasks';
 import type { Goal } from '../../types/goals';
 import { useGoals } from '../../hooks/useGoals';
-import { Button } from '../ui/button';
+import { Button } from '@/components/ui/button';
 import {
   DialogOverlay,
   DialogContent,

@@ -2,10 +2,10 @@ import React from 'react';
 import { Progress } from '@/components/ui/progress';
 import type { Goal } from '../../types/goals';
 import { useTranslation } from 'react-i18next';
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { formatDateShort } from '../../lib/utils'; // Utility function to format dates
-import { getCategoryBorderVariant, getCategoryColorClass } from '../ui/categoryUtils';
-import { StatusBadge } from '../ui/BadgeUI';
+import { getCategoryBorderVariant, getCategoryColorClass } from '@/components/ui/categoryUtils';
+import { StatusBadge } from '@/components/ui/BadgeUI';
 
 interface ProgressGoalCardProps {
   goal: Goal & { progress: number; days_remaining: number };

@@ -4,15 +4,15 @@ import { AuthContext } from '../contexts/auth.context';
 import type { AuthContextType } from '../contexts/auth.types';
 import { useTasks, useCreateTask, useUpdateTask, useDeleteTask, useToggleTaskStatus } from '../hooks/useTasks';
 import { useGoals } from '../hooks/useGoals';
-import { CategoryHeader } from '../components/ui/CategoryUI';
-import { getCategoryColorClass } from '../components/ui/categoryUtils';
+import { CategoryHeader } from '@/components/ui/CategoryUI';
+import { getCategoryColorClass } from '@/components/ui/categoryUtils';
 import type { GoalCategory } from '../types/goals';
 import type { Task } from '../types/tasks';
 import type { Goal } from '../types/goals';
 import { useNavigate } from 'react-router-dom';
 import TaskDialog from '../components/tasks/TaskDialog';
 import TaskCard from '../components/tasks/TaskCard';
-import ConfirmDeleteDialog from '../components/ui/ConfirmDeleteDialog';
+import ConfirmDeleteDialog from '@/components/ui/ConfirmDeleteDialog';
 import { useToast } from '../hooks/useToast'; // Import useToast hook
 import SelectMenu from '@/components/ui/select-menu';
 import { Button } from '@/components/ui/button';

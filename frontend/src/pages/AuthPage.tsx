@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '../hooks/useToast'; // Import useToast hook
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { LanguageSwitch } from '../components/ui/language-toggle';
+import { LanguageSwitch } from '@/components/ui/language-toggle';
 import { login, register } from '../services/auth';
 import { AuthContext } from '../contexts/auth.context';
-import LOSHeader from '../components/ui/losheader';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
+import LOSHeader from '@/components/ui/losheader';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface AuthFormProps {
   title: string;

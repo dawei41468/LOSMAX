@@ -3,12 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { AuthContext } from '../contexts/auth.context';
 import type { AuthContextType } from '../contexts/auth.types';
 import { useGoals, useCreateGoal, useUpdateGoal, useDeleteGoal, useToggleGoalStatus } from '../hooks/useGoals';
-import { CategoryHeader } from '../components/ui/CategoryUI';
+import { CategoryHeader } from '@/components/ui/CategoryUI';
 import { useNavigate } from 'react-router-dom';
 import type { Goal, GoalStatus, GoalCategory, CreateGoalPayload } from '../types/goals';
 import GoalDialog from '../components/goals/GoalDialog';
 import GoalCard from '../components/goals/GoalCard';
-import ConfirmDeleteDialog from '../components/ui/ConfirmDeleteDialog'; // Import the new dialog
+import ConfirmDeleteDialog from '@/components/ui/ConfirmDeleteDialog'; // Import the new dialog
 import { useToast } from '../hooks/useToast'; // Import useToast hook
 import SelectMenu from '@/components/ui/select-menu';
 import { Button } from '@/components/ui/button';

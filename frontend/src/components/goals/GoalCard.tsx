@@ -2,10 +2,10 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Goal } from '../../types/goals';
 import { Edit, Check, Trash2 } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../ui/card';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { formatDate, formatDateShort } from '../../lib/utils'; // Utility function to format dates
-import { getCategoryColorClass } from '../ui/categoryUtils';
-import { StatusBadge } from '../ui/BadgeUI';
+import { getCategoryColorClass } from '@/components/ui/categoryUtils';
+import { StatusBadge } from '@/components/ui/BadgeUI';
 
 interface GoalCardProps {
   goal: Goal;

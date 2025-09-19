@@ -16,7 +16,6 @@ const DateInput: React.FC<DateInputProps> = ({
   ...props
 }) => {
   const [displayValue, setDisplayValue] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
   const [showPicker, setShowPicker] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const inputRef = useRef<HTMLInputElement>(null);
@@ -173,12 +172,7 @@ const DateInput: React.FC<DateInputProps> = ({
     }
   };
 
-  const handleFocus = () => {
-    setIsFocused(true);
-  };
-
   const handleBlur = () => {
-    setIsFocused(false);
     // On blur, try to parse and reformat the date
     const isoValue = parseDateFromDisplay(displayValue);
     if (isoValue) {
@@ -193,7 +187,6 @@ const DateInput: React.FC<DateInputProps> = ({
         type="text"
         value={displayValue}
         onChange={handleInputChange}
-        onFocus={handleFocus}
         onBlur={handleBlur}
         placeholder={placeholder}
         className={cn(

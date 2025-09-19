@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import SelectMenu from '@/components/ui/select-menu';
-import type { Goal, GoalCategory } from '../../types/goals'; 
-import { Button } from '../ui/button';
+import type { Goal, GoalCategory } from '../../types/goals';
+import { Button } from '@/components/ui/button';
 import DateInput from '@/components/ui/DateInput';
 import {
   DialogOverlay,

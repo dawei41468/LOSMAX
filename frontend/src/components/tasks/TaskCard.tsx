@@ -3,7 +3,7 @@ import type { Task } from '../../types/tasks';
 import { useTranslation } from 'react-i18next';
 import { Edit, Check, Trash2 } from 'lucide-react';
 import { formatDate, formatDateShort } from '../../lib/utils';
-import { StatusBadge } from '../ui/BadgeUI';
+import { StatusBadge } from '@/components/ui/BadgeUI';
 
 interface TaskCardProps {
   task: Task;
