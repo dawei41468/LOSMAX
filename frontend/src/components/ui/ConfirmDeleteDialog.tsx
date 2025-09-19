@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../contexts/ThemeContext';
 import { DialogOverlay, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from './dialog';
 import { Button } from './button';
 
@@ -22,29 +21,27 @@ const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
   message,
 }) => {
   const { t } = useTranslation();
-  const { theme } = useTheme();
 
   if (!isOpen) return null;
 
   return (
     <DialogOverlay>
       <DialogContent 
-        className="rounded-lg shadow-xl max-w-md mx-auto" 
         onClose={onClose}
-        style={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff' }}
+        className="shadow-xl max-w-md mx-auto bg-card"
       >
-        <DialogHeader className="p-4 pb-0">
-          <DialogTitle className="text-2xl font-bold mb-2 text-center sm:text-left">
+        <DialogHeader>
+          <DialogTitle>
             {t('confirmDialog.title', { item: itemName })}
           </DialogTitle>
-          <DialogDescription className="text-sm text-muted-foreground mb-4">
+          <DialogDescription>
             {message || t('confirmDialog.message', { item: itemName })}
           </DialogDescription>
-          <DialogDescription className="text-sm text-red-600 font-semibold mb-6">
+          <DialogDescription className="text-destructive font-medium">
             {t('confirmDialog.warning')}
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="flex flex-row justify-end gap-2 p-4 pt-0">
+        <DialogFooter className="flex flex-row justify-end gap-2">
           <Button
             type="button"
             variant="outline"

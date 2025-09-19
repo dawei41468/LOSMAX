@@ -1,20 +1,32 @@
 import * as React from "react"
+import { createPortal } from "react-dom"
 import { cn } from "@/lib/utils"
 
 // Dialog Overlay
 const DialogOverlay = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "fixed inset-0 z-[90] bg-black/50 flex items-center justify-center p-4 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-      className
-    )}
-    {...props}
-  />
-))
+>(({ className, children, ...props }, ref) => {
+  const overlay = (
+    <div
+      ref={ref}
+      className={cn(
+        "fixed inset-0 z-[1000] bg-black/50 flex items-center justify-center p-4 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </div>
+  )
+
+  // Render in a portal to escape any parent stacking context (e.g., AppShell headers)
+  if (typeof window !== "undefined") {
+    const container = document.body
+    return createPortal(overlay, container)
+  }
+  return overlay
+})
 DialogOverlay.displayName = "DialogOverlay"
 
 // Dialog Content
@@ -27,7 +39,7 @@ const DialogContent = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "fixed left-1/2 top-1/2 z-[100] grid w-[20rem] max-w-[92vw] -translate-x-1/2 -translate-y-1/2 gap-2 border border-standard bg-card p-3 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 rounded-[var(--radius)]",
+      "fixed left-1/2 top-1/2 z-[1010] grid w-[20rem] max-w-[92vw] -translate-x-1/2 -translate-y-1/2 gap-2 border border-standard bg-card p-3 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 rounded-[var(--radius)]",
       className
     )}
     {...props}

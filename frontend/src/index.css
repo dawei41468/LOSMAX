@@ -293,9 +293,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Reduce horizontal padding further */
-  padding-left: var(--spacing-xs);
-  padding-right: var(--spacing-xs);
+  /* Add horizontal padding to prevent full-bleed layout */
+  padding-left: var(--app-content-px);
+  padding-right: var(--app-content-px);
   /* Shift content upward slightly to reduce top whitespace (approx ~30% of current) */
   transform: translateY(-8vh);
   /* Reduce bottom whitespace by ~20% using a slight negative bottom margin */
@@ -317,40 +317,23 @@ body {
   }
 }
 
-/* Remove horizontal padding on small/medium screens to eliminate left-edge spacing */
-@media (max-width: 768px) {
-  .page-auth {
-    padding-left: 0;
-    padding-right: 0;
-  }
-}
-
 /* Ensure the auth card itself has no unintended horizontal margins */
 .auth-card {
   margin-left: 0;
   margin-right: 0;
 }
 
-/* On very small screens, remove horizontal padding entirely */
-@media (max-width: 420px) {
-  .page-auth {
-    padding-left: 0;
-    padding-right: 0;
-  }
-  /* Make the auth container full-bleed on very small screens */
-  .auth-card {
-    max-width: none;
-    width: 100vw;
-  }
-  /* Remove card border radius so it visually touches the screen edges */
-  .page-auth .rounded-lg {
-    border-radius: 0.5rem;
-  }
-}
-
 .auth-card {
   width: 100%;
   max-width: 400px;
+}
+
+/* Add more inner padding to auth card content */
+.auth-card-content {
+  padding-left: var(--spacing-md);
+  padding-right: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  padding-bottom: var(--spacing-xs);
 }
 
 .auth-header {
@@ -396,7 +379,7 @@ body {
   border-bottom: 1px solid var(--border);
   background-color: transparent;
   color: var(--foreground);
-  font-size: 0.875rem;
+  font-size: 1rem;
   transition: all 0.2s ease-in-out;
   outline: none;
 }

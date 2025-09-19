@@ -72,7 +72,7 @@ function AuthFormComponent({
             </CardTitle>
           </CardHeader>
         )}
-        <CardContent size="none" className="space-y-3">
+        <CardContent size="none" className="auth-card-content space-y-3">
           <form onSubmit={handleSubmit} className="auth-form">
             {showNameField && (
               <div className="form-group">

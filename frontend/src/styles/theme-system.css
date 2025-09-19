@@ -90,16 +90,11 @@
   --focus-ring-offset: 2px;
   --focus-ring-color: var(--ring);
   
-  /* Category colors */
-  --category-health: #10b981;
-  --category-work: #3b82f6;
-  --category-family: #8b5cf6;
-  --category-personal: #f59e0b;
-
-  /* Status colors */
-  --status-active: var(--brand-info); /* Changed to blue */
-  --status-completed: #10b981;
-  --status-incomplete: #f59e0b; /* Old status-active color */
+  /* Switch colors */
+  --switch-off-bg: #e5e7eb; /* gray-200 */
+  --switch-off-border: #e5e7eb; /* gray-200 */
+  --switch-thumb-bg: #ffffff;
+  --switch-thumb-border: #e5e7eb; /* gray-200 */
 }
 
 /* ===== DARK THEME OVERRIDES ===== */
@@ -145,10 +140,11 @@ html.dark {
   --category-family: #a78bfa;
   --category-personal: #fbbf24;
 
-  /* Status colors for dark theme */
-  --status-active: #60a5fa; /* Changed to blue for dark theme */
-  --status-completed: #34d399;
-  --status-incomplete: #fbbf24; /* Old status-active color for dark theme */
+  /* Switch colors for dark theme */
+  --switch-off-bg: #4b5563; /* gray-600 */
+  --switch-off-border: #4b5563; /* gray-600 */
+  --switch-thumb-bg: #f3f4f6; /* gray-100 */
+  --switch-thumb-border: #6b7280; /* gray-500 */
 }
 
 /* Badge status styles */

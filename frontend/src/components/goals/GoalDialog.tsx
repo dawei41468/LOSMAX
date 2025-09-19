@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import SelectMenu from '@/components/ui/select-menu';
 import type { Goal, GoalCategory } from '../../types/goals'; 
 import { Button } from '../ui/button';
+import DateInput from '@/components/ui/DateInput';
 import {
   DialogOverlay,
   DialogContent,
@@ -141,17 +142,14 @@ const GoalDialog: React.FC<GoalDialogProps> = ({ isOpen, onClose, onSubmit, init
             <FormLabel htmlFor="target_date" className="block text-sm font-medium text-standard mb-1 text-left">
               {t('component.goalDialog.targetDate')}
             </FormLabel>
-            <FormInput
+            <DateInput
               id="target_date"
-              type="date"
               value={targetDate}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setTargetDate(e.target.value);
+              onChange={(value: string) => {
+                setTargetDate(value);
                 if (dateError) setDateError(null);
               }}
               required
-              min={new Date().toISOString().split('T')[0]}
-              className="w-full px-3 py-2 border border-[var(--border)] rounded-[var(--radius)] bg-card text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
             {dateError && <p className="text-xs text-red-500 mt-1">{dateError}</p>}
           </FormField>

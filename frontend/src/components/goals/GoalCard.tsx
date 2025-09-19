@@ -26,13 +26,33 @@ const calculateDaysRemaining = (targetDateISOString: string): number => {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 };
 
+// Utility function to calculate progress percentage
+const calculateProgress = (createdAtISOString: string, targetDateISOString: string): number => {
+  const created = new Date(createdAtISOString);
+  const target = new Date(targetDateISOString);
+  const now = new Date();
+  
+  // If target date is in the past, return 0% (no time remaining)
+  if (now >= target) return 0;
+  
+  // If current date is before creation date (shouldn't happen), return 100%
+  if (now <= created) return 100;
+  
+  // Calculate total duration and remaining time
+  const totalDuration = target.getTime() - created.getTime();
+  const remainingTime = target.getTime() - now.getTime();
+  
+  // Calculate remaining percentage
+  const progress = Math.round((remainingTime / totalDuration) * 100);
+  
+  // Clamp between 0 and 100
+  return Math.max(0, Math.min(100, progress));
+};
+
 const GoalCard: React.FC<GoalCardProps> = ({ goal, onEdit, onDelete, onToggleStatus, useShortDate = true }) => {
   const { t } = useTranslation();
   const daysRemaining = calculateDaysRemaining(goal.target_date);
-
-  const getDaysRemainingClass = () => {
-    return daysRemaining === 0 && goal.status === 'active' ? 'text-error' : 'text-muted';
-  };
+  const progressPercentage = calculateProgress(goal.created_at, goal.target_date);
 
   return (
     <Card
@@ -63,16 +83,24 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal, onEdit, onDelete, onToggleSta
       </CardHeader>
 
       <CardContent size="sm" spacing="none">
-        <div className="bg-muted/30 rounded-md p-3">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t('component.goalCard.targetDate')}</div>
-              <div className="text-sm font-medium">{useShortDate ? formatDateShort(goal.target_date) : formatDate(goal.target_date)}</div>
-            </div>
-            <div className="space-y-1">
-              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t('component.goalCard.daysLeft')}</div>
-              <div className="flex items-center gap-2">
-                <span className={`text-sm font-semibold ${getDaysRemainingClass()}`}>{daysRemaining}</span>
+        <div className="relative">
+          {/* Banner background */}
+          <div className={`absolute inset-0 rounded-md border-1 ${getCategoryColorClass(goal.category, 'primary').replace('text-', 'border-')}`}></div>
+          
+          <div className="rounded-md p-3 relative z-10">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t('component.goalCard.targetDate')}</div>
+                <div className="text-sm font-medium">{useShortDate ? formatDateShort(goal.target_date) : formatDate(goal.target_date)}</div>
+              </div>
+              <div className="space-y-1">
+                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t('component.goalCard.daysLeft')}</div>
+                <div className="flex items-center gap-2">
+                  <span className={`text-sm font-semibold ${getCategoryColorClass(goal.category, 'primary')}`}>{daysRemaining}</span>
+                  <div className="flex-1 bg-muted/50 rounded-full h-1.5 border border-border/20">
+                    <div className={`${getCategoryColorClass(goal.category, 'primaryBg')} h-1 rounded-full transition-all duration-300`} style={{width: `${progressPercentage}%`}}></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

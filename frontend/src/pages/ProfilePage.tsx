@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import UserCard from '../components/ui/UserCard';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,7 @@ import { ThemeSwitcher } from '../components/ui/theme-switcher';
 import { LanguageSwitch } from '../components/ui/language-toggle';
 import { AuthContext } from '../contexts/auth.context';
 import { TimePicker } from '../components/ui/TimePicker';
+import Switch from '@/components/ui/switch';
 import { useToast } from '../hooks/useToast';
 import ConfirmDeleteDialog from '../components/ui/ConfirmDeleteDialog';
 import ChangePasswordDialog from '../components/ui/ChangePasswordDialog';
@@ -31,9 +32,6 @@ const ProfilePage: React.FC = () => {
   const [eveningDeadline, setEveningDeadline] = useState('');
   const [showPasswordChange, setShowPasswordChange] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  // Measure fixed UserCard height for spacer
-  const profileCardRef = useRef<HTMLDivElement | null>(null);
-
   
   // State for expandable preference cards
   const [expandedCards, setExpandedCards] = useState<{
@@ -93,6 +91,34 @@ const ProfilePage: React.FC = () => {
     }
   };
 
+  const [userCardOpacity, setUserCardOpacity] = useState(1);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const headerHeight = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--app-header-h'));
+      const userCardTopOffset = 8; // 0.5rem = 8px
+      const userCardHeight = 200; // Approximate UserCard height
+      
+      // Start fading immediately when tabs section begins covering UserCard
+      const fadeStart = headerHeight + userCardTopOffset; // When tabs section reaches UserCard
+      const fadeEnd = headerHeight + userCardTopOffset + userCardHeight; // When UserCard is fully covered
+      
+      if (scrollY <= fadeStart) {
+        setUserCardOpacity(1);
+      } else if (scrollY >= fadeEnd) {
+        setUserCardOpacity(0);
+      } else {
+        const progress = (scrollY - fadeStart) / (fadeEnd - fadeStart);
+        setUserCardOpacity(Math.max(0, 1 - progress));
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Set initial state
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <AppShell
       title={t('content.profile.title')}
@@ -110,7 +136,7 @@ const ProfilePage: React.FC = () => {
       )}
     >
       {/* Fixed Profile Card under header */}
-      <div className="fixed left-0 right-0 z-30" style={{ top: 'calc(var(--app-header-h) + 0.5rem)' }}>
+      <div className="fixed left-0 right-0 z-30 transition-opacity duration-300 ease-out" style={{ top: 'calc(var(--app-header-h) + 0.5rem)', opacity: userCardOpacity }}>
         <div className="px-app-content">
           <UserCard />
         </div>
@@ -156,55 +182,58 @@ const ProfilePage: React.FC = () => {
           <div className="relative z-40 bg-background pt-4 px-app-content">
             {/* Info Tab Content */}
             {activeTab === 'info' && (
-              <Card variant="flat" size="none">
-                <CardContent className="relative py-6">
-                  <div className="space-y-2 text-sm py-6">
-                    <div className="flex justify-between">
-                      <span className="font-semibold">{t('forms.labels.nickname')}:</span>
-                      <span>{userName || t('forms.labels.notAvailable')}</span>
+              <>
+                <Card variant="flat" size="none">
+                  <CardContent className="relative pt-2 pb-4">
+                    <div className="space-y-2 text-sm py-6">
+                      <div className="flex justify-between">
+                        <span className="font-semibold">{t('forms.labels.nickname')}:</span>
+                        <span>{userName || t('forms.labels.notAvailable')}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-semibold">{t('forms.labels.uid')}:</span>
+                        <span>{userId || t('forms.labels.notAvailable')}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-semibold">{t('forms.labels.role')}:</span>
+                        <span>{userRole || t('forms.labels.notAvailable')}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-semibold">{t('forms.labels.language')}:</span>
+                        <span>{userLanguage || t('forms.labels.notAvailable')}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-semibold">{t('forms.labels.morningDeadline')}:</span>
+                        <span>{morningDeadline || t('forms.labels.notAvailable')}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-semibold">{t('forms.labels.eveningDeadline')}:</span>
+                        <span>{eveningDeadline || t('forms.labels.notAvailable')}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-semibold">{t('forms.labels.notifications')}:</span>
+                        <span>{notificationsEnabled ? t('common.enabled') : t('common.disabled')}</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="font-semibold">{t('forms.labels.uid')}:</span>
-                      <span>{userId || t('forms.labels.notAvailable')}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-semibold">{t('forms.labels.role')}:</span>
-                      <span>{userRole || t('forms.labels.notAvailable')}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-semibold">{t('forms.labels.language')}:</span>
-                      <span>{userLanguage || t('forms.labels.notAvailable')}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-semibold">{t('forms.labels.morningDeadline')}:</span>
-                      <span>{morningDeadline || t('forms.labels.notAvailable')}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-semibold">{t('forms.labels.eveningDeadline')}:</span>
-                      <span>{eveningDeadline || t('forms.labels.notAvailable')}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-semibold">{t('forms.labels.notifications')}:</span>
-                      <span>{notificationsEnabled ? t('common.enabled') : t('common.disabled')}</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-center mt-5">
-                    <Button
-                      onClick={async () => {
-                        try {
-                          await logout();
-                        } catch {
-                          toastError('toast.error.auth.logoutFailed');
-                        }
-                      }}
-                      variant="destructive"
-                      className="w-full mt-4 flex items-center justify-center gap-2"
-                    >
-                      <LogOut className="h-4 w-4" /> <span>{t('actions.signOut')}</span>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+                
+                <div className="flex justify-center mt-5">
+                  <Button
+                    onClick={async () => {
+                      try {
+                        await logout();
+                      } catch {
+                        toastError('toast.error.auth.logoutFailed');
+                      }
+                    }}
+                    variant="destructive"
+                    className="w-full flex items-center justify-center gap-2"
+                  >
+                    <LogOut className="h-4 w-4" /> <span>{t('actions.signOut')}</span>
+                  </Button>
+                </div>
+              </>
             )}
 
             <ConfirmDeleteDialog
@@ -236,7 +265,7 @@ const ProfilePage: React.FC = () => {
               <div className="space-y-4">
 
                 <Card variant="flat" size="none">
-                  <CardContent className={`relative ${expandedCards.displayName ? 'py-6' : 'py-2'}`}>
+                  <CardContent className="relative pt-2 pb-4">
                     <div 
                       className="flex items-center justify-between cursor-pointer"
                       onClick={() => toggleCard('displayName')}
@@ -289,7 +318,7 @@ const ProfilePage: React.FC = () => {
                 </Card>
 
                 <Card variant="flat" size="none">
-                  <CardContent className={`relative ${expandedCards.deadlines ? 'py-6' : 'py-2'}`}>
+                  <CardContent className="relative pt-2 pb-4">
                     <div 
                       className="flex items-center justify-between cursor-pointer"
                       onClick={() => toggleCard('deadlines')}
@@ -333,7 +362,7 @@ const ProfilePage: React.FC = () => {
                 </Card>
 
                 <Card variant="flat" size="none">
-                  <CardContent className={`relative ${expandedCards.notifications ? 'py-6' : 'py-2'}`}>
+                  <CardContent className="relative pt-2 pb-4">
                     <div 
                       className="flex items-center justify-between cursor-pointer"
                       onClick={() => toggleCard('notifications')}
@@ -346,18 +375,14 @@ const ProfilePage: React.FC = () => {
                       <div className="mt-4">
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-muted-foreground">{t('content.profile.preference.notificationsDescription')}</span>
-                          <div className="focus:ring-0 focus:ring-offset-0">
-                            <input
-                              type="checkbox"
-                              checked={notificationsEnabled}
-                              onChange={(e) => {
-                                const checked = e.target.checked;
-                                setNotificationsEnabled(checked);
-                                savePreference({ notifications_enabled: checked });
-                              }}
-                              className="form-checkbox h-5 w-5 text-primary dark:text-primary-foreground"
-                            />
-                          </div>
+                          <Switch
+                            checked={notificationsEnabled}
+                            onCheckedChange={(checked) => {
+                              setNotificationsEnabled(checked);
+                              savePreference({ notifications_enabled: checked });
+                            }}
+                            size="md"
+                          />
                         </div>
                       </div>
                     )}
@@ -365,7 +390,7 @@ const ProfilePage: React.FC = () => {
                 </Card>
 
                 <Card variant="flat" size="none">
-                  <CardContent className={`relative ${expandedCards.accountActions ? 'py-6' : 'py-2'}`}>
+                  <CardContent className="relative pt-2 pb-4">
                     <div 
                       className="flex items-center justify-between cursor-pointer"
                       onClick={() => toggleCard('accountActions')}
@@ -407,7 +432,7 @@ const ProfilePage: React.FC = () => {
             {activeTab === 'about' && (
               <div className="space-y-4">
                 <Card variant="flat" size="none">
-                  <CardContent className="relative py-6">
+                  <CardContent className="relative pt-2 pb-4">
                   <h2 className="text-lg text-center font-medium mb-3 py-4">{t('content.profile.about.title')}</h2>
                   <p className="text-sm text-center text-muted-foreground mb-4">{t('content.profile.about.subtitle')}</p>
                   
@@ -428,7 +453,6 @@ const ProfilePage: React.FC = () => {
                           <li>{t('content.profile.about.features.feature2')}</li>
                           <li>{t('content.profile.about.features.feature3')}</li>
                           <li>{t('content.profile.about.features.feature4')}</li>
-                          <li>{t('content.profile.about.features.feature5')}</li>
                         </ul>
                       </Card>
                     </div>

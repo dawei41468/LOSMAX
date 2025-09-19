@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../contexts/ThemeContext';
 import { useToast } from '../../hooks/useToast';
 import { DialogOverlay, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from './dialog';
-import { Form, FormField, FormLabel, FormInput } from './form';
 import { Button } from './button';
 import { useChangePassword } from '../../hooks/usePreferences';
 import { AUTH_ROUTE } from '../../routes/constants';
@@ -18,7 +16,6 @@ interface ChangePasswordDialogProps {
 const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ isOpen, onClose, userEmail }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { theme } = useTheme();
   const { success: toastSuccess, error: toastError } = useToast();
   const changePassword = useChangePassword();
   const [currentPassword, setCurrentPassword] = useState('');
@@ -56,20 +53,27 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ isOpen, onC
 
   return (
     <DialogOverlay>
-      <DialogContent 
-        className="rounded-lg shadow-xl max-w-md mx-auto" 
+      <DialogContent
         onClose={onClose}
-        style={{ backgroundColor: theme === 'dark' ? '#1f2937' : '#ffffff' }}
+        className="shadow-xl max-w-md mx-auto bg-card"
       >
-        <DialogHeader className="p-4 pb-0">
-          <DialogTitle className="text-2xl font-bold mb-2 text-center sm:text-left">{t('component.changePasswordDialog.title')}</DialogTitle>
-          <DialogDescription>{t('component.changePasswordDialog.message')}</DialogDescription>
+        <DialogHeader>
+          <DialogTitle>
+            {t('component.changePasswordDialog.title')}
+          </DialogTitle>
+          <DialogDescription>
+            {t('component.changePasswordDialog.message')}
+          </DialogDescription>
         </DialogHeader>
-        <Form onSubmit={handleSubmit} noValidate className="space-y-2 p-4 pt-0">
+
+        <form onSubmit={handleSubmit} noValidate className="space-y-4">
           <input type="text" name="username" autoComplete="username" className="hidden" value={userEmail || ''} readOnly />
-          <FormField>
-            <FormLabel htmlFor="currentPassword">{t('component.changePasswordDialog.currentPassword')}</FormLabel>
-            <FormInput
+
+          <div className="space-y-2">
+            <label htmlFor="currentPassword" className="text-sm font-medium">
+              {t('component.changePasswordDialog.currentPassword')}
+            </label>
+            <input
               id="currentPassword"
               name="currentPassword"
               type="password"
@@ -77,12 +81,15 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ isOpen, onC
               onChange={(e) => setCurrentPassword(e.target.value)}
               required
               autoComplete="current-password"
-              className="w-full p-2 border rounded-md"
+              className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             />
-          </FormField>
-          <FormField>
-            <FormLabel htmlFor="newPassword">{t('component.changePasswordDialog.newPassword')}</FormLabel>
-            <FormInput
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="newPassword" className="text-sm font-medium">
+              {t('component.changePasswordDialog.newPassword')}
+            </label>
+            <input
               id="newPassword"
               name="newPassword"
               type="password"
@@ -90,12 +97,15 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ isOpen, onC
               onChange={(e) => setNewPassword(e.target.value)}
               required
               autoComplete="new-password"
-              className="w-full p-2 border rounded-md"
+              className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             />
-          </FormField>
-          <FormField>
-            <FormLabel htmlFor="confirmPassword">{t('component.changePasswordDialog.confirmPassword')}</FormLabel>
-            <FormInput
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="confirmPassword" className="text-sm font-medium">
+              {t('component.changePasswordDialog.confirmPassword')}
+            </label>
+            <input
               id="confirmPassword"
               name="confirmPassword"
               type="password"
@@ -103,9 +113,10 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ isOpen, onC
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               autoComplete="new-password"
-              className="w-full p-2 border rounded-md"
+              className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             />
-          </FormField>
+          </div>
+
           <DialogFooter className="flex flex-row justify-end gap-2">
             <Button type="button" variant="outline" onClick={onClose}>
               {t('component.changePasswordDialog.cancel')}
@@ -113,12 +124,11 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ isOpen, onC
             <Button
               type="submit"
               disabled={isChangingPassword || !currentPassword || !newPassword || !confirmPassword}
-              className="bg-primary text-primary-foreground rounded-md border border-primary hover:bg-blue-500/10 hover:text-primary transition-colors"
             >
               {t('component.changePasswordDialog.changeButton')}
             </Button>
           </DialogFooter>
-        </Form>
+        </form>
       </DialogContent>
     </DialogOverlay>
   );
