@@ -134,7 +134,7 @@ export function UserManagement() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Role</label>
                   <Select
-                    variant="outline"
+                    variant="subtle"
                     size="sm"
                     value={selectedRole}
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedRole(e.target.value)}
