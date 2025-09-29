@@ -163,3 +163,30 @@
 .dark .ios-text-accent {
   color: var(--ios-accent-dark);
 }
+
+/* Bottom sheet slide-up animation */
+.ios-picker-bottom-sheet {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
+  max-width: none;
+  background: var(--ios-picker-bg-light);
+  border: 1px solid var(--ios-picker-border-light);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  transform: translateY(calc(100% + 1rem));
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 1010;
+  overflow: hidden;
+}
+
+.dark .ios-picker-bottom-sheet {
+  background: var(--ios-picker-bg-dark);
+  border: 1px solid var(--ios-picker-border-dark);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.ios-picker-bottom-sheet.open {
+  transform: translateY(0);
+}

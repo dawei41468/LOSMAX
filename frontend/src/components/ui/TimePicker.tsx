@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState, forwardRef } from "react";
+import { createPortal } from "react-dom";
 import { Clock } from 'lucide-react';
 import '@/styles/timepicker.css';
 
@@ -62,10 +63,37 @@ export const TimePicker = forwardRef<HTMLDivElement, TimePickerProps>(
       }
     }, [open]);
 
-    // Handle open state change
-    const handleOpenChange = (newOpen: boolean) => {
-      setIsOpen(newOpen);
-      onOpenChange?.(newOpen);
+    const [isAnimating, setIsAnimating] = useState(false);
+    const isBottomSheet = context === 'morningDeadline' || context === 'eveningDeadline';
+
+    useEffect(() => {
+        if (isOpen && isBottomSheet) {
+            const timer = setTimeout(() => {
+                setIsAnimating(true);
+            }, 10);
+            return () => clearTimeout(timer);
+        } else {
+            setIsAnimating(false);
+        }
+    }, [isOpen, isBottomSheet]);
+
+
+    const handleCloseRequest = () => {
+        if (isBottomSheet) {
+            setIsAnimating(false);
+            setTimeout(() => {
+                setIsOpen(false);
+                onOpenChange?.(false);
+            }, 400);
+        } else {
+            setIsOpen(false);
+            onOpenChange?.(false);
+        }
+    };
+
+    const handleOpenRequest = () => {
+        setIsOpen(true);
+        onOpenChange?.(true);
     };
 
     // Scroll to the correct position on initial render
@@ -240,7 +268,7 @@ export const TimePicker = forwardRef<HTMLDivElement, TimePickerProps>(
     const handleDone = () => {
       const formattedTime = `${selectedHour}:${selectedMinute} ${selectedPeriod}`;
       onChange?.(formattedTime);
-      handleOpenChange(false);
+      handleCloseRequest();
     };
 
     // highlightProps was unused and has been removed.
@@ -285,7 +313,7 @@ export const TimePicker = forwardRef<HTMLDivElement, TimePickerProps>(
             )}
             <button
               type="button"
-              onClick={() => handleOpenChange(!isOpen)}
+              onClick={() => (isOpen ? handleCloseRequest() : handleOpenRequest())}
               className="ml-auto p-1 text-gray-400 hover:text-blue-600 transition-colors"
             >
               <Clock className="h-5 w-5" />
@@ -293,133 +321,154 @@ export const TimePicker = forwardRef<HTMLDivElement, TimePickerProps>(
           </div>
         </div>
 
-        {isOpen && (
-          <div
-            ref={ref}
-            className="absolute z-10 mt-1 w-full max-w-full ios-picker shadow-2xl overflow-hidden"
-            style={{ backgroundColor: 'var(--background)' }}
-          >
-            <div className="relative py-2 px-0">
-              {/* iOS-style blur overlays */}
-              <div className="absolute top-0 left-0 right-0 h-[80px] ios-blur-top"></div>
-              <div className="absolute bottom-0 left-0 right-0 h-[80px] ios-blur-bottom"></div>
-              
-              <div className="flex items-center justify-center relative z-10 space-x-2 px-2">
-                {/* Hours Column */}
-                <div className="relative w-24 h-[120px] overflow-hidden">
-                    <div
-                      ref={hoursRef}
-                      className="absolute inset-0 overflow-y-auto scroll-smooth scrollbar-hide"
-                      style={{
-                        msOverflowStyle: "none",
-                        scrollbarWidth: "none",
-                        scrollSnapType: "y mandatory",
-                        overscrollBehaviorY: "contain",
-                        scrollBehavior: "smooth"
-                      }}
-                    >
-                      <div className="h-[40px]" /> {/* Top spacing */}
-                    
-                    {hours.map((hour) => (
-                      <div
-                        key={hour}
-                        className="h-[40px] flex items-center justify-center scroll-snap-align-center"
-                        data-value={hour}
-                      >
-                        <div className={`text-2xl font-light transition-all duration-200 ${hour === selectedHour ? 'ios-text-accent font-medium scale-110' : 'ios-text-primary opacity-50'}`}>{hour.toString().padStart(2, '0')}</div>
-                      </div>
-                    ))}
-                    
-                    <div className="h-[40px]" /> {/* Bottom spacing */}
-                  </div>
-                </div>
-                
-                {/* Colon */}
-                <div className="text-2xl font-medium text-gray-700">:</div>
-                
-                {/* Minutes Column */}
-                <div className="relative w-16 h-[160px] overflow-hidden">
-                  <div
-                    ref={minutesRef}
-                    className="absolute inset-0 overflow-y-auto scroll-smooth scrollbar-hide"
-                    style={{
-                      msOverflowStyle: "none",
-                      scrollbarWidth: "none",
-                      scrollSnapType: "y mandatory",
-                      overscrollBehaviorY: "contain",
-                      scrollBehavior: "smooth"
-                    }}
-                  >
-                    <div className="h-[60px]"></div> {/* Top spacing */}
-                    
-                    {minutes.map((minute) => (
-                      <div
-                        key={minute}
-                        className="h-[40px] flex items-center justify-center scroll-snap-align-center"
-                        data-value={minute}
-                      >
-                        <div className={`text-2xl font-light transition-all duration-200 ${minute === selectedMinute ? 'ios-text-accent font-medium scale-110' : 'ios-text-primary opacity-50'}`}>{minute.toString().padStart(2, '0')}</div>
-                      </div>
-                    ))}
-                    
-                    <div className="h-[60px]"></div> {/* Bottom spacing */}
-                  </div>
-                </div>
-                
-                {/* AM/PM Column */}
-                {!use24HourFormat && (
-                  <div className="relative w-16 h-[160px] overflow-hidden">
-                    <div
-                      ref={periodsRef}
-                      className="absolute inset-0 overflow-y-auto scroll-smooth scrollbar-hide"
-                      style={{
-                        msOverflowStyle: "none",
-                        scrollbarWidth: "none",
-                        scrollSnapType: "y mandatory",
-                        overscrollBehaviorY: "contain",
-                        scrollBehavior: "smooth"
-                      }}
-                    >
-                      <div className="h-[60px]"></div> {/* Top spacing */}
-                      
-                      {periods.map((period) => (
-                        <div
-                          key={period}
-                          className="h-[40px] flex items-center justify-center scroll-snap-align-center"
-                          data-value={period}
-                        >
-                          <div className={`text-xl font-light transition-all duration-200 ${period === selectedPeriod ? 'ios-text-accent font-medium scale-110' : 'ios-text-primary opacity-50'}`}>{period}</div>
-                        </div>
-                      ))}
-                      
-                      <div className="h-[60px]"></div> {/* Bottom spacing */}
-                    </div>
-                  </div>
-                )}
-              </div>
-              
-              {/* iOS-style selection highlight */}
+        {isOpen &&
+          (() => {
+            const pickerContent = (
               <div
-                className="absolute left-3 right-3 top-1/2 transform -translate-y-1/2 h-[36px] ios-selection pointer-events-none z-5"
-              />
-            </div>
-            
-            <div className="flex justify-center space-x-2 w-full mt-3 px-4 pb-3">
-              <button
-                onClick={() => handleOpenChange(false)}
-                className="ios-button ios-button-cancel flex-1"
+                ref={ref}
+                className={
+                  isBottomSheet
+                    ? `ios-picker-bottom-sheet ${isAnimating ? 'open' : ''}`
+                    : `absolute z-10 mt-1 w-full max-w-full ios-picker shadow-2xl overflow-hidden`
+                }
+                style={{ backgroundColor: 'var(--background)' }}
               >
-                Cancel
-              </button>
-              <button 
-                onClick={handleDone}
-                className="ios-button ios-button-done flex-1"
-              >
-                Done
-              </button>
-            </div>
-          </div>
-        )}
+                <div className="relative py-2 px-0">
+                  {/* iOS-style blur overlays */}
+                  <div className="absolute top-0 left-0 right-0 h-[80px] ios-blur-top"></div>
+                  <div className="absolute bottom-0 left-0 right-0 h-[80px] ios-blur-bottom"></div>
+                  
+                  <div className="flex items-center justify-center relative z-10 space-x-2 px-2">
+                    {/* Hours Column */}
+                    <div className="relative w-24 h-[120px] overflow-hidden">
+                        <div
+                          ref={hoursRef}
+                          className="absolute inset-0 overflow-y-auto scroll-smooth scrollbar-hide"
+                          style={{
+                            msOverflowStyle: "none",
+                            scrollbarWidth: "none",
+                            scrollSnapType: "y mandatory",
+                            overscrollBehaviorY: "contain",
+                            scrollBehavior: "smooth"
+                          }}
+                        >
+                          <div className="h-[40px]" /> {/* Top spacing */}
+                        
+                        {hours.map((hour) => (
+                          <div
+                            key={hour}
+                            className="h-[40px] flex items-center justify-center scroll-snap-align-center"
+                            data-value={hour}
+                          >
+                            <div className={`text-2xl font-light transition-all duration-200 ${hour === selectedHour ? 'ios-text-accent font-medium scale-110' : 'ios-text-primary opacity-50'}`}>{hour.toString().padStart(2, '0')}</div>
+                          </div>
+                        ))}
+                        
+                        <div className="h-[40px]" /> {/* Bottom spacing */}
+                      </div>
+                    </div>
+                    
+                    {/* Colon */}
+                    <div className="text-2xl font-medium text-gray-700">:</div>
+                    
+                    {/* Minutes Column */}
+                    <div className="relative w-16 h-[160px] overflow-hidden">
+                      <div
+                        ref={minutesRef}
+                        className="absolute inset-0 overflow-y-auto scroll-smooth scrollbar-hide"
+                        style={{
+                          msOverflowStyle: "none",
+                          scrollbarWidth: "none",
+                          scrollSnapType: "y mandatory",
+                          overscrollBehaviorY: "contain",
+                          scrollBehavior: "smooth"
+                        }}
+                      >
+                        <div className="h-[60px]"></div> {/* Top spacing */}
+                        
+                        {minutes.map((minute) => (
+                          <div
+                            key={minute}
+                            className="h-[40px] flex items-center justify-center scroll-snap-align-center"
+                            data-value={minute}
+                          >
+                            <div className={`text-2xl font-light transition-all duration-200 ${minute === selectedMinute ? 'ios-text-accent font-medium scale-110' : 'ios-text-primary opacity-50'}`}>{minute.toString().padStart(2, '0')}</div>
+                          </div>
+                        ))}
+                        
+                        <div className="h-[60px]"></div> {/* Bottom spacing */}
+                      </div>
+                    </div>
+                    
+                    {/* AM/PM Column */}
+                    {!use24HourFormat && (
+                      <div className="relative w-16 h-[160px] overflow-hidden">
+                        <div
+                          ref={periodsRef}
+                          className="absolute inset-0 overflow-y-auto scroll-smooth scrollbar-hide"
+                          style={{
+                            msOverflowStyle: "none",
+                            scrollbarWidth: "none",
+                            scrollSnapType: "y mandatory",
+                            overscrollBehaviorY: "contain",
+                            scrollBehavior: "smooth"
+                          }}
+                        >
+                          <div className="h-[60px]"></div> {/* Top spacing */}
+                          
+                          {periods.map((period) => (
+                            <div
+                              key={period}
+                              className="h-[40px] flex items-center justify-center scroll-snap-align-center"
+                              data-value={period}
+                            >
+                              <div className={`text-xl font-light transition-all duration-200 ${period === selectedPeriod ? 'ios-text-accent font-medium scale-110' : 'ios-text-primary opacity-50'}`}>{period}</div>
+                            </div>
+                          ))}
+                          
+                          <div className="h-[60px]"></div> {/* Bottom spacing */}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* iOS-style selection highlight */}
+                  <div
+                    className="absolute left-3 right-3 top-1/2 transform -translate-y-1/2 h-[36px] ios-selection pointer-events-none z-5"
+                  />
+                </div>
+                
+                <div className="flex justify-center space-x-2 w-full mt-3 px-4 pb-3">
+                  <button
+                    onClick={handleCloseRequest}
+                    className="ios-button ios-button-cancel flex-1"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleDone}
+                    className="ios-button ios-button-done flex-1"
+                  >
+                    Done
+                  </button>
+                </div>
+              </div>
+            );
+
+            if (isBottomSheet && typeof window !== 'undefined') {
+              return createPortal(
+                <>
+                  <div
+                    className={`fixed inset-0 z-[1000] bg-black/50 transition-opacity duration-400 ${isAnimating ? 'opacity-100' : 'opacity-0'}`}
+                    onClick={handleCloseRequest}
+                  />
+                  {pickerContent}
+                </>,
+                document.body
+              );
+            }
+            return pickerContent;
+          })()}
       </div>
     );
   }
