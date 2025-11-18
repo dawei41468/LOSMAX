@@ -8,8 +8,9 @@ from database import connect_to_mongo
 from models.user import UserInDB, UserCreate
 from models.goal import GoalCreate
 from datetime import datetime
-from routes import auth, goals, websocket, preferences, task, admin # Added preferences and task router
+from routes import auth, goals, websocket, preferences, task, admin, notifications # Added notifications router
 from middleware.cors import setup_cors
+from services.scheduler_service import scheduler_service
 
 def mask_sensitive_settings(settings_obj):
     """Mask sensitive information in settings for logging purposes."""
@@ -37,7 +38,9 @@ def mask_sensitive_settings(settings_obj):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await connect_to_mongo()
+    scheduler_service.start()
     yield
+    scheduler_service.stop()
 
 app = FastAPI(lifespan=lifespan)
 setup_cors(app)
@@ -77,6 +80,7 @@ app.include_router(goals.router)
 app.include_router(preferences.router) # Included preferences router
 app.include_router(task.router) # Included task router
 app.include_router(admin.router) # Included admin router
+app.include_router(notifications.router) # Included notifications router
 
 async def test_goal_service():
     """Test GoalService functionality"""
@@ -128,4 +132,9 @@ async def test_goal_service():
     print("Test completed, cleanup done")
 
 if __name__ == "__main__":
-    asyncio.run(test_goal_service())
+    # Only run test if explicitly requested, not when started by uvicorn
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "test":
+        asyncio.run(test_goal_service())
+    else:
+        print("Use 'python main.py test' to run tests, or use uvicorn to start the server")

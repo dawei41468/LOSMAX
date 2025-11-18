@@ -7,7 +7,6 @@ import { ThemeSwitcher } from '@/components/ui/theme-switcher';
 import { LanguageSwitch } from '@/components/ui/language-toggle';
 import { AuthContext } from '../contexts/auth.context';
 import { TimePicker } from '@/components/ui/TimePicker';
-import Switch from '@/components/ui/switch';
 import { useToast } from '../hooks/useToast';
 import ConfirmDeleteDialog from '@/components/ui/ConfirmDeleteDialog';
 import ChangePasswordDialog from '@/components/ui/ChangePasswordDialog';
@@ -15,6 +14,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import AppShell from '@/layouts/AppShell';
 import { usePreferences, useUpdatePreferences, useUpdateName, useDeleteAccount } from '../hooks/usePreferences';
+import { useNotifications } from '../hooks/useNotifications';
 import { AUTH_ROUTE } from '../routes/constants';
 import axios from 'axios';
 
@@ -58,6 +58,17 @@ const ProfilePage: React.FC = () => {
   const updatePreferences = useUpdatePreferences();
   const updateName = useUpdateName();
   const deleteAccount = useDeleteAccount();
+
+  // Push notifications
+  const {
+    permission,
+    subscription,
+    isSupported,
+    requestPermission,
+    subscribe,
+    unsubscribe,
+    loading: notificationLoading
+  } = useNotifications();
 
   // Sync local controlled inputs when preferences load
   useEffect(() => {
@@ -372,18 +383,97 @@ const ProfilePage: React.FC = () => {
                     </div>
                     
                     {expandedCards.notifications && (
-                      <div className="mt-4">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-muted-foreground">{t('content.profile.preference.notificationsDescription')}</span>
-                          <Switch
-                            checked={notificationsEnabled}
-                            onCheckedChange={(checked) => {
-                              setNotificationsEnabled(checked);
-                              savePreference({ notifications_enabled: checked });
-                            }}
-                            size="md"
-                          />
+                      <div className="mt-4 space-y-4">
+                        <div className="text-sm text-muted-foreground">
+                          {t('content.profile.preference.notificationsDescription')}
                         </div>
+
+                        {!isSupported && (
+                          <div className="text-sm text-orange-600 bg-orange-50 p-3 rounded">
+                            Push notifications are not supported in this browser.
+                          </div>
+                        )}
+
+                        {isSupported && (
+                          <>
+                            <div className="space-y-3">
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm">Permission Status:</span>
+                                <span className={`text-sm px-2 py-1 rounded ${
+                                  permission === 'granted' ? 'bg-green-100 text-green-800' :
+                                  permission === 'denied' ? 'bg-red-100 text-red-800' :
+                                  'bg-yellow-100 text-yellow-800'
+                                }`}>
+                                  {permission === 'granted' ? 'Allowed' :
+                                   permission === 'denied' ? 'Blocked' : 'Not asked'}
+                                </span>
+                              </div>
+
+                              {permission === 'denied' && (
+                                <div className="text-sm text-red-600 bg-red-50 p-3 rounded">
+                                  Notifications are blocked. Please enable them in your browser settings to receive reminders.
+                                </div>
+                              )}
+
+                              {permission === 'default' && (
+                                <Button
+                                  onClick={async () => {
+                                    await requestPermission();
+                                  }}
+                                  disabled={notificationLoading}
+                                  variant="outline"
+                                  size="sm"
+                                >
+                                  {notificationLoading ? 'Requesting...' : 'Enable Notifications'}
+                                </Button>
+                              )}
+
+                              {permission === 'granted' && (
+                                <div className="space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-sm">Subscription Status:</span>
+                                    <span className={`text-sm px-2 py-1 rounded ${
+                                      subscription ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                                    }`}>
+                                      {subscription ? 'Active' : 'Inactive'}
+                                    </span>
+                                  </div>
+
+                                  {!subscription ? (
+                                    <Button
+                                      onClick={async () => {
+                                        const newSubscription = await subscribe();
+                                        if (newSubscription) {
+                                          savePreference({ notifications_enabled: true });
+                                          setNotificationsEnabled(true);
+                                        }
+                                      }}
+                                      disabled={notificationLoading}
+                                      size="sm"
+                                    >
+                                      {notificationLoading ? 'Subscribing...' : 'Subscribe to Notifications'}
+                                    </Button>
+                                  ) : (
+                                    <Button
+                                      onClick={async () => {
+                                        const success = await unsubscribe();
+                                        if (success) {
+                                          savePreference({ notifications_enabled: false });
+                                          setNotificationsEnabled(false);
+                                        }
+                                      }}
+                                      disabled={notificationLoading}
+                                      variant="outline"
+                                      size="sm"
+                                    >
+                                      {notificationLoading ? 'Unsubscribing...' : 'Disable Notifications'}
+                                    </Button>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </>
+                        )}
                       </div>
                     )}
                   </CardContent>

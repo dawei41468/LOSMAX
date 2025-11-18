@@ -28,7 +28,7 @@ ssh -i "${SSH_KEY}" "${SERVER_USER}@${SERVER_IP}" "rm -rf '${REMOTE_APP_DIR}' &&
 
 echo "==> Copying backend code (excluding venv) via tar stream"
 ( cd "${LOCAL_BACKEND_DIR}" && tar --exclude=venv -czf - . ) \
-| ssh -i "${SSH_KEY}" "${SERVER_USER}@${SERVER_IP}" "tar -xzf - -C '${REMOTE_APP_DIR}'"
+| ssh -i "${SSH_KEY}" "${SERVER_USER}@${SERVER_IP}" "tar --warning=no-unknown-keyword -xzf - -C '${REMOTE_APP_DIR}'"
 
 echo "==> Uploading PM2 ecosystem file (always overwrite)"
 scp -i "${SSH_KEY}" "${LOCAL_ECOSYSTEM_FILE}" "${SERVER_USER}@${SERVER_IP}:${REMOTE_ECOSYSTEM}"

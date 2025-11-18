@@ -42,7 +42,7 @@ rm -rf "${REMOTE_FRONTEND_DIR}"
 mkdir -p "${REMOTE_FRONTEND_DIR}"
 
 echo "==> Extracting bundle"
-tar -xzf "${BUNDLE}" -C "${REMOTE_FRONTEND_DIR}" --strip-components=1 || true
+tar --warning=no-unknown-keyword -xzf "${BUNDLE}" -C "${REMOTE_FRONTEND_DIR}" --strip-components=1 || true
 rm -f "${BUNDLE}"
 
 cd "${REMOTE_FRONTEND_DIR}"

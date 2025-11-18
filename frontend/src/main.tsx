@@ -7,6 +7,20 @@ import App from './App.tsx'
 import i18n from './i18n'
 import { queryClient } from './lib/queryClient'
 
+// Register service worker for push notifications
+if ('serviceWorker' in navigator) {
+ window.addEventListener('load', async () => {
+   try {
+     const registration = await navigator.serviceWorker.register('/sw.js', {
+       scope: '/'
+     });
+     console.log('Service worker registered:', registration);
+   } catch (error) {
+     console.error('Service worker registration failed:', error);
+   }
+ });
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <I18nextProvider i18n={i18n}>
